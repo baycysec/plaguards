@@ -1,9 +1,6 @@
 import re
 
 
-REGEX = True
-
-
 def vba_collapse_long_lines(vba_code):
     if (vba_code is None):
         return ""
@@ -16,13 +13,27 @@ def vba_collapse_long_lines(vba_code):
     return vba_code
 
 
-if REGEX:
 
-    CHR = re.compile(r'Chr\((\d+)(\s+(Xor|\+|\-|\/|\*|\%)\s+(\d+))*\)', re.IGNORECASE)
-    STRING = re.compile(r'(".*?"|\'.*?.\')')
+CHR = re.compile(r'Chr\((\d+)(\s+(Xor|\+|\-|\/|\*|\%)\s+(\d+))*\)', re.IGNORECASE)
+STRING = re.compile(r'(".*?"|\'.*?.\')')
 
-    CONCAT_RUN = re.compile('(?P<entry>{chr}|{string})(\s+[&+]\s+(?P<other>{chr}|{string}))*'.format(chr=CHR.pattern, string=STRING.pattern))
+CONCAT_RUN = re.compile('(?P<entry>{chr}|{string})(\s+[&+]\s+(?P<other>{chr}|{string}))*'.format(chr=CHR.pattern, string=STRING.pattern))
 
+    
+VAR_RUN = re.compile(r'''(?P<var>[A-Za-z][A-Za-z0-9]*)\s*=\s*(?P<entry>.*?)[\r\n](?P<lines>(?:\s*?(?P=var)\s*=\s*(?P=var)\s*&\s*(?P<entry2>.*?)[\r\n])*)''', re.VERBOSE)
+
+
+# def _replace_var_runs(code):
+#     code_replacements = []
+#     for match in VAR_RUN.finditer(code):
+#         entries = [match.group('entry')]
+#         code_string = '{var} = {value}{newline}'.format(
+#             var=match.group('var'),
+#             value=' & '.join(entries),
+#             newline=match.group(0)[-1]
+#         )
+#         code_replacements.append((match.start(), match.end(), code_string))
+#     return _replace_code(code, code_replacements)
 
 def decode_chr(expr):
     numbers = list(map(int, re.findall(r'-?\d+', expr)))
@@ -42,6 +53,7 @@ def decode_chr(expr):
         elif simbol[i] == '^' or re.search(r'xor', simbol[i], re.IGNORECASE):
             result ^= numbers[i+1]
     return chr(result)
+
 
 def check_symbols(symbol):
     chr_pattern = re.compile(r'chr\([^()]*\)', re.IGNORECASE)
@@ -83,9 +95,8 @@ def _replace_concat_runs(code):
 
 def deobfuscate(code):
     code = vba_collapse_long_lines(code)
-    if REGEX:
-        # code = _replace_var_runs(code)
-        code = _replace_concat_runs(code)
+    # code = _replace_var_runs(code)
+    code = _replace_concat_runs(code)
     return code
 
 text = 'tes = Chr(123 Xor 11) + Chr(99 + 14) & Chr(109 Xor 4) & Chr(99 Xor 13) = tes2 + Chr(99 Xor 13) & Chr(109 Xor 4)'
