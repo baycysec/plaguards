@@ -1,43 +1,13 @@
 import re
 
+chrregex = re.compile(r'Chr\((\d+)(\s+(\^|\+|\-|\/|\*|\%)\s+(\d+))*\)', re.IGNORECASE)
+stringregex = re.compile(r'(".*?"|\'.*?.\')')
 
-def vba_collapse_long_lines(vba_code):
-    if (vba_code is None):
-        return ""
-    if vba_code[-1] != '\n':
-        vba_code += '\n'
-
-    vba_code = vba_code.replace(' _\r\n', ' ')
-    vba_code = vba_code.replace(' _\r', ' ')
-    vba_code = vba_code.replace(' _\n', ' ')
-    return vba_code
-
-
-
-CHR = re.compile(r'Chr\((\d+)(\s+(Xor|\+|\-|\/|\*|\%)\s+(\d+))*\)', re.IGNORECASE)
-STRING = re.compile(r'(".*?"|\'.*?.\')')
-
-CONCAT_RUN = re.compile('(?P<entry>{chr}|{string})(\s+[&+]\s+(?P<other>{chr}|{string}))*'.format(chr=CHR.pattern, string=STRING.pattern))
-
-    
-VAR_RUN = re.compile(r'''(?P<var>[A-Za-z][A-Za-z0-9]*)\s*=\s*(?P<entry>.*?)[\r\n](?P<lines>(?:\s*?(?P=var)\s*=\s*(?P=var)\s*&\s*(?P<entry2>.*?)[\r\n])*)''', re.VERBOSE)
-
-
-# def _replace_var_runs(code):
-#     code_replacements = []
-#     for match in VAR_RUN.finditer(code):
-#         entries = [match.group('entry')]
-#         code_string = '{var} = {value}{newline}'.format(
-#             var=match.group('var'),
-#             value=' & '.join(entries),
-#             newline=match.group(0)[-1]
-#         )
-#         code_replacements.append((match.start(), match.end(), code_string))
-#     return _replace_code(code, code_replacements)
+concatregex = re.compile(r'({chr})(\s*\+\s*({chr}))*'.format(chr=chrregex.pattern, string=stringregex.pattern))
 
 def decode_chr(expr):
     numbers = list(map(int, re.findall(r'-?\d+', expr)))
-    simbol = re.findall(r'(Xor|\+|\-|\/|\*|\^|\%)', expr, re.IGNORECASE)
+    simbol = re.findall(r'(\^|\+|\-|\/|\*|\^|\%)', expr, re.IGNORECASE)
     result = numbers[0]
     for i in range(len(simbol)):
         if simbol[i] == '+':
@@ -50,7 +20,7 @@ def decode_chr(expr):
             result = result // numbers[i+1]
         elif simbol[i] == '%':
             result %= numbers[i+1]
-        elif simbol[i] == '^' or re.search(r'xor', simbol[i], re.IGNORECASE):
+        elif simbol[i] == '^':
             result ^= numbers[i+1]
     return chr(result)
 
@@ -59,22 +29,22 @@ def check_symbols(symbol):
     chr_pattern = re.compile(r'chr\([^()]*\)', re.IGNORECASE)
     chr_substrings = chr_pattern.findall(symbol)
     temp_string = chr_pattern.sub("temp", symbol)
-    temp_string = temp_string.replace(" & ", "").replace(" + ", "")
+    temp_string = temp_string.replace(" + ", "")
     for chr_substring in chr_substrings:
         temp_string = temp_string.replace("temp", chr_substring, 1)
     
     return temp_string
 
-def _replace_concat_runs(code):
-    matches = CONCAT_RUN.finditer(code)
+def concat_test(code):
+    matches = concatregex.finditer(code)
     results = []
     for match in matches:
-        results.append(match.group('entry'))
-        remaining_text = match.group(0)[len(match.group('entry')):].strip()
+        results.append(match.group(1))
+        remaining_text = match.group(0)[len(match.group(1)):].strip()
         while remaining_text:
-            next_match = re.match(r'\s*[&+]\s*(?P<entry>{chr}|{string})'.format(chr=CHR.pattern, string=STRING.pattern), remaining_text)
+            next_match = re.match(r'\s*\+\s*({chr})'.format(chr=chrregex.pattern, string=stringregex.pattern), remaining_text)
             if next_match:
-                results.append(next_match.group('entry'))
+                results.append(next_match.group(1))
                 remaining_text = remaining_text[next_match.end():].strip()
             else:
                 break
@@ -94,10 +64,8 @@ def _replace_concat_runs(code):
 
 
 def deobfuscate(code):
-    code = vba_collapse_long_lines(code)
-    # code = _replace_var_runs(code)
-    code = _replace_concat_runs(code)
+    code = concat_test(code)
     return code
 
-text = 'tes = Chr(123 Xor 11) + Chr(99 + 14) & Chr(109 Xor 4) & Chr(99 Xor 13) = tes2 + Chr(99 Xor 13) & Chr(109 Xor 4)'
+text = 'tes = Chr(123 ^ 11) + Chr(99 ^ 14) + Chr(109 ^ 4) + Chr(99 ^ 13) = tes2 + Chr(99 ^ 13) + Chr(109 ^ 4)'
 print(deobfuscate(text))
