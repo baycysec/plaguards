@@ -74,8 +74,6 @@ def concat_test(code):
 
 
 def deobfuscate(code):
-    # code = vba_collapse_long_lines(code)
-    # code = _replace_var_runs(code)
     code = char_transform(code)
     code = concat_test(code)
     return code
