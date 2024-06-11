@@ -1,23 +1,21 @@
 import re
 
-
 chrregex = re.compile(r'Chr\(([-]?\d+)(\s+(\^|\+|\-|\/|\*|\%)\s+(\d+))*\)', re.IGNORECASE)
 stringregex = re.compile(r'(".*?"|\'.*?.\')')
 
 concatregex = re.compile(r'({chr})(\s*\+\s*({chr}))*'.format(chr=chrregex.pattern, string=stringregex.pattern))
 
-
 def replace_match(match):
-    num1, operator, num2 = match.groups()
-    return f'Chr({num1} {operator} {num2})'
+    res = match.group(1)
+    res_space = re.sub(r'(?<=\d)([\+\-\*/\^])(?=\d)', r' \1 ', res)
+    return f'Chr({res_space})'
 
 def char_transform(code):
-    return re.compile(r'char\[\](\-?\d+)\s*([\+\-\*/\^])\s*(\d+)', re.IGNORECASE).sub(replace_match, code)
+    return re.compile(r'char\[\]([-\d\+\-\*/\^]+)', re.IGNORECASE).sub(replace_match, code)
     
 
 def decode_chr(expr):
     numbers = list(map(int, re.findall(r'-?\d+', expr)))
-
     simbol = re.compile(r'[-]?\d+\s*(\^|\+|\-|\/|\*|\%|\^)', re.IGNORECASE).findall(expr)
     result = numbers[0]
     for i in range(len(simbol)):
@@ -79,7 +77,7 @@ def deobfuscate(code):
     return code
 
 # testing = 'tes = Chr(-11 + 100) + Chr(99 ^ 14) + Chr(109 ^ 4) + Chr(99 ^ 13) = tes2 + Chr(99 ^ 13) + Chr(109 ^ 4)'
-testing = 'tes = Char[]-11 + 100 + ChAr[]99 ^ 14 + CHar[]109 ^ 4 + ChaR[]99 ^ 13 = tes2 + ChaR[]99 ^ 13 + CHar[]109 ^ 4'
+testing = 'tes = Char[]-11+100 + ChAr[]99^14 + CHar[]109^4 + ChaR[]99^13 = tes2 + ChaR[]99^13 + CHar[]109^4'
 print(deobfuscate(testing))
 
 #TO DO
