@@ -1,13 +1,15 @@
 import re
 
-chrregex = re.compile(r'Chr\((\d+)(\s+(\^|\+|\-|\/|\*|\%)\s+(\d+))*\)', re.IGNORECASE)
+
+chrregex = re.compile(r'Chr\(([-]?\d+)(\s+(\^|\+|\-|\/|\*|\%)\s+(\d+))*\)', re.IGNORECASE)
 stringregex = re.compile(r'(".*?"|\'.*?.\')')
 
 concatregex = re.compile(r'({chr})(\s*\+\s*({chr}))*'.format(chr=chrregex.pattern, string=stringregex.pattern))
 
+
 def decode_chr(expr):
     numbers = list(map(int, re.findall(r'-?\d+', expr)))
-    simbol = re.findall(r'(\^|\+|\-|\/|\*|\^|\%)', expr, re.IGNORECASE)
+    simbol = re.compile(r'[-]?\d+\s*(\^|\+|\-|\/|\*|\%|\^)', re.IGNORECASE).findall(expr)
     result = numbers[0]
     for i in range(len(simbol)):
         if simbol[i] == '+':
@@ -32,7 +34,6 @@ def check_symbols(symbol):
     temp_string = temp_string.replace(" + ", "")
     for chr_substring in chr_substrings:
         temp_string = temp_string.replace("temp", chr_substring, 1)
-    
     return temp_string
 
 def concat_test(code):
@@ -67,5 +68,5 @@ def deobfuscate(code):
     code = concat_test(code)
     return code
 
-text = 'tes = Chr(123 ^ 11) + Chr(99 ^ 14) + Chr(109 ^ 4) + Chr(99 ^ 13) = tes2 + Chr(99 ^ 13) + Chr(109 ^ 4)'
+text = 'tes = Chr(-11 + 100) + Chr(99 ^ 14) + Chr(109 ^ 4) + Chr(99 ^ 13) = tes2 + Chr(99 ^ 13) + Chr(109 ^ 4)'
 print(deobfuscate(text))
