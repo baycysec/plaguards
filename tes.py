@@ -7,8 +7,17 @@ stringregex = re.compile(r'(".*?"|\'.*?.\')')
 concatregex = re.compile(r'({chr})(\s*\+\s*({chr}))*'.format(chr=chrregex.pattern, string=stringregex.pattern))
 
 
+def replace_match(match):
+    num1, operator, num2 = match.groups()
+    return f'Chr({num1} {operator} {num2})'
+
+def char_transform(code):
+    return re.compile(r'char\[\](\-?\d+)\s*([\+\-\*/\^])\s*(\d+)', re.IGNORECASE).sub(replace_match, code)
+    
+
 def decode_chr(expr):
     numbers = list(map(int, re.findall(r'-?\d+', expr)))
+
     simbol = re.compile(r'[-]?\d+\s*(\^|\+|\-|\/|\*|\%|\^)', re.IGNORECASE).findall(expr)
     result = numbers[0]
     for i in range(len(simbol)):
@@ -65,8 +74,16 @@ def concat_test(code):
 
 
 def deobfuscate(code):
+    # code = vba_collapse_long_lines(code)
+    # code = _replace_var_runs(code)
+    code = char_transform(code)
     code = concat_test(code)
     return code
 
-text = 'tes = Chr(-11 + 100) + Chr(99 ^ 14) + Chr(109 ^ 4) + Chr(99 ^ 13) = tes2 + Chr(99 ^ 13) + Chr(109 ^ 4)'
-print(deobfuscate(text))
+# testing = 'tes = Chr(-11 + 100) + Chr(99 ^ 14) + Chr(109 ^ 4) + Chr(99 ^ 13) = tes2 + Chr(99 ^ 13) + Chr(109 ^ 4)'
+testing = 'tes = Char[]-11 + 100 + ChAr[]99 ^ 14 + CHar[]109 ^ 4 + ChaR[]99 ^ 13 = tes2 + ChaR[]99 ^ 13 + CHar[]109 ^ 4'
+print(deobfuscate(testing))
+
+#TO DO
+# Read next line.
+
