@@ -14,6 +14,11 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.upload-container p {
+  color: var(--secondary-color);
+  font-size: 15px;
+}
+
 .upload-section,
 .search-bar {
   position: relative;
@@ -29,10 +34,6 @@
   cursor: pointer;
   transition: background-color 0.3s;
 }
-
-/* .upload-section.dragover {
-  background-color: #f0f8ff;
-} */
 
 .upload-section.dragover {
   background-color: #f0f8ff;
