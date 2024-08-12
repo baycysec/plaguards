@@ -1,0 +1,100 @@
+{
+  "pandoc-api-version": [1, 23],
+  "meta": {
+    "title": {
+      "t": "MetaInlines",
+      "c": [
+        {
+          "t": "Str",
+          "c": "Sample JSON Data"
+        }
+      ]
+    },
+    "author": {
+      "t": "MetaInlines",
+      "c": [
+        {
+          "t": "Str",
+          "c": "John Doe"
+        }
+      ]
+    },
+    "date": {
+      "t": "MetaInlines",
+      "c": [
+        {
+          "t": "Str",
+          "c": "2024-08-06"
+        }
+      ]
+    }
+  },
+  "blocks": [
+    {
+      "t": "Header",
+      "c": [
+        1,
+        ["introduction", [], []],
+        [
+          {
+            "t": "Str",
+            "c": "Introduction"
+          }
+        ]
+      ]
+    },
+    {
+      "t": "Para",
+      "c": [
+        {
+          "t": "Str",
+          "c": "This is the introduction section of the sample JSON data."
+        }
+      ]
+    },
+    {
+      "t": "Header",
+      "c": [
+        1,
+        ["main-content", [], []],
+        [
+          {
+            "t": "Str",
+            "c": "Main Content"
+          }
+        ]
+      ]
+    },
+    {
+      "t": "Para",
+      "c": [
+        {
+          "t": "Str",
+          "c": "This section contains the main content of the sample JSON data."
+        }
+      ]
+    },
+    {
+      "t": "Header",
+      "c": [
+        1,
+        ["conclusion", [], []],
+        [
+          {
+            "t": "Str",
+            "c": "Conclusion"
+          }
+        ]
+      ]
+    },
+    {
+      "t": "Para",
+      "c": [
+        {
+          "t": "Str",
+          "c": "This is the conclusion section of the sample JSON data."
+        }
+      ]
+    }
+  ]
+}
