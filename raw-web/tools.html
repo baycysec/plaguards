@@ -43,19 +43,15 @@
 
       <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
       <div class="upload-container">
-        <div class="upload-section" id="drop-zone">
-          <i class="ri-upload-2-line"></i>
-          <label for="file-upload" class="custom-file-upload"> Drag & Drop or Click to Upload File </label>
-          <input id="file-upload" type="file" />
-        </div>
+        <label class="upload-section" id="drop-zone">
+          <input type="file" id="upload-file" hidden />
+          <div id="file-view">
+            <i class="ri-upload-2-line">
+              <p>Drag and Drop or Click Here to Upload File</p>
+            </i>
+          </div>
+        </label>
       </div>
-
-      <!-- <i class="ri-download-2-line"></i> -->
-
-      <!-- <div class="search-container">
-        <i class="ri-search-line"></i>
-        <input type="text" placeholder="Search..." class="search-bar" />
-      </div> -->
     </div>
   </body>
 </html>
