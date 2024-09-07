@@ -50,14 +50,24 @@ def decode_chr(expr):
             result ^= numbers[i+1]
     return chr(result)
 
-def check_symbols(symbol):
+def validate_input(input_string):
+    input_string = input_string.strip()
+    while re.search(r'(\w)\s*\+\s*(\w)', input_string):
+        input_string = re.sub(r'(\w)\s*\+\s*(\w)', r'\1\2', input_string)
+    input_string = re.sub(r'\s*\+\s*', '', input_string)
+    return input_string
+
+def check_concat_plus(symbol):
     chr_pattern = re.compile(r'chr\([^()]*\)', re.IGNORECASE)
     chr_substrings = chr_pattern.findall(symbol)
     temp_string = chr_pattern.sub("temp", symbol)
-    temp_string = temp_string.replace("+", "")
+    
+    temp_string = validate_input(temp_string)
+    
     for chr_substring in chr_substrings:
         temp_string = temp_string.replace("temp", chr_substring, 1)
-    return temp_string
+    return ' ' + temp_string
+
 
 def concat_code(code):
     concatregex = re.compile(r'(Chr\([^()]*\)|".*?")(\s*\+\s*(Chr\([^()]*\)|".*?"))*', re.IGNORECASE)
@@ -78,42 +88,49 @@ def concat_code(code):
     splitslashn = [splitslash for splitslash in code.strip().splitlines()]
     check = []
     for i in splitslashn:
-        if "+=" in i:
-            check.append(i + '\n')
-            continue
-        parts = [part.lstrip(' ') for part in i.split('=')]
-        for j in range(len(parts)):
-            if '+' in parts and re.search(r'\$\w+', parts):
-                check.append(i + '\n')
-                break
-            if j == len(parts) - 1:
-                check.append(parts[j] + '\n')
-            else:
-                check.append(parts[j])
+        check.append(i + '\n')
     newcoderes = []
     for i in range(len(check)):
+        check[i] = check[i].replace('"', "").replace("'", "")
         if "+=" in check[i]:
             parts = [part.lstrip(' ') for part in check[i].split('+=')]
             if "+" in parts[1] and not re.search(r'\$\w+', parts[1]):
-                newparts = check_symbols(parts[1])
+                newparts = check_concat_plus(parts[1])
             else:
                 newparts = parts[1]
-            check[i] = parts[0] + "+=" + newparts + "\n"
+            check[i] = parts[0] + "+=" + ' ' + newparts + "\n"
             newcoderes.append(check[i])
-        elif "+" in check[i] and re.search(r'\$\w+', check[i]):
-            newcoderes.append(check[i])
-            if "\n" not in check[i]:
-                newcoderes.append('=')
+        elif "=" in check[i]:
+            valid = 0
+            parts = [part.lstrip(' ') for part in check[i].split('=')]  
+            for j in range(len(parts)):
+                if "+" in parts[j] and re.search(r'\$\w+', parts[j]):
+                    newcoderes.append(check[i])
+                    valid = 1
+                    break
+            if valid == 0:
+                pluscount = 0
+                res = ''
+                for i in range(len(parts)):
+                    if '+' in parts[i]:
+                        newparts = check_concat_plus(parts[i])
+                        pluscount = 1
+                    else:
+                        newparts = parts[i]
+                    if pluscount == 0 and i == len(parts) - 1:
+                        res += ' '
+                    if i == len(parts) - 1:
+                        res += newparts + '\n'
+                    else:
+                        res += newparts + '='
+                newcoderes.append(res)
         else:
-            newcoderes.append(check_symbols(check[i]))
-            if "\n" not in check[i]:
-                newcoderes.append('=')
+            newcoderes.append(check[i])
     newcode = ''.join([i for i in newcoderes])
-    newcode = newcode.replace('"', "").replace("'", "")
-    for i, element in enumerate(gabungin): #Replace chr with the string that has been converted
+    for i, element in enumerate(gabungin):
         if len(element) == 1:
             newcode = newcode.replace(results[i], element)
-    return newcode.replace(" ", "").replace("(", "").replace(")", "")
+    return newcode.replace("(", "").replace(")", "")
 
 
 def Replace(code):
@@ -129,7 +146,8 @@ def Replace(code):
         elif "=" in splitslashn[i]:
             newcoderes.append(re.sub(r'(?<!\s)=(?!\s)', ' = ', splitslashn[i]).strip())
     newcode = ''.join([i + '\n' for i in newcoderes])
-    return newcode
+    return newcode.strip()
+
 
 def decoding(code):
     match = re.search(r'(?i)B64_decode_([A-Za-z0-9%_=]+)', code)
@@ -148,7 +166,6 @@ def semicolon_case(code):
 
     value_dict = {}
 
-    # Step 1: Extract assignments and append operations
     for line in code.split(';'):
         line = line.strip()
         if not line:
@@ -159,19 +176,16 @@ def semicolon_case(code):
 
         if assign_match:
             var, value = assign_match.groups()
-            # Remove unnecessary concatenation symbols
             value = value.replace('+', '')
             value_dict[var] = value
         elif append_match:
             var, value = append_match.groups()
-            # Remove unnecessary concatenation symbols
             value = value.replace('+', '')
             if var in value_dict:
                 value_dict[var] += value
             else:
                 value_dict[var] = value
 
-    # Step 2: Resolve any concatenations within the stored values
     for var in value_dict:
         resolved_value = ''
         for token in re.split(r'(\$?\w+)', value_dict[var]):
@@ -181,46 +195,33 @@ def semicolon_case(code):
                 resolved_value += token
         value_dict[var] = resolved_value
 
-    # Step 3: Generate the new code output
     result_code = []
     for var, value in value_dict.items():
         result_code.append(f"{var} = {value}")
 
-    # Reconstruct the code with non-matched lines preserved
     non_matched_lines = [line for line in code.split(';') if not re.match(assign_pattern, line) and not re.match(append_pattern, line)]
     result_code.extend(non_matched_lines)
 
-    # Join lines and clean up extra symbols
     final_result = ';'.join(result_code)
     return final_result
 
 def replace_multiple_variables_and_extra_concat(code):
-    pattern = r'(\$\w+|\b\w+)\s*=\s*(\S+(\s*=\s*\S+)*)'
-    append_pattern = r'(\$\w+|\b\w+)\s*\+=\s*(\S+)'
+    append_pattern = r'(\$\w+)\s*\+=\s*(.+)'
     
     value_dict = {}
-    
     for line in code.splitlines():
-        match = re.match(pattern, line)
-        append_match = re.match(append_pattern, line)
-        
-        if match:
-            vars_values = match.group(0).split("=")
-            vars = [v.strip() for v in vars_values[:-1]]
-            value = vars_values[-1].strip()
-            for var in vars:
-                value_dict[var] = value
-        elif append_match:
-            var, value = append_match.groups()[0], append_match.groups()[1]
-            if var in value_dict:
-                value_dict[var] += value
-            else:
+        if "+=" in line:
+            append_match = re.match(append_pattern, line)
+            if append_match:
+                var, value = append_match.groups()
+                value_dict[var] = value_dict.get(var, "") + value.strip()
+        else:
+            assignments = line.split('=')
+            for i in range(len(assignments)-1, 0, -1):
+                var = assignments[i-1].strip().split()[-1]
+                value = assignments[i].strip().split('=')[0].strip()
                 value_dict[var] = value
 
-    for var, value in list(value_dict.items()):
-        if value in value_dict:
-            value_dict[var] = value_dict[value]
-    
     for var, value in list(value_dict.items()):
         chain = []
         while value in value_dict and value not in chain:
@@ -229,7 +230,7 @@ def replace_multiple_variables_and_extra_concat(code):
         for v in chain:
             value_dict[v] = value
         value_dict[var] = value
-    
+
     for var, value in value_dict.items():
         concat = ""
         for token in re.split(r'(\$?\w+)', value):
@@ -252,21 +253,19 @@ def replace_multiple_variables_and_extra_concat(code):
             newcode.append(" = ".join(vars) + f" = {value}")
         else:
             newcode.append(f"{vars[0]} = {value}")
-    
-    for line in code.splitlines():
-        if not re.match(pattern, line) and not re.match(append_pattern, line):
-            newcode.append(line)
+
     newcodewithslashn = []
     for i in newcode:
         newcodewithslashn.append(i + '\n')
-    
     newcoderes = []
-    for i in newcodewithslashn: #concat after initialize variable value (the remain + sign)
+    for i in newcodewithslashn:
         parts = i.split('=')
         res = ''
         for j in parts:
             if '+' in j:
-                check = check_symbols(j)
+                check = check_concat_plus(j)
+                if parts.index(j) == len(parts) - 1:
+                    check += '\n'
             else:
                 check = j
             res += check
@@ -283,7 +282,7 @@ def deobfuscate(code):
         code = char_transform(code)
         code = concat_code(code)
         code = Replace(code)
-        checkcode = code.split('\n')[:-1]
+        checkcode = code.split('\n')
         codetemp = []
         semicolon_sign = []
         for i in range(len(checkcode)):
@@ -306,7 +305,6 @@ def deobfuscate(code):
             if j == len(checkcode2):
                 checkcode = checkcode[:j+1]
                 break
-        print(checkcode)
         code = ''.join([i.replace('\n', '') if i == checkcode[-1] else i for i in checkcode])
         code = decoding(code)
     except:
@@ -328,6 +326,8 @@ $tesss += [ChaR](100   -  10  - 10 + 1) + [CHAR](109 -bxor   4) + $tes7
 $tes8 = $tesss + [CHAR](109 -bxor   3)
 $s10 = $tesss + [CHAR](109 -bxor   3)
 $tes9 = [CHAr](109 + 2) + $tes + [CHAR](109 -bxor   5)
+$aa = ayam goreng enak loh
+$bb = a + $aa
 """
 
 print(deobfuscate(testing))
