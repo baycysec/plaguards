@@ -81,29 +81,35 @@ def concat_code(code):
         if "+=" in i:
             check.append(i + '\n')
             continue
-        parts = i.split('=')
+        parts = [part.strip() for part in i.split('=')]
         for j in range(len(parts)):
+            if '+' in parts and re.search(r'\$\w+', parts):
+                check.append(i + '\n')
+                break
             if j == len(parts) - 1:
                 check.append(parts[j] + '\n')
             else:
                 check.append(parts[j])
     newcoderes = []
     for i in range(len(check)):
-        if "+=" not in check[i]:
-            newcoderes.append(check_symbols(check[i]))
-            if "\n" not in check[i]:
-                newcoderes.append('=')
-        else:
-            parts = check[i].split('+=')
-            if "+" in parts[1]:
+        if "+=" in check[i]:
+            parts = [part.strip() for part in check[i].split('+=')]
+            if "+" in parts[1] and not re.search(r'\$\w+', parts[1]):
                 newparts = check_symbols(parts[1])
             else:
                 newparts = parts[1]
-            check[i] = parts[0] + "+=" + newparts
+            check[i] = parts[0] + "+=" + newparts + "\n"
             newcoderes.append(check[i])
+        elif "+" in check[i] and re.search(r'\$\w+', check[i]):
+            newcoderes.append(check[i])
+        else:
+            newcoderes.append(check_symbols(check[i]))
+            if "\n" not in check[i]:
+                newcoderes.append('=')
+                
     newcode = ''.join([i for i in newcoderes])
     newcode = newcode.replace('"', "").replace("'", "")
-    for i, element in enumerate(gabungin):
+    for i, element in enumerate(gabungin): #Replace chr with the string that has been converted
         if len(element) == 1:
             newcode = newcode.replace(results[i], element)
     return newcode.replace(" ", "").replace("(", "").replace(")", "")
@@ -135,7 +141,7 @@ def decoding(code):
             return code
     return code
 
-def replace_multiple_variables(code):
+def replace_multiple_variables_and_extra_concat(code):
     pattern = r'(\$\w+|\b\w+)\s*=\s*(\S+(\s*=\s*\S+)*)'
     append_pattern = r'(\$\w+|\b\w+)\s*\+=\s*(\S+)'
     
@@ -171,6 +177,14 @@ def replace_multiple_variables(code):
             value_dict[v] = value
         value_dict[var] = value
     
+    for var, value in value_dict.items():
+        concat = ""
+        for token in re.split(r'(\$?\w+)', value):
+            if token in value_dict:
+                concat += value_dict[token]
+            else:
+                concat += token
+        value_dict[var] = concat
 
     reverse_dict = {}
     for var, value in value_dict.items():
@@ -189,18 +203,37 @@ def replace_multiple_variables(code):
     for line in code.splitlines():
         if not re.match(pattern, line) and not re.match(append_pattern, line):
             newcode.append(line)
+    newcodewithslashn = []
+    for i in newcode:
+        newcodewithslashn.append(i + '\n')
     
-    return "\n".join(newcode)
-
+    newcoderes = []
+    for i in newcodewithslashn: #concat after initialize variable value (the remain + sign)
+        parts = i.split('=')
+        res = ''
+        for j in parts:
+            if '+' in j:
+                check = check_symbols(j)
+            else:
+                check = j
+            res += check
+            if "\n" not in j:
+                res += "="
+        newcoderes.append(res)
+    newcode = ''.join([i.strip() if i == newcoderes[-1] else i for i in newcoderes])
+    return newcode
 
 
 def deobfuscate(code):
-    code = char_intended(code)
-    code = char_transform(code)
-    code = concat_code(code)
-    code = Replace(code)
-    code = decoding(code)
-    code = replace_multiple_variables(code)
+    try:
+        code = char_intended(code)
+        code = char_transform(code)
+        code = concat_code(code)
+        code = Replace(code)
+        code = decoding(code)
+        code = replace_multiple_variables_and_extra_concat(code)
+    except:
+        code = "Something's wrong with the code!"
     return code
 
 testing = """
@@ -214,10 +247,10 @@ $u='ht'+'tp://192.168.0.16:8282/B64_deC'+'ode_RkxBR3tEYXl1bV90aGlzX'+'2lzX3NlY3J
 $tes6 = [ChaR](99   -  10  - 10 + 1)+[CHAR](109 -bxor   4)
 $tes7 = [ChaR](99   -  10  - 10 + 1)+[CHAR](109 -bxor   4)
 $tesss = pe
-$tesss += [ChaR](100   -  10  - 10 + 1)+[CHAR](109 -bxor   4)
-$tes8 = $tesss
+$tesss += [ChaR](100   -  10  - 10 + 1) + [CHAR](109 -bxor   4) + $tes7
+$tes8 = $tesss + [CHAR](109 -bxor   3)
+$s10 = $tesss + [CHAR](109 -bxor   3)
+$tes9 = [CHAr](109 + 2) + $tes + [CHAR](109 -bxor   5)
 """
 
-
-# deobfuscate(testing)
 print(deobfuscate(testing))
