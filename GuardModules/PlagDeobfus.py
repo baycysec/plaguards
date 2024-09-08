@@ -10,6 +10,14 @@ concatregex = re.compile(r'({chr}|{string})(\s*\+\s*({chr}|{string}))*'.format(c
 def remove_spaces_bracket(match):
     return f"[Char]({match.group(1)}{match.group(2)}{match.group(3)})"
 
+def remove_string(code):
+    pattern = re.compile(r'\[string\]', re.IGNORECASE)
+    newcode = []
+    for line in code.strip().splitlines():
+        newcoderes = pattern.sub('', line).strip()
+        newcode.append(newcoderes)
+    return "\n".join(newcode)
+
 def char_intended(code):
     code = re.compile(r'\[Char\]\s+\(([-\d\+\*/\^]+)\)', re.IGNORECASE).sub(r'[Char](\1)', code)
     resultnumber = re.compile(r'\[Char\]\s+(\d+)', re.IGNORECASE).sub(r'[Char]\1', code)
@@ -145,6 +153,8 @@ def Replace(code):
             newcoderes.append(re.sub(r'(\w)\+=\s*(\w)', r'\1 += \2', splitslashn[i]).strip())
         elif "=" in splitslashn[i]:
             newcoderes.append(re.sub(r'(?<!\s)=(?!\s)', ' = ', splitslashn[i]).strip())
+        else:
+            newcoderes.append(splitslashn[i].strip())
     newcode = ''.join([i + '\n' for i in newcoderes])
     return newcode.strip()
 
@@ -159,51 +169,6 @@ def decoding(code):
         except:
             return code
     return code
-
-def semicolon_case(code):
-    assign_pattern = r'(\$\w+|\b\w+)\s*=\s*([^;]+)'
-    append_pattern = r'(\$\w+|\b\w+)\s*\+=\s*([^;]+)'
-
-    value_dict = {}
-
-    for line in code.split(';'):
-        line = line.strip()
-        if not line:
-            continue
-
-        assign_match = re.match(assign_pattern, line)
-        append_match = re.match(append_pattern, line)
-
-        if assign_match:
-            var, value = assign_match.groups()
-            value = value.replace('+', '')
-            value_dict[var] = value
-        elif append_match:
-            var, value = append_match.groups()
-            value = value.replace('+', '')
-            if var in value_dict:
-                value_dict[var] += value
-            else:
-                value_dict[var] = value
-
-    for var in value_dict:
-        resolved_value = ''
-        for token in re.split(r'(\$?\w+)', value_dict[var]):
-            if token in value_dict:
-                resolved_value += value_dict[token]
-            else:
-                resolved_value += token
-        value_dict[var] = resolved_value
-
-    result_code = []
-    for var, value in value_dict.items():
-        result_code.append(f"{var} = {value}")
-
-    non_matched_lines = [line for line in code.split(';') if not re.match(assign_pattern, line) and not re.match(append_pattern, line)]
-    result_code.extend(non_matched_lines)
-
-    final_result = ';'.join(result_code)
-    return final_result
 
 def replace_multiple_variables_and_extra_concat(code):
     append_pattern = r'(\$\w+)\s*\+=\s*(.+)'
@@ -305,16 +270,14 @@ def replace_multiple_variables2(code):
 
 def deobfuscate(code):
     try:
+        code = remove_string(code)
         code = char_intended(code)
         code = char_transform(code)
-        code = concat_code(code)
-        code = Replace(code)
-        checkcode = code.split('\n')
         codetemp = []
+        checkcode = code.split('\n')
         for i in range(len(checkcode)):
             checkcode[i] += "\n"
             if ';' in checkcode[i]:
-                checkcode[i] = semicolon_case(checkcode[i])
                 parts = [part.lstrip(' ') for part in checkcode[i].split(';')]
                 if parts[-1] == '\n':
                     parts = parts[:-1]
@@ -328,31 +291,46 @@ def deobfuscate(code):
                         codetemp.append(j + '\n')
             else:
                 codetemp.append(checkcode[i])
+        code = ''.join([i if i != codetemp[-1] else i.rstrip('\n') for i in codetemp])
+        code = concat_code(code)
+        code = Replace(code)
         codetobecheckedonly = []
         notvariablevalue = []
-        for j in range(len(codetemp)):
-            if re.match(r'\$\w+\s*[\+=]+\s*.+', codetemp[j]):
-                codetobecheckedonly.append(codetemp[j])
+        checkcode = code.split('\n')
+        checkcode = [check for check in checkcode if check != '']
+        codetemp2 = [i + '\n' if i != checkcode[-1] else i for i in checkcode]
+        for j in range(len(codetemp2)):
+            if re.match(r'\$\w+\s*[\+=]+\s*.+', codetemp2[j]):
+                codetobecheckedonly.append(codetemp2[j])
             else:
                 notvariablevalue.append(j)
         code = ''.join([i for i in codetobecheckedonly])
         code = replace_multiple_variables_and_extra_concat(code)
         checkcode = code.split('\n')
-        if checkcode[-1] == '':
-            checkcode = checkcode[:-1]
+        checkcode = [check for check in checkcode if check != '']
+        codetemp3 = []
         j = 0
-        for i in range(len(codetemp)):
+        for i in range(len(codetemp2)):
             if i in notvariablevalue:
+                codetemp3.append(codetemp2[i])
                 continue
-            checkcode[j] += "\n"
-            codetemp[i] = checkcode[j]
-            j += 1
+            elif j != len(checkcode):
+                checkcode[j] += "\n"
+                codetemp3.append(checkcode[j])
+                j += 1
+                continue
             if j == len(checkcode):
-                codetemp = codetemp[:i+1]
+                for k in range(i, len(codetemp2)):
+                    if k in notvariablevalue:
+                        codetemp3.append(codetemp2[k])
                 break
-        code = ''.join([i if i != codetemp[-1] else i.rstrip('\n') for i in codetemp])
+
+        code = ''.join([i if i != codetemp3[-1] else i.rstrip('\n') for i in codetemp3])
         code = decoding(code)
         code = replace_multiple_variables2(code)
+        reverse = input("Want to reverse the code? (y/n): ")
+        if reverse.lower() == 'y':
+            code = code[::-1]
     except:
         code = "Something's wrong with the code!"
     return code
