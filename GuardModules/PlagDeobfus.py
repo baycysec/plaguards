@@ -175,6 +175,7 @@ def decoding(code):
 def replace_multiple_variables_and_extra_concat(code):
     append_pattern = r'(\$\w+)\s*\+=\s*(.+)'
     value_dict = {}
+    
     for line in code.splitlines():
         if "+=" in line:
             append_match = re.match(append_pattern, line)
