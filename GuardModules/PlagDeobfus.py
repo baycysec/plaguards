@@ -328,9 +328,6 @@ def deobfuscate(code):
         code = ''.join([i if i != codetemp3[-1] else i.rstrip('\n') for i in codetemp3])
         code = decoding(code)
         code = replace_multiple_variables2(code)
-        reverse = input("Want to reverse the code? (y/n): ")
-        if reverse.lower() == 'y':
-            code = code[::-1]
     except:
         code = "Something's wrong with the code!"
     return code
