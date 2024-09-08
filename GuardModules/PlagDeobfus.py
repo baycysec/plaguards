@@ -133,16 +133,18 @@ def concat_code(code):
                         res += newparts + '='
                 newcoderes.append(res)
         else:
+            if '+' in check[i]:
+                check[i] = check_concat_plus(check[i])
             newcoderes.append(check[i])
     newcode = ''.join([i for i in newcoderes])
     for i, element in enumerate(gabungin):
         if len(element) == 1:
             newcode = newcode.replace(results[i], element)
-    return newcode.replace("(", "").replace(")", "")
+    return newcode
 
 
 def Replace(code):
-    pattern = re.compile(r'Replace(\w+),([!@#$%^&*\w]+)', re.IGNORECASE)
+    pattern = re.compile(r'Replace\(([^,]+),\s*([^)]+)\)', re.IGNORECASE)
     def replacer(match):
         return match.group(2)
     newcode = pattern.sub(replacer, code)
