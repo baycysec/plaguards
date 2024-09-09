@@ -15,15 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from plaguards.views import index
+from plaguards.views import index, tools, about, tutorial
 
 urlpatterns = [
     path("index/", index, name="index"),
-    # path("index/", views.index, name="index"),  # Matches /index/
+    path("tools/", tools, name="tools"),
+    path("about/", about, name="about"),
+    path("tutorial/", tutorial, name="tutorial"),
 ]
-
-# urlpatterns = [
-#     path('', include('plaguards.urls')),
-#     path('admin/', admin.site.urls),
-# ]
-

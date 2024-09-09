@@ -104,7 +104,7 @@ nav {
   color: var(--secondary-color);
 }
 
-.header__container {
+.content__container {
   max-width: var(--max-width);
   margin-inline: auto;
   padding-block: 5rem 2rem;
@@ -113,20 +113,87 @@ nav {
   gap: 2rem;
 }
 
-.header__image img {
+.content__container h1 {
+  overflow: hidden;
+  text-align: center;
+  color: var(--white);
+}
+
+.content__container h2 {
+  overflow: hidden;
+  text-align: center;
+  color: var(--white);
+}
+
+.content__container p {
+  color: var(--white);
+}
+
+.content__container img {
+  max-width: 85%;
+}
+
+.image__container {
+  text-align: center;
+  border: 1px solid var(--white);
+  border-radius: 5px;
+}
+
+.content {
+  color: var(--white);
+}
+
+.team__container {
+  display: flex;
+  gap: 0;
+  justify-content: space-between;
+}
+
+.team__box {
+  text-align: center;
+}
+
+.team__box img {
+  height: 200px;
+}
+
+.team__box h2 {
+  margin-bottom: 10px;
+}
+
+.socials {
+  padding-block: 2rem 4rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.socials a {
+  font-size: 1.5rem;
+  color: var(--text-light);
+}
+
+.socials a:hover {
+  color: var(--primary-color);
+}
+
+footer {
+  color: var(--text-light);
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  font-size: 12px;
+  margin-bottom: 20px;
+}
+
+/* tes */
+
+/* .header__image img {
   width: 100%;
   max-width: 500px;
   margin-inline: auto;
   display: flex;
 }
-
-/* .header__image p {
-  color: var(--white);
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  font-size: 35px;
-} */
 
 .header__content {
   overflow: hidden;
@@ -193,12 +260,12 @@ nav {
 .header__content .btn:hover {
   color: var(--primary-color);
   background-color: var(--white);
-}
+} */
 
-.header__bar {
+/* .header__bar {
   font-size: 0.9rem;
   color: var(--text-light);
-}
+} */
 
 @media (width > 768px) {
   nav {
