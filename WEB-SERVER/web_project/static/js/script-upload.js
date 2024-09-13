@@ -18,7 +18,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const files = e.dataTransfer.files;
     if (files.length) {
       fileInput.files = files;
-      // You can handle the file upload here (e.g., using AJAX)
       console.log(files[0].name);
     }
   });
@@ -28,7 +27,6 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   fileInput.addEventListener("change", () => {
-    // You can handle the file upload here (e.g., using AJAX)
     console.log(fileInput.files[0].name);
   });
 });
