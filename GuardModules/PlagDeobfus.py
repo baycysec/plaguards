@@ -172,16 +172,15 @@ def decoding(code):
             return code
     return code
 
-def replace_multiple_variables_and_extra_concat(code):
-    append_pattern = r'(\$\w+)\s*\+=\s*(.+)'
+def combine_and_concat_multiple_variables_value(code):
     value_dict = {}
     
     for line in code.splitlines():
         if "+=" in line:
-            append_match = re.match(append_pattern, line)
-            if append_match:
-                var, value = append_match.groups()
-                value_dict[var] = value_dict.get(var, "") + value.strip()
+            parts = line.split('+=')
+            var = parts[0].strip()
+            value = parts[1].strip() 
+            value_dict[var] = value_dict.get(var, "") + value 
         else:
             assignments = line.split('=')
             for i in range(len(assignments)-1, 0, -1):
@@ -242,7 +241,7 @@ def replace_multiple_variables_and_extra_concat(code):
     newcode = ''.join([i for i in newcoderes])
     return newcode
 
-def replace_multiple_variables2(code):
+def replace_variables_value(code):
     lines = code.split('\n')
     variables = {}
     for line in lines:
@@ -307,7 +306,7 @@ def deobfuscate(code):
             else:
                 notvariablevalue.append(j)
         code = ''.join([i for i in codetobecheckedonly])
-        code = replace_multiple_variables_and_extra_concat(code)
+        code = combine_and_concat_multiple_variables_value(code)
         checkcode = code.split('\n')
         checkcode = [check for check in checkcode if check != '']
         codetemp3 = []
@@ -329,7 +328,7 @@ def deobfuscate(code):
 
         code = ''.join([i if i != codetemp3[-1] else i.rstrip('\n') for i in codetemp3])
         code = decoding(code)
-        code = replace_multiple_variables2(code)
+        code = replace_variables_value(code)
     except:
         code = "Something's wrong with the code!"
     return code
