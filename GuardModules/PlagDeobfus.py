@@ -303,6 +303,22 @@ def decoding(code):
     newcode = ''.join([i + '\n' for i in newcoderes])
     return newcode.strip()
 
+def Replace(code):
+    def replace_func(match):
+        string, oldword, newword = match.groups()
+        return string.replace(oldword.strip(), newword.strip())
+    
+    checkcode = code.split('\n')
+    for i in range(len(checkcode)):
+        while True:
+            newcode, count = re.subn(r"(\w+)\.rePLAce\(([^,]+),([^)]+)\)", replace_func, checkcode[i], flags=re.IGNORECASE)
+            if count == 0:
+                break
+            checkcode[i] = newcode
+    newcode = ''.join([i + '\n' for i in checkcode])
+    return newcode.strip()
+
+
 def http_and_ip_grep(code):    
     httplist = re.findall(r'https?://[^\s]+', code)
     iplist = re.findall(r'\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}(?::[0-9]{1,5})?\b', code)
@@ -337,9 +353,8 @@ def deobfuscate(code):
         code = backtick(code)
         code = combine_and_concat_multiple_variables_value(code)
         code = decoding(code)
-        code = backtick(code)
-        code = combine_and_concat_multiple_variables_value(code)
+        code = Replace(code)
         httplist,iplist = http_and_ip_grep(code)
     except:
-        code = "Something's wrong with the code!"
+        code = "Something's wrong with the code or input!"
     return code,httplist,iplist
