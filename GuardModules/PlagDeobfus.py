@@ -37,7 +37,6 @@ def replace_match(match):
 
 def char_transform(code):
     return re.compile(r'\[char\]\(([-\d\+\*/\^\s]+(?:\s?-bxor\s?[-\d\+\*/\^\s]+)?)\)|\[Char\]([-0-9]+)', re.IGNORECASE).sub(replace_match, code)
-
  
 def decode_chr(expr):
     numbers = list(map(int, re.findall(r'-?\d+', expr)))
@@ -135,6 +134,8 @@ def concat_code(code):
         else:
             if '+' in check[i]:
                 check[i] = check_concat_plus(check[i])
+            if '\n' not in check[i]:
+                check[i] += '\n'
             newcoderes.append(check[i])
     newcode = ''.join([i for i in newcoderes])
     for i, element in enumerate(gabungin):
@@ -143,82 +144,119 @@ def concat_code(code):
     return newcode
 
 
-def Replace(code):
-    pattern = re.compile(r'Replace\(([^,]+),\s*([^)]+)\)', re.IGNORECASE)
-    def replacer(match):
-        return match.group(2)
-    newcode = pattern.sub(replacer, code)
-    splitslashn = [splitslash for splitslash in newcode.strip().splitlines()]
-    newcoderes = []
-    for i in range(len(splitslashn)):
-        if "+=" in splitslashn[i]:
-            newcoderes.append(re.sub(r'(\w)\+=\s*(\w)', r'\1 += \2', splitslashn[i]).strip())
-        elif "=" in splitslashn[i]:
-            newcoderes.append(re.sub(r'(?<!\s)=(?!\s)', ' = ', splitslashn[i]).strip())
-        else:
-            newcoderes.append(splitslashn[i].strip())
-    newcode = ''.join([i + '\n' for i in newcoderes])
+def backtick(code):
+    backtick_dict = {
+        '`b': '\b',
+        '`f': '\f',
+        '`n': '\n',
+        '`r': '\r',
+        '`t': '\t',
+        '`v': '\v'
+    }
+    checkcode = code.split('\n')
+    for i in range(len(checkcode)):
+        for backtick, backtickvalue in backtick_dict.items():
+            if backtick in checkcode[i]:
+                checkcode[i] = checkcode[i].replace(backtick,backtickvalue)
+        if not checkcode[i].endswith('\n'):
+            checkcode[i] += '\n'
+    newcode = ''.join([i for i in checkcode])
     return newcode.strip()
 
 
-def decoding(code):
-    match = re.search(r'(?i)B64_decode_([A-Za-z0-9%_=]+)', code)
-    if match:
-        try:
-            encoded = unquote(match.group(1))
-            decoded = base64.b64decode(encoded).decode()
-            code = code.replace(match.group(0), decoded)
-        except:
-            return code
-    return code
-
 def combine_and_concat_multiple_variables_value(code):
     value_dict = {}
+    notvariablevalue = []
+    equalmorethan1pattern = r'={2,}'
     
-    for line in code.splitlines():
-        if "+=" in line:
-            parts = line.split('+=')
+    def replace_equal_more_than_1(match):
+        return '%3D' * len(match.group(0))
+    
+    checkcode = [check for check in code.splitlines() if check != '']
+
+    for i in range(len(checkcode)):
+        checkcode[i] = re.sub(equalmorethan1pattern, replace_equal_more_than_1, checkcode[i])
+        if "+=" in checkcode[i]:
+            parts = checkcode[i].split('+=')
             var = parts[0].strip()
             value = parts[1].strip() 
-            value_dict[var] = value_dict.get(var, "") + value 
-        else:
-            assignments = line.split('=')
-            for i in range(len(assignments)-1, 0, -1):
-                var = assignments[i-1].strip().split()[-1]
-                value = assignments[i].strip().split('=')[0].strip()
+            value_dict[var] = value_dict.get(var, "") + value
+        elif "=" in checkcode[i] and "!=" not in checkcode[i]:
+            split_equal = checkcode[i].split('=')
+            for i in range(len(split_equal)-1, 0, -1):
+                var = split_equal[i-1].strip().split()[-1]
+                value = split_equal[i].strip().split('=')[0].strip()
                 value_dict[var] = value
+        else:
+            notvariablevalue.append(checkcode[i])
 
     for var, value in list(value_dict.items()):
-        chain = []
-        while value in value_dict and value not in chain:
-            chain.append(value)
+        vars = []
+        while value in value_dict and value not in vars:
+            vars.append(value)
             value = value_dict[value]
-        for v in chain:
+        for v in vars:
             value_dict[v] = value
         value_dict[var] = value
 
     for var, value in value_dict.items():
-        concat = ""
-        for token in re.split(r'(\$?\w+)', value):
-            if token in value_dict:
-                concat += value_dict[token]
+        newvaluetemp = ""
+        for match in re.split(r'(\$?\w+)', value):
+            if match in value_dict:
+                newvaluetemp += value_dict[match]
             else:
-                concat += token
-        value_dict[var] = concat
+                newvaluetemp += match
+        value_dict[var] = newvaluetemp
 
-    reverse_dict = {}
+    reverse_value_dict = {}
     for var, value in value_dict.items():
-        if value in reverse_dict:
-            reverse_dict[value].append(var)
+        if value in reverse_value_dict:
+            reverse_value_dict[value].append(var)
         else:
-            reverse_dict[value] = [var]
+            reverse_value_dict[value] = [var]
 
-    newcode = []
-    for value, vars in reverse_dict.items():
+    codetemp = []
+    for value, vars in reverse_value_dict.items():
         if len(vars) > 1:
-            newcode.append(" = ".join(vars) + f" = {value}")
+            codetemp.append(" = ".join(vars) + f" = {value}")
         else:
-            newcode.append(f"{vars[0]} = {value}")
+            codetemp.append(f"{vars[0]} = {value}")
+    newcodetemp = []
+    j,k = 0, 0
+    for i in range(len(checkcode)):
+        if k != len(notvariablevalue) and checkcode[i] == notvariablevalue[k]:
+            newcodetemp.append(notvariablevalue[k])
+            k += 1
+        elif j != len(codetemp):
+            newcodetemp.append(codetemp[j])
+            j += 1
+        elif j == len(codetemp):
+            if k == len(notvariablevalue):
+                break
+            newcodetemp.append(notvariablevalue[k])
+            k += 1
+
+    variables = {}
+    for line in newcodetemp:
+        match = re.match(r'^(\$\w+(?:\s*=\s*\$\w+)*\s*)=\s*(.+)', line)
+        if match:
+            value = match.group(2).strip()
+            vars = [v.strip() for v in match.group(1).split('=')]
+            prev_var = value
+            for var in vars:
+                variables[var] = prev_var
+                prev_var = var
+    def replace_var(match):
+        var = match.group(0)
+        while var in variables:
+            var = variables[var]
+        return var
+    
+    newcode = []
+    for line in newcodetemp:
+        if not line.strip().startswith('$'):
+            line = re.sub(r'\$\w+', replace_var, line)
+        newcode.append(line)
 
     newcodewithslashn = []
     for i in newcode:
@@ -238,36 +276,38 @@ def combine_and_concat_multiple_variables_value(code):
             if "\n" not in j:
                 res += "="
         newcoderes.append(res)
+    newcoderes[-1] = newcoderes[-1].strip('\n')
     newcode = ''.join([i for i in newcoderes])
     return newcode
 
-def replace_variables_value(code):
-    lines = code.split('\n')
-    variables = {}
-    for line in lines:
-        match = re.match(r'^(\$\w+(?:\s*=\s*\$\w+)*\s*)=\s*(.+)', line)
+def decoding(code):
+    checkcode = code.split('\n')
+    newcoderes = []
+    for i in checkcode:
+        if i == '':
+            continue
+        match = re.search(r'(?i)B64_decode_([A-Za-z0-9]+%3D%3D)|\[System\.Convert\]::FromBase64String\((?:\'|")?([A-Za-z0-9%_=]+)(?:\'|")?\)|([A-Za-z0-9]+%3D%3D)', i)
         if match:
-            value = match.group(2).strip()
-            var_chain = reversed([v.strip() for v in match.group(1).split('=')])
-            prev_var = value
-            for var in var_chain:
-                variables[var] = prev_var
-                prev_var = var
-    
-    def replace_var(match):
-        var = match.group(0)
-        while var in variables:
-            var = variables[var]
-        return var
-    
-    newcode = []
-    for line in lines:
-        if not line.strip().startswith('$'):
-            line = re.sub(r'\$\w+', replace_var, line)
-        newcode.append(line)
-    
-    return '\n'.join(newcode)
+            for j in range(1,4):
+                if match.group(j):
+                    val = match.group(j)
+                    break
+            try:
+                encoded = unquote(val)
+                decoded = base64.b64decode(encoded).decode()
+                newcoderes.append(i.replace(match.group(0), decoded))
+            except:
+                newcoderes.append(i)
+        else:
+            newcoderes.append(i)
+    newcode = ''.join([i + '\n' for i in newcoderes])
+    return newcode.strip()
 
+def http_and_ip_grep(code):    
+    httplist = re.findall(r'https?://[^\s]+', code)
+    iplist = re.findall(r'\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}(?::[0-9]{1,5})?\b', code)
+    
+    return httplist, iplist
 
 def deobfuscate(code):
     try:
@@ -294,41 +334,12 @@ def deobfuscate(code):
                 codetemp.append(checkcode[i])
         code = ''.join([i if i != codetemp[-1] else i.rstrip('\n') for i in codetemp])
         code = concat_code(code)
-        code = Replace(code)
-        codetobecheckedonly = []
-        notvariablevalue = []
-        checkcode = code.split('\n')
-        checkcode = [check for check in checkcode if check != '']
-        codetemp2 = [i + '\n' if i != checkcode[-1] else i for i in checkcode]
-        for j in range(len(codetemp2)):
-            if re.match(r'\$\w+\s*[\+=]+\s*.+', codetemp2[j]):
-                codetobecheckedonly.append(codetemp2[j])
-            else:
-                notvariablevalue.append(j)
-        code = ''.join([i for i in codetobecheckedonly])
+        code = backtick(code)
         code = combine_and_concat_multiple_variables_value(code)
-        checkcode = code.split('\n')
-        checkcode = [check for check in checkcode if check != '']
-        codetemp3 = []
-        j = 0
-        for i in range(len(codetemp2)):
-            if i in notvariablevalue:
-                codetemp3.append(codetemp2[i])
-                continue
-            elif j != len(checkcode):
-                checkcode[j] += "\n"
-                codetemp3.append(checkcode[j])
-                j += 1
-                continue
-            if j == len(checkcode):
-                for k in range(i, len(codetemp2)):
-                    if k in notvariablevalue:
-                        codetemp3.append(codetemp2[k])
-                break
-
-        code = ''.join([i if i != codetemp3[-1] else i.rstrip('\n') for i in codetemp3])
         code = decoding(code)
-        code = replace_variables_value(code)
+        code = backtick(code)
+        code = combine_and_concat_multiple_variables_value(code)
+        httplist,iplist = http_and_ip_grep(code)
     except:
         code = "Something's wrong with the code!"
-    return code
+    return code,httplist,iplist
