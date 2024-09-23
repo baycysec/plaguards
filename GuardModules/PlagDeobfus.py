@@ -5,8 +5,6 @@ from urllib.parse import unquote
 chrregex = re.compile(r'Chr\(([-]?\d+)(\s+(\^|\+|\-|\/|\*|\%)\s+(\d+))*\)', re.IGNORECASE)
 stringregex = re.compile(r'(".*?"|\'.*?.\')')
 
-concatregex = re.compile(r'({chr})(\s*\+\s*({chr}))*'.format(chr=chrregex.pattern, string=stringregex.pattern))
-
 def remove_spaces_bracket(match):
     return f"[Char]({match.group(1)}{match.group(2)}{match.group(3)})"
 
@@ -358,3 +356,4 @@ def deobfuscate(code):
     except:
         code = "Something's wrong with the code or input!"
     return code,httplist,iplist
+
