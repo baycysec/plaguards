@@ -286,16 +286,16 @@ def decoding(code):
     for i in checkcode:
         if i == '':
             continue
-        match = re.search(r'(?i)B64_decode_([A-Za-z0-9]+%3D%3D)|\[System\.Convert\]::FromBase64String\((?:\'|")?([A-Za-z0-9%_=]+)(?:\'|")?\)|([A-Za-z0-9]+%3D%3D)', i)
-        if match:
-            for j in range(1,4):
-                if match.group(j):
-                    val = match.group(j)
-                    break
+        matchb64 = re.search(r'(?i)([A-Za-z0-9]+%3D%3D)', i)
+        if matchb64:
             try:
-                encoded = unquote(val)
+                encoded = unquote(matchb64.group(0))
                 decoded = base64.b64decode(encoded).decode()
-                newcoderes.append(i.replace(match.group(0), decoded))
+                matchb64part2 = re.search(r"(?i)\[(.*?\)+)|(b64|base64).*?%3D%3D", i)
+                if matchb64part2:
+                    newcoderes.append(i.replace(matchb64part2.group(0), decoded))
+                else:
+                    newcoderes.append(i.replace(matchb64.group(0), decoded))
             except:
                 newcoderes.append(i)
         else:
