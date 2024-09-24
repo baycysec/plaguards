@@ -85,7 +85,7 @@ def concat_code(code):
         results.append(match.group(1))
         remaining_text = match.group(0)[len(match.group(1)):].strip()
         while remaining_text:
-            next_match = re.match(r'\s*\+\s*(Chr\([^()]*\)")', remaining_text, re.IGNORECASE)
+            next_match = re.match(r'\s*\+\s*(Chr\([^()]*\))', remaining_text, re.IGNORECASE)
             if next_match:
                 results.append(next_match.group(1))
                 remaining_text = remaining_text[next_match.end():].strip()
