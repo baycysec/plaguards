@@ -20,7 +20,7 @@ def change_bxor_and_to_chr(code):
         changebxor = res.replace('-bxor', '^')
         return f'Chr({changebxor})'
     
-    return re.compile(r'\[char\]\(([-\d\+\*/\s]+(?:\s?-bxor\s?[-\d\+\*/\s]+)*)\)', re.IGNORECASE).sub(replace_bxor_and_to_chr, code)
+    return re.compile(r'\[char\]\(([\d\-+\*/\s]+(?:\s?-bxor\s?[\d\-+\*/\s]+)*)\)', re.IGNORECASE).sub(replace_bxor_and_to_chr, code)
  
 def decode_chr(expr):
     numbers = list(map(int, re.findall(r'-?\d+', expr)))
