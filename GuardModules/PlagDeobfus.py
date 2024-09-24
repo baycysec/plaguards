@@ -12,6 +12,7 @@ def remove_string(code):
 
 def remove_space_from_char(code):
     code = re.compile(r'(\[ChaR\])\s+\(', re.IGNORECASE).sub(r'\1(', code)
+    code = re.compile(r'(\[Char\])\s+(\d+)', re.IGNORECASE).sub(r'\1(\2)', code)
     return code
 
 def change_bxor_and_to_chr(code):
