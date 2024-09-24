@@ -2,12 +2,6 @@ import re
 import base64
 from urllib.parse import unquote
 
-chrregex = re.compile(r'Chr\(([-]?\d+)(\s+(\^|\+|\-|\/|\*|\%)\s+(\d+))*\)', re.IGNORECASE)
-stringregex = re.compile(r'(".*?"|\'.*?.\')')
-
-def remove_spaces_bracket(match):
-    return f"[Char]({match.group(1)}{match.group(2)}{match.group(3)})"
-
 def remove_string(code):
     pattern = re.compile(r'\[string\]', re.IGNORECASE)
     newcode = []
@@ -17,7 +11,7 @@ def remove_string(code):
     return "\n".join(newcode)
 
 def remove_space_from_char(code):
-    code = re.compile(r'\[Char\]\s+\(([-\d\+\*/\^]+)\)', re.IGNORECASE).sub(r'[Char](\1)', code)
+    code = re.compile(r'\[Char\]\s+\(([-\d\+\*]+)\)', re.IGNORECASE).sub(r'[Char](\1)', code)
     result = re.compile(r'(\[ChaR\])\s+\(', re.IGNORECASE).sub(r'\1(', code)
     return result
 
@@ -25,10 +19,9 @@ def change_bxor_and_to_chr(code):
     def replace_bxor_and_to_chr(match):
         res = match.group(1)
         changebxor = res.replace('-bxor', '^')
-        final_result = re.sub(r'^\((.*)\)$', r'\1', changebxor)
-        return f'Chr({final_result})'
+        return f'Chr({changebxor})'
     
-    return re.compile(r'\[char\]\(([-\d\+\*/\^\s]+(?:\s?-bxor\s?[-\d\+\*/\^\s]+)*)\)', re.IGNORECASE).sub(replace_bxor_and_to_chr, code)
+    return re.compile(r'\[char\]\(([-\d\+\*/\s]+(?:\s?-bxor\s?[-\d\+\*/\s]+)*)\)', re.IGNORECASE).sub(replace_bxor_and_to_chr, code)
  
 def decode_chr(expr):
     numbers = list(map(int, re.findall(r'-?\d+', expr)))
