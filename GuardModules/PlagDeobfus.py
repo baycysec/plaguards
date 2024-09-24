@@ -20,7 +20,7 @@ def char_intended(code):
     code = re.compile(r'\[Char\]\s+\(([-\d\+\*/\^]+)\)', re.IGNORECASE).sub(r'[Char](\1)', code)
     resultnumber = re.compile(r'\[Char\]\s+(\d+)', re.IGNORECASE).sub(r'[Char]\1', code)
     resultexpr = re.compile(r'\[Char\]\s*\(\s*(-?\d+)\s*([+\-*/])\s*(-?\d+)\s*\)', re.IGNORECASE).sub(remove_spaces_bracket, resultnumber)
-    resultbxor = re.compile(r'\s*(-?\d+)\s*-\s*bxor\s*(-?\d+)\s*', re.IGNORECASE).sub(r'\1 -bxor \2', resultexpr)
+    resultbxor = re.compile(r'\[Char\]\s*(-?\d+)\s*-\s*bxor\s*(-?\d+)\s*', re.IGNORECASE).sub(r'\1 -bxor ', resultexpr)
     resultplus = re.compile(r'(\[Char\]\(\d+[+\-*/]\d+\))\s*\+\s*', re.IGNORECASE).sub(r'\1 + ', resultbxor)
     final_result = re.compile(r'(\[Char\]\([^\)]+\))\s*\+\s*(\[Char\]\([^\)]+\))', re.IGNORECASE).sub(r'\1 + \2', resultplus)
     return final_result
@@ -34,26 +34,41 @@ def replace_match(match):
     return f'Chr({final_result})'
 
 def char_transform(code):
-    return re.compile(r'\[char\]\(([-\d\+\*/\^\s]+(?:\s?-bxor\s?[-\d\+\*/\^\s]+)?)\)|\[Char\]([-0-9]+)', re.IGNORECASE).sub(replace_match, code)
+    return re.compile(r'\[char\]\(([-\d\+\*/\^\s]+(?:\s?-bxor\s?[-\d\+\*/\^\s]+)*)\)|\[Char\]([-0-9]+)', re.IGNORECASE).sub(replace_match, code)
  
 def decode_chr(expr):
     numbers = list(map(int, re.findall(r'-?\d+', expr)))
-    simbol = re.compile(r'[-]?\d+\s*(\^|\+|\-|\/|\*|\%|\^)', re.IGNORECASE).findall(expr)
-    result = numbers[0]
-    for i in range(len(simbol)):
-        if simbol[i] == '+':
-            result += numbers[i+1]
-        elif simbol[i] == '-':
-            result -= numbers[i+1]
-        elif simbol[i] == '*':
-            result *= numbers[i+1]
-        elif simbol[i] == '/':
-            result //= numbers[i+1]
-        elif simbol[i] == '%':
-            result %= numbers[i+1]
-        elif simbol[i] == '^':
-            result ^= numbers[i+1]
-    return chr(result)
+    symbol = re.compile(r'[-]?\d+\s*(\^|\+|\-|\/|\*|\%|\^)', re.IGNORECASE).findall(expr)
+
+    numlist = []
+    oprlist = []
+
+    def operator(opr, a, b):
+        if opr == '+': return a + b
+        elif opr == '-': return a - b
+        elif opr == '*': return a * b
+        elif opr == '/': return a // b
+        elif opr == '%': return a % b
+        elif opr == '^': return a ^ b
+    
+    precedence = {'+': 1, '-': 1, '*': 2, '/': 2, '%': 2, '^': 2}
+    for number, symbol in zip(numbers[:-1], symbol):
+        numlist.append(number)
+        while oprlist and (precedence[symbol] <= precedence[oprlist[-1]]):
+            b = numlist.pop()
+            a = numlist.pop()
+            op = oprlist.pop()
+            numlist.append(operator(op, a, b))
+        oprlist.append(symbol)
+    numlist.append(numbers[-1])
+
+    while len(numlist) > 1:
+        b = numlist.pop()
+        a = numlist.pop()
+        op = oprlist.pop()
+        numlist.append(operator(op, a, b))
+
+    return chr(numlist[0])
 
 def validate_input(input_string):
     input_string = input_string.strip()
@@ -109,7 +124,7 @@ def concat_code(code):
             valid = 0
             parts = [part.lstrip(' ') for part in check[i].split('=')]  
             for j in range(len(parts)):
-                if "+" in parts[j] and re.search(r'\$\w+', parts[j]):
+                if "+" in parts[j] and (re.search(r'\$\w+', parts[j]) or 'replace' in check[i].lower()):
                     newcoderes.append(check[i])
                     valid = 1
                     break
@@ -321,7 +336,7 @@ def http_and_ip_grep(code):
     httplist = re.findall(r'https?://[^\s]+', code)
     iplist = re.findall(r'\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}(?::[0-9]{1,5})?\b', code)
     
-    return httplist, iplist
+    return list(set(httplist)), list(set(iplist))
 
 def deobfuscate(code):
     try:
@@ -355,5 +370,5 @@ def deobfuscate(code):
         httplist,iplist = http_and_ip_grep(code)
     except:
         code = "Something's wrong with the code or input!"
+        return code,[],[]
     return code,httplist,iplist
-
