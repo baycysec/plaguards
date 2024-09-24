@@ -21,14 +21,14 @@ def remove_space_from_char(code):
     result = re.compile(r'(\[ChaR\])\s+\(', re.IGNORECASE).sub(r'\1(', code)
     return result
 
-def change_bxor(code):
-    def replace_bxor(match):
+def change_bxor_and_to_chr(code):
+    def replace_bxor_and_to_chr(match):
         res = match.group(1)
         changebxor = res.replace('-bxor', '^')
         final_result = re.sub(r'^\((.*)\)$', r'\1', changebxor)
         return f'Chr({final_result})'
     
-    return re.compile(r'\[char\]\(([-\d\+\*/\^\s]+(?:\s?-bxor\s?[-\d\+\*/\^\s]+)*)\)', re.IGNORECASE).sub(replace_bxor, code)
+    return re.compile(r'\[char\]\(([-\d\+\*/\^\s]+(?:\s?-bxor\s?[-\d\+\*/\^\s]+)*)\)', re.IGNORECASE).sub(replace_bxor_and_to_chr, code)
  
 def decode_chr(expr):
     numbers = list(map(int, re.findall(r'-?\d+', expr)))
@@ -337,7 +337,7 @@ def deobfuscate(code):
     try:
         code = remove_string(code)
         code = remove_space_from_char(code)
-        code = change_bxor(code)
+        code = change_bxor_and_to_chr(code)
         codetemp = []
         checkcode = code.split('\n')
         for i in range(len(checkcode)):
