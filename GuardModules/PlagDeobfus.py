@@ -259,6 +259,7 @@ def combine_and_concat_multiple_variables_value(code):
             for var in vars:
                 variables[var] = prev_var
                 prev_var = var
+                
     def replace_var(match):
         var = match.group(0)
         while var in variables:
