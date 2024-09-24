@@ -77,7 +77,7 @@ def check_concat_plus(symbol):
 
 
 def concat_code(code):
-    concatregex = re.compile(r'(Chr\([^()]*\)|".*?")(\s*\+\s*(Chr\([^()]*\)|".*?"))*', re.IGNORECASE)
+    concatregex = re.compile(r'(Chr\([^()]*\))(\s*\+\s*(Chr\([^()]*\)))*', re.IGNORECASE)
     
     matches = concatregex.finditer(code)
     results = []
