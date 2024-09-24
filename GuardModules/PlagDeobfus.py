@@ -16,14 +16,10 @@ def remove_string(code):
         newcode.append(newcoderes)
     return "\n".join(newcode)
 
-def char_intended(code):
+def remove_space_from_char(code):
     code = re.compile(r'\[Char\]\s+\(([-\d\+\*/\^]+)\)', re.IGNORECASE).sub(r'[Char](\1)', code)
-    resultnumber = re.compile(r'\[Char\]\s+(\d+)', re.IGNORECASE).sub(r'[Char]\1', code)
-    resultexpr = re.compile(r'\[Char\]\s*\(\s*(-?\d+)\s*([+\-*/])\s*(-?\d+)\s*\)', re.IGNORECASE).sub(remove_spaces_bracket, resultnumber)
-    resultbxor = re.compile(r'\[Char\]\s*(-?\d+)\s*-\s*bxor\s*(-?\d+)\s*', re.IGNORECASE).sub(r'\1 -bxor ', resultexpr)
-    resultplus = re.compile(r'(\[Char\]\(\d+[+\-*/]\d+\))\s*\+\s*', re.IGNORECASE).sub(r'\1 + ', resultbxor)
-    final_result = re.compile(r'(\[Char\]\([^\)]+\))\s*\+\s*(\[Char\]\([^\)]+\))', re.IGNORECASE).sub(r'\1 + \2', resultplus)
-    return final_result
+    result = re.compile(r'(\[ChaR\])\s+\(', re.IGNORECASE).sub(r'\1(', code)
+    return result
 
 def replace_match(match):
     res = match.group(1)
@@ -259,7 +255,7 @@ def combine_and_concat_multiple_variables_value(code):
             for var in vars:
                 variables[var] = prev_var
                 prev_var = var
-                
+
     def replace_var(match):
         var = match.group(0)
         while var in variables:
@@ -342,7 +338,7 @@ def http_and_ip_grep(code):
 def deobfuscate(code):
     try:
         code = remove_string(code)
-        code = char_intended(code)
+        code = remove_space_from_char(code)
         code = char_transform(code)
         codetemp = []
         checkcode = code.split('\n')
@@ -368,7 +364,6 @@ def deobfuscate(code):
         code = combine_and_concat_multiple_variables_value(code)
         code = Replace(code)
         code = decoding(code)
-        code = combine_and_concat_multiple_variables_value(code).replace("'","")
         httplist,iplist = http_and_ip_grep(code)
     except:
         code = "Something's wrong with the code or input!"
