@@ -111,7 +111,7 @@ def concat_code(code):
         check.append(i + '\n')
     newcoderes = []
     for i in range(len(check)):
-        check[i] = check[i].replace('"', "").replace("'", "")
+        check[i] = check[i].replace('"', "")
         if "+=" in check[i]:
             parts = [part.lstrip(' ') for part in check[i].split('+=')]
             if "+" in parts[1] and not re.search(r'\$\w+', parts[1]):
@@ -199,7 +199,7 @@ def combine_and_concat_multiple_variables_value(code):
             for i in range(len(split_equal)-1, 0, -1):
                 var = split_equal[i-1].strip().split()[-1]
                 value = split_equal[i].strip().split('=')[0].strip()
-                value_dict[var] = value
+                value_dict[var] = "'" + value + "'"
         else:
             notvariablevalue.append(checkcode[i])
 
@@ -319,17 +319,17 @@ def decoding(code):
 def Replace(code):
     def replace_func(match):
         string, oldword, newword = match.groups()
-        return string.replace(oldword.strip(), newword.strip())
+        return "'" + string.replace(oldword.replace("'",""), newword.replace("'","")) + "'"
     
     checkcode = code.split('\n')
     for i in range(len(checkcode)):
         while True:
-            newcode, count = re.subn(r"(\w+)\.rePLAce\(([^,]+),([^)]+)\)", replace_func, checkcode[i], flags=re.IGNORECASE)
+            newcode, count = re.subn(r"'([^']+)'\.replace\(([^,]+),([^)]+)\)", replace_func, checkcode[i], flags=re.IGNORECASE)
             if count == 0:
                 break
             checkcode[i] = newcode
     newcode = ''.join([i + '\n' for i in checkcode])
-    return newcode.strip()
+    return newcode.strip().replace("'","")
 
 
 def http_and_ip_grep(code):    
@@ -365,8 +365,9 @@ def deobfuscate(code):
         code = concat_code(code)
         code = backtick(code)
         code = combine_and_concat_multiple_variables_value(code)
-        code = decoding(code)
         code = Replace(code)
+        code = decoding(code)
+        code = combine_and_concat_multiple_variables_value(code).replace("'","")
         httplist,iplist = http_and_ip_grep(code)
     except:
         code = "Something's wrong with the code or input!"
