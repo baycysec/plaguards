@@ -25,7 +25,7 @@ def change_bxor_and_to_chr(code):
  
 def decode_chr(expr):
     numbers = list(map(int, re.findall(r'-?\d+', expr)))
-    symbol = re.compile(r'[-]?\d+\s*(\^|\+|\-|\/|\*{1,2}|\%|\^)', re.IGNORECASE).findall(expr)
+    symbol = re.compile(r'\d+\s*(\^|\+|\-|\/|\*{1,2}|\%|\^)', re.IGNORECASE).findall(expr)
 
     numlist = []
     oprlist = []
@@ -188,6 +188,7 @@ def combine_and_concat_multiple_variables_value(code):
                 plusequalcount[var] = 1
             else:
                 value_dict[var] = value_dict.get(var, "") + value
+
         elif "=" in checkcode[i] and "!=" not in checkcode[i]:
             split_equal = checkcode[i].split('=')
             for i in range(len(split_equal)-1, 0, -1):
@@ -198,12 +199,10 @@ def combine_and_concat_multiple_variables_value(code):
             notvariablevalue.append(checkcode[i])
             
     for var, value in list(value_dict.items()):
-        vars = []
-        while value in value_dict and value not in vars:
-            vars.append(value)
+        if value in value_dict:
+            initialvalue = value
             value = value_dict[value]
-        for v in vars:
-            value_dict[v] = value
+            value_dict[initialvalue] = value
         value_dict[var] = value
 
     for var, value in value_dict.items():
@@ -213,6 +212,7 @@ def combine_and_concat_multiple_variables_value(code):
                 newvaluetemp += value_dict[match]
             else:
                 newvaluetemp += match
+
         if not newvaluetemp.startswith("'") and not newvaluetemp.endswith("'"):
             value_dict[var] = "'" + newvaluetemp + "'"
         else:
