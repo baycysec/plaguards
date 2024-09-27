@@ -98,7 +98,7 @@ def concat_code(code):
         check.append(i + '\n')
     newcoderes = []
     for i in range(len(check)):
-        check[i] = check[i].replace('"', "")
+        check[i] = check[i]
         if "+=" in check[i]:
             parts = [part.lstrip(' ') for part in check[i].split('+=')]
             if "+" in parts[1] and not re.search(r'\$\w+', parts[1]):
@@ -317,7 +317,7 @@ def Replace(code):
                 break
             checkcode[i] = newcode
     newcode = ''.join([i + '\n' for i in checkcode])
-    return newcode.strip().replace("'","")
+    return newcode.strip().replace("'","").replace('"', "")
 
 
 def http_and_ip_grep(code):    
