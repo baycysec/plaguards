@@ -187,7 +187,8 @@ def combine_and_concat_multiple_variables_value(code):
             for i in range(len(split_equal)-1, 0, -1):
                 var = split_equal[i-1].strip().split()[-1]
                 value = split_equal[i].strip().split('=')[0].strip()
-                value_dict[var] = "'" + value + "'"
+                if not value.startswith("'") and not value.endswith("'"):
+                    value_dict[var] = "'" + value + "'"
         else:
             notvariablevalue.append(checkcode[i])
 
