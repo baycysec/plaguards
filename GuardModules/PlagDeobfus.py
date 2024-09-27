@@ -189,6 +189,8 @@ def combine_and_concat_multiple_variables_value(code):
                 value = split_equal[i].strip().split('=')[0].strip()
                 if not value.startswith("'") and not value.endswith("'"):
                     value_dict[var] = "'" + value + "'"
+                else:
+                    value_dict[var] = value
         else:
             notvariablevalue.append(checkcode[i])
 
