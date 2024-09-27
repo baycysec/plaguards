@@ -25,7 +25,7 @@ def change_bxor_and_to_chr(code):
  
 def decode_chr(expr):
     numbers = list(map(int, re.findall(r'-?\d+', expr)))
-    symbol = re.compile(r'[-]?\d+\s*(\^|\+|\-|\/|\*|\%|\^)', re.IGNORECASE).findall(expr)
+    symbol = re.compile(r'[-]?\d+\s*(\^|\+|\-|\/|\*{1,2}|\%|\^)', re.IGNORECASE).findall(expr)
 
     numlist = []
     oprlist = []
@@ -37,8 +37,9 @@ def decode_chr(expr):
         elif opr == '/': return a // b
         elif opr == '%': return a % b
         elif opr == '^': return a ^ b
+        elif opr == '**': return a ** b
     
-    precedence = {'+': 1, '-': 1, '*': 2, '/': 2, '%': 2, '^': 2}
+    precedence = {'+': 1, '-': 1, '*': 2, '/': 2, '%': 2, '^': 2, '**': 2}
     for number, symbol in zip(numbers[:-1], symbol):
         numlist.append(number)
         while oprlist and (precedence[symbol] <= precedence[oprlist[-1]]):
