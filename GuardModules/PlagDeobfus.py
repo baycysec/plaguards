@@ -86,13 +86,13 @@ def concat_code(code):
         results.append(match.group(1))
         remaining_text = match.group(0)[len(match.group(1)):].strip()
         while remaining_text:
-            next_match = re.match(r'\s*\+\s*(Chr\([^()]*\))', remaining_text, re.IGNORECASE)
-            if next_match:
-                results.append(next_match.group(1))
-                remaining_text = remaining_text[next_match.end():].strip()
+            chr_match_after_plus = re.match(r'\s*\+\s*(Chr\([^()]*\))', remaining_text, re.IGNORECASE)
+            if chr_match_after_plus:
+                results.append(chr_match_after_plus.group(1))
+                remaining_text = remaining_text[chr_match_after_plus.end():].strip()
             else:
                 break
-    gabungin = [decode_chr(result) if result.startswith('Chr') else result.strip('"') for result in results]
+    gabungin = [decode_chr(result) for result in results]
     splitslashn = [splitslash for splitslash in code.strip().splitlines()]
     check = []
     for i in splitslashn:
