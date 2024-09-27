@@ -203,7 +203,6 @@ def combine_and_concat_multiple_variables_value(code):
             initialvalue = value
             value = value_dict[value]
             value_dict[initialvalue] = value
-        value_dict[var] = value
 
     for var, value in value_dict.items():
         newvaluetemp = ""
