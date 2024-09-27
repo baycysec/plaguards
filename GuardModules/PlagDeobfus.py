@@ -169,6 +169,7 @@ def combine_and_concat_multiple_variables_value(code):
     value_dict = {}
     notvariablevalue = []
     equalmorethan1pattern = r'={2,}'
+    plusequalcount = {}
     
     def replace_equal_more_than_1(match):
         return '%3D' * len(match.group(0))
@@ -180,20 +181,22 @@ def combine_and_concat_multiple_variables_value(code):
         if "+=" in checkcode[i]:
             parts = checkcode[i].split('+=')
             var = parts[0].strip()
-            value = parts[1].strip() 
-            value_dict[var] = value_dict.get(var, "") + value
+            value = parts[1].strip()
+            plusequalcount[var] = 0
+            if re.search(r'\$\w+', value_dict.get(var, "")) and plusequalcount[var] != 1:
+                value_dict[var] = value_dict.get(var, "") + "+" + value
+                plusequalcount[var] = 1
+            else:
+                value_dict[var] = value_dict.get(var, "") + value
         elif "=" in checkcode[i] and "!=" not in checkcode[i]:
             split_equal = checkcode[i].split('=')
             for i in range(len(split_equal)-1, 0, -1):
                 var = split_equal[i-1].strip().split()[-1]
                 value = split_equal[i].strip().split('=')[0].strip()
-                if not value.startswith("'") and not value.endswith("'"):
-                    value_dict[var] = "'" + value + "'"
-                else:
-                    value_dict[var] = value
+                value_dict[var] = value
         else:
             notvariablevalue.append(checkcode[i])
-
+            
     for var, value in list(value_dict.items()):
         vars = []
         while value in value_dict and value not in vars:
@@ -210,7 +213,10 @@ def combine_and_concat_multiple_variables_value(code):
                 newvaluetemp += value_dict[match]
             else:
                 newvaluetemp += match
-        value_dict[var] = newvaluetemp
+        if not newvaluetemp.startswith("'") and not newvaluetemp.endswith("'"):
+            value_dict[var] = "'" + newvaluetemp + "'"
+        else:
+            value_dict[var] = newvaluetemp 
 
     reverse_value_dict = {}
     for var, value in value_dict.items():
@@ -259,7 +265,7 @@ def combine_and_concat_multiple_variables_value(code):
     
     newcode = []
     for line in newcodetemp:
-        if not line.strip().startswith('$'):
+        if not '=' in line.strip():
             line = re.sub(r'\$\w+', replace_var, line)
         newcode.append(line)
 
