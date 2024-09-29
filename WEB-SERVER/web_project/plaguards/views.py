@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from django.conf import settings
 import os
 import requests
 import pypandoc
@@ -42,6 +43,12 @@ def tutorial(request):
         'title': 'tutorial',
     }
     return render(request, 'tutorial.html', context)
+
+def results(request): 
+    context = {
+        'title': 'results',
+    }
+    return render(request, 'results.html', context)    
 
 def file_upload(request):
     context = {}
@@ -159,22 +166,31 @@ def search(request):
         args = search_query.split()
 
         if len(args) != 2:
-            return HttpResponse("Error: Please enter exactly 2 arguments (e.g., [hash / signature / domain / url / ip] [value]).")
+            return JsonResponse({
+                'status': 'error',
+                'message': "Error: Please enter exactly 2 arguments (e.g., [hash / signature / domain / url / ip] [value])."
+            })
 
         query_type = args[0]
         query_value = args[1]
 
         # Validate the query type
         if query_type not in ['hash', 'signature', 'domain', 'ip', 'url']:
-            return HttpResponse("Error: Invalid query type. Use 'hash' or 'signature'.")
+            return JsonResponse({
+                'status': 'error',
+                'message': "Error: Invalid query type. Use 'hash', 'signature', 'domain', 'ip', or 'url'."
+            })
 
         # Call the API
         json_data = get_data(query_type, query_value)
 
         if not json_data:
-            return HttpResponse("Error: No data returned from the API.")
+            return JsonResponse({
+                'status': 'error',
+                'message': "Error: No data returned from the API."
+            })
 
-         # Initialize markdown content
+        # Initialize markdown content
         md_content = []
 
         # Add report header based on API source
@@ -228,25 +244,30 @@ def search(request):
             md_content.append(f'- **Last Final URL**: {attributes.get("last_final_url", "N/A")}')
             md_content.append(f'- **Title**: {attributes.get("title", "N/A")}')
             md_content.append('\n')
-
+        
         # Save markdown file
         md_file_path = os.path.join('malware_data.md')
         with open(md_file_path, 'w') as md_file:
             md_file.write('\n'.join(md_content))
 
         # Convert to PDF
-        output_pdf_path = os.path.join('RESULT')
+        output_pdf_path = os.path.join('results')
         md_to_pdf(md_file_path, output_pdf_path)
 
         # request.session['pdf_url'] = output_pdf_path
 
         if output_pdf_path:
-            return HttpResponse(f"Markdown and PDF generated. PDF: {output_pdf_path}")
-            # return redirect('tools')
+            return JsonResponse({
+                'status': 'success',
+                'message': "Report generated successfully.",
+                'pdf_url': output_pdf_path
+            })
         else:
-            return HttpResponse("Error: PDF generation failed.")
-
-    return render(request, 'index.html')
+            return JsonResponse({
+                'status': 'error',
+                'message': "Error: PDF generation failed."
+            })
+    return render(request, 'results.html')
 
 
 # Example view to handle file uploads
@@ -267,3 +288,15 @@ def validate_file_extension(file):
     valid_extensions = ['.ps1', '.txt']
     ext = os.path.splitext(file.name)[1]
     return ext.lower() in valid_extensions
+
+
+# def results_view(request, report_id):
+#     try:
+#         report = Report.objects.get(id=report_id)
+#         context = {
+#             'title': 'Results',
+#             'pdf_url': report.pdf_file.url if report.pdf_file else None,
+#         }
+#         return render(request, 'results.html', context)
+#     except Report.DoesNotExist:
+#         return HttpResponse("Report not found", status=404)
