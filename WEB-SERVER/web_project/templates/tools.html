@@ -12,6 +12,32 @@
     <script src="{% static 'js/script-upload.js' %}"></script>
     <link rel="stylesheet" href="https://unpkg.com/scrollreveal" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" />
+    <style>
+      .notification {
+        position: fixed;
+        bottom: 20px; /* Keeps the notification at the bottom */
+        right: 20px; /* Changed from left to right to place it on the right side */
+        padding: 15px;
+        border-radius: 5px;
+        display: none;
+        z-index: 1000;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .notification.show {
+        display: block;
+      }
+
+      .notification.error {
+        background-color: #f44336;
+        color: white;
+      }
+
+      .notification.success {
+        background-color: #4caf50;
+        color: white;
+      }
+    </style>
   </head>
   <body>
     <nav>
@@ -34,19 +60,26 @@
       </ul>
     </nav>
 
+    <div id="notification" class="notification"></div>
+
     <div class="content__container">
-      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+      <p>Search IOC with hash or signature</p>
       <div class="search-container">
-        <form method="POST" action="{% url 'search' %}">
+        <form id="search-form" method="POST" action="{% url 'search' %}">
           {% csrf_token %}
-          <i class="ri-search-line"></i>
-          <input type="text" name="search-bar" placeholder="Search (e.g., hash <value>)" class="search-bar" />
-          <button type="submit" style="display:none;"></button>
+          <div class="search-wrapper">
+            <i class="ri-search-line search-icon"></i>
+            <input type="text" name="search-bar" id="search-bar" placeholder="Search (e.g., hash <value>)" class="search-bar" />
+            <button type="submit" class="search-button">
+              <i class="ri-arrow-right-line"></i>
+            </button>
+          </div>
         </form>
       </div>
+
       <br />
 
-      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+      <p>Upload file to deobfuscate (.zip, .exe, .dll)</p>
       <!-- 
       <div class="upload-container">
         <div class="upload-section" id="drop-zone">
@@ -61,9 +94,8 @@
         <label class="upload-section" id="drop-zone">
           <input type="file" id="upload-file" hidden />
           <div id="file-view">
-            <i class="ri-upload-2-line">
-              <p>Drag and Drop or Click Here to Upload File</p>
-            </i>
+            <i class="ri-upload-2-line"> </i>
+            <p>Drag and Drop or Click Here to Upload File</p>
           </div>
         </label>
       </div>
@@ -77,15 +109,43 @@
       </div> 
       -->
     </div>
-    <h1>{{ title }}</h1>
 
-{% if pdf_url %}
-    <h2>Generated Report</h2>
-    <iframe src="{{ pdf_url }}" width="100%" height="600px"></iframe>
-    <br>
-    <a href="{{ pdf_url }}" download class="btn">Download PDF</a>
-{% else %}
-    <p>No report generated yet.</p>
-{% endif %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      function showNotification(message, type) {
+        var notification = $("#notification");
+        notification.text(message);
+        notification.removeClass("error success").addClass(type);
+        notification.addClass("show");
+        setTimeout(function () {
+          notification.removeClass("show");
+        }, 3000); // Hide after 3 seconds
+      }
+
+      $(document).ready(function () {
+        $("#search-form").on("submit", function (e) {
+          e.preventDefault();
+
+          $.ajax({
+            url: $(this).attr("action"),
+            type: "POST",
+            data: $(this).serialize(),
+            dataType: "json",
+            success: function (response) {
+              if (response.status === "success") {
+                showNotification(response.message, "success");
+                // If you want to redirect to the PDF, uncomment the next line
+                window.location.href = '../' + response.pdf_url;
+              } else {
+                showNotification(response.message, "error");
+              }
+            },
+            error: function () {
+              showNotification("An error occurred. Please try again.", "error");
+            },
+          });
+        });
+      });
+    </script>
   </body>
 </html>
