@@ -22,5 +22,6 @@ urlpatterns = [
     path("tools/", tools, name="tools"),
     path("about/", about, name="about"),
     path("tutorial/", tutorial, name="tutorial"),
-    path("", search, name="search"),
+    path("search/", search, name="search"),
+    path("", index, name="index")
 ]
