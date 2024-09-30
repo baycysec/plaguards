@@ -10,9 +10,15 @@ WORKDIR /app
 
 # Salin file requirements.txt ke dalam container
 COPY requirements.txt /app/
+COPY fonts/ /usr/local/share/fonts/
 
 # Install dependencies menggunakan pip
-RUN pip install -r requirements.txt
+RUN pip3 install -r requirements.txt
+
+# Update the package list and install pandoc
+RUN apt-get update && \
+    apt-get install -y pandoc texlive texlive-latex-extra texlive-xetex && \
+    apt-get clean
 
 # Salin semua file dari direktori project Django ke dalam container
 COPY . /app/
