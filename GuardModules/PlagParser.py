@@ -112,7 +112,7 @@ def search_IOC_and_generate_report(queryinput, search = False, code = None):
         if json_data['query_status'] == 'no_results' and search:
             return "Error: No data returned from the API."
         if json_data['query_status'] == 'no_results':
-            md_content.append(f'# {query_value}\n')
+            md_content.append(f'# VirusTotal Report for {query_value}\n')
             md_content.append(f'No Information Found')
             continue
 
@@ -176,4 +176,3 @@ def search_IOC_and_generate_report(queryinput, search = False, code = None):
     # request.session['pdf_url'] = output_pdf_path
 
     return output_pdf_path
-
