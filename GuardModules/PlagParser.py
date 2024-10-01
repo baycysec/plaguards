@@ -89,25 +89,29 @@ def md_to_pdf(md_file, output_dir, template_path=None):
         print(f"Error during PDF conversion: {e}")
         return None
 
-def search_IOC_and_generate_report(queryinput):
+def search_IOC_and_generate_report(queryinput, search = False):
     md_content = []
 
-    for i in queryinput:
-        args = i.split()
+    for i in range(len(queryinput)):
+        args = queryinput[i].split()
 
         if len(args) != 2:
-            return HttpResponse("Error: Please enter exactly 2 arguments (e.g., [hash / signature / domain / url / ip] [value]).")
-            
+            return "Error: Please enter exactly 2 arguments (e.g., [hash / signature / domain / url / ip] [value])."
+
         query_type = args[0]
         query_value = args[1]
 
         if query_type not in ['hash', 'signature', 'domain', 'ip', 'url']:
-            return HttpResponse("Error: Invalid query type. Use 'hash' or 'signature'.")
+            return "Error: Invalid query type. Use 'hash' or 'signature'."
 
         json_data = FindQuery(query_type, query_value)
 
-        if not json_data:
-            return HttpResponse("Error: No data returned from the API.")
+        if json_data['query_status'] == 'no_results' and search:
+            return "Error: No data returned from the API."
+        if json_data['query_status'] == 'no_results':
+            md_content.append(f'# {query_value}\n')
+            md_content.append(f'No Information Found')
+            continue
 
 
         if query_type in ['hash', 'signature']:
@@ -169,4 +173,3 @@ def search_IOC_and_generate_report(queryinput):
     # request.session['pdf_url'] = output_pdf_path
 
     return output_pdf_path
-
