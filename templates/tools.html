@@ -63,13 +63,13 @@
     <div id="notification" class="notification"></div>
 
     <div class="content__container">
-      <p>Search IOC with hash or signature</p>
+      <p>Upload IOC to check summary</p>
       <div class="search-container">
         <form id="search-form" method="POST" action="{% url 'search' %}">
           {% csrf_token %}
           <div class="search-wrapper">
             <i class="ri-search-line search-icon"></i>
-            <input type="text" name="search-bar" id="search-bar" placeholder="Search (e.g., hash <value>)" class="search-bar" />
+            <input type="text" name="search-bar" id="search-bar" placeholder="Search (ex: hash | ip | domain | url | signature <value>)" class="search-bar" />
             <button type="submit" class="search-button">
               <i class="ri-arrow-right-line"></i>
             </button>
@@ -79,7 +79,7 @@
 
       <br />
 
-      <p>Upload file to deobfuscate (.zip, .exe, .dll)</p>
+      <p>Upload file to deobfuscate (.ps1)</p>
       <!-- 
       <div class="upload-container">
         <div class="upload-section" id="drop-zone">
