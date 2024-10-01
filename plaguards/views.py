@@ -69,18 +69,18 @@ def search(request):
 
         queryinput.append(search_sanitize(search_query))
 
-        output_pdf_path = search_IOC_and_generate_report(queryinput)
+        output_pdf_path = search_IOC_and_generate_report(queryinput, search = True)
 
-        if output_pdf_path:
+        if 'Error' in output_pdf_path:
+            return JsonResponse({
+                'status': 'error',
+                'message': output_pdf_path
+            })
+        else:
             return JsonResponse({
                 'status': 'success',
                 'message': "Report generated successfully.",
                 'pdf_url': output_pdf_path
-            })
-        else:
-            return JsonResponse({
-                'status': 'error',
-                'message': "Error: PDF generation failed."
             })
     return render(request, 'results.html')
 
