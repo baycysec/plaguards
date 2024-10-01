@@ -25,7 +25,7 @@ def change_bxor_and_to_chr(code):
  
 def decode_chr(expr):
     numbers = list(map(int, re.findall(r'-?\d+', expr)))
-    symbol = re.compile(r'\d+\s*(\^|\+|\-|\/|\*{1,2}|\%|\^)', re.IGNORECASE).findall(expr)
+    symbol = re.compile(r'[-]?\d+\s*(\^|\+|\-|\/|\*|\%|\^)', re.IGNORECASE).findall(expr)
 
     numlist = []
     oprlist = []
@@ -37,9 +37,8 @@ def decode_chr(expr):
         elif opr == '/': return a // b
         elif opr == '%': return a % b
         elif opr == '^': return a ^ b
-        elif opr == '**': return a ** b
     
-    precedence = {'+': 1, '-': 1, '*': 2, '/': 2, '%': 2, '^': 2, '**': 2}
+    precedence = {'+': 1, '-': 1, '*': 2, '/': 2, '%': 2, '^': 2}
     for number, symbol in zip(numbers[:-1], symbol):
         numlist.append(number)
         while oprlist and (precedence[symbol] <= precedence[oprlist[-1]]):
@@ -86,20 +85,20 @@ def concat_code(code):
         results.append(match.group(1))
         remaining_text = match.group(0)[len(match.group(1)):].strip()
         while remaining_text:
-            chr_match_after_plus = re.match(r'\s*\+\s*(Chr\([^()]*\))', remaining_text, re.IGNORECASE)
-            if chr_match_after_plus:
-                results.append(chr_match_after_plus.group(1))
-                remaining_text = remaining_text[chr_match_after_plus.end():].strip()
+            next_match = re.match(r'\s*\+\s*(Chr\([^()]*\))', remaining_text, re.IGNORECASE)
+            if next_match:
+                results.append(next_match.group(1))
+                remaining_text = remaining_text[next_match.end():].strip()
             else:
                 break
-    gabungin = [decode_chr(result) for result in results]
+    gabungin = [decode_chr(result) if result.startswith('Chr') else result.strip('"') for result in results]
     splitslashn = [splitslash for splitslash in code.strip().splitlines()]
     check = []
     for i in splitslashn:
         check.append(i + '\n')
     newcoderes = []
     for i in range(len(check)):
-        check[i] = check[i]
+        check[i] = check[i].replace('"', "")
         if "+=" in check[i]:
             parts = [part.lstrip(' ') for part in check[i].split('+=')]
             if "+" in parts[1] and not re.search(r'\$\w+', parts[1]):
@@ -169,7 +168,6 @@ def combine_and_concat_multiple_variables_value(code):
     value_dict = {}
     notvariablevalue = []
     equalmorethan1pattern = r'={2,}'
-    plusequalcount = {}
     
     def replace_equal_more_than_1(match):
         return '%3D' * len(match.group(0))
@@ -181,28 +179,25 @@ def combine_and_concat_multiple_variables_value(code):
         if "+=" in checkcode[i]:
             parts = checkcode[i].split('+=')
             var = parts[0].strip()
-            value = parts[1].strip()
-            plusequalcount[var] = 0
-            if re.search(r'\$\w+', value_dict.get(var, "")) and plusequalcount[var] != 1:
-                value_dict[var] = value_dict.get(var, "") + "+" + value
-                plusequalcount[var] = 1
-            else:
-                value_dict[var] = value_dict.get(var, "") + value
-
+            value = parts[1].strip() 
+            value_dict[var] = value_dict.get(var, "") + value
         elif "=" in checkcode[i] and "!=" not in checkcode[i]:
             split_equal = checkcode[i].split('=')
             for i in range(len(split_equal)-1, 0, -1):
                 var = split_equal[i-1].strip().split()[-1]
                 value = split_equal[i].strip().split('=')[0].strip()
-                value_dict[var] = value
+                value_dict[var] = "'" + value + "'"
         else:
             notvariablevalue.append(checkcode[i])
-            
+
     for var, value in list(value_dict.items()):
-        if value in value_dict:
-            initialvalue = value
+        vars = []
+        while value in value_dict and value not in vars:
+            vars.append(value)
             value = value_dict[value]
-            value_dict[initialvalue] = value
+        for v in vars:
+            value_dict[v] = value
+        value_dict[var] = value
 
     for var, value in value_dict.items():
         newvaluetemp = ""
@@ -211,11 +206,7 @@ def combine_and_concat_multiple_variables_value(code):
                 newvaluetemp += value_dict[match]
             else:
                 newvaluetemp += match
-
-        if not newvaluetemp.startswith("'") and not newvaluetemp.endswith("'"):
-            value_dict[var] = "'" + newvaluetemp + "'"
-        else:
-            value_dict[var] = newvaluetemp 
+        value_dict[var] = newvaluetemp
 
     reverse_value_dict = {}
     for var, value in value_dict.items():
@@ -264,7 +255,7 @@ def combine_and_concat_multiple_variables_value(code):
     
     newcode = []
     for line in newcodetemp:
-        if not '=' in line.strip():
+        if not line.strip().startswith('$'):
             line = re.sub(r'\$\w+', replace_var, line)
         newcode.append(line)
 
@@ -326,7 +317,7 @@ def Replace(code):
                 break
             checkcode[i] = newcode
     newcode = ''.join([i + '\n' for i in checkcode])
-    return newcode.strip().replace("'","").replace('"', "")
+    return newcode.strip().replace("'","")
 
 
 def http_and_ip_grep(code):    

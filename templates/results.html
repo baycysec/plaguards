@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Plaguards - Results</title>
+    <link rel="icon" href="{% static 'assets/1.0.png' %}" type="image/png" />
+    <link rel="stylesheet" href="{% static 'css/style2.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style-results.css' %}" />
+    <script src="{% static 'js/script.js' %}"></script>
+    <link rel="stylesheet" href="https://unpkg.com/scrollreveal" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="nav__header">
+        <div class="nav__logo">
+          <a href="{% url 'index' %}">
+            <img src="{% static 'assets/1.0.png' %}" alt="logo" />
+            <span>Plaguards</span>
+          </a>
+        </div>
+        <div class="nav__menu__btn" id="menu-btn">
+          <i class="ri-menu-line"></i>
+        </div>
+      </div>
+      <ul class="nav__links" id="nav-links">
+        <li><a href="{% url 'index' %}">Home</a></li>
+        <li><a href="{% url 'tools' %}">Tools</a></li>
+        <li><a href="{% url 'tutorial' %}">Tutorial</a></li>
+        <li><a href="{% url 'about' %}">About us</a></li>
+      </ul>
+    </nav>
+
+    <div class="content__container">
+      <h1>{{ title }}</h1>
+
+      <div class="results-section">
+        {% if pdf_url %}
+        <h2>Generated Report</h2>
+        <div class="pdf-container">
+          <iframe src="{{ pdf_url }}" width="100%" height="600px"></iframe>
+        </div>
+        <div class="download-section">
+          <a href="{{ pdf_url }}" download class="btn download-btn"> <i class="ri-download-2-line"></i> Download PDF </a>
+        </div>
+        {% else %}
+        <p class="no-results">No report generated yet.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    {% comment %}
+    <footer>
+      <p>&copy; 2024 Plaguards. All rights reserved.</p>
+    </footer>
+    {% endcomment %}
+  </body>
+</html>
