@@ -89,68 +89,75 @@ def md_to_pdf(md_file, output_dir, template_path=None):
         print(f"Error during PDF conversion: {e}")
         return None
 
-def search_IOC_and_generate_report(args1, args2):
-    query_type = args1
-    query_value = args2
-
-    if query_type not in ['hash', 'signature', 'domain', 'ip', 'url']:
-        return HttpResponse("Error: Invalid query type. Use 'hash' or 'signature'.")
-
-    json_data = FindQuery(query_type, query_value)
-
-    if not json_data:
-        return HttpResponse("Error: No data returned from the API.")
-
+def search_IOC_and_generate_report(queryinput):
     md_content = []
 
-    if query_type in ['hash', 'signature']:
-        for entry in json_data.get("data", []):
-            mw_name = entry.get("signature", "Unknown Malware")
-            md_content.append(f'# {mw_name}\n')
-            md_content.append(f'- **File Name**: {entry.get("file_name", "N/A")}')
-            md_content.append(f'- **SHA256 Hash**: {entry.get("sha256_hash", "N/A")}')
-            md_content.append(f'- **File Size**: {entry.get("file_size", "N/A")} bytes')
-            md_content.append(f'- **MD5 Hash**: {entry.get("md5_hash", "N/A")}')
-            md_content.append(f'- **Imphash**: {entry.get("imphash", "N/A")}')
+    for i in queryinput:
+        args = i.split()
 
-            tags = entry.get("tags", [])
-            tags = ', '.join(tags) if isinstance(tags, list) else "N/A"
-            md_content.append(f'- **Tags**: {tags}')
+        if len(args) != 2:
+            return HttpResponse("Error: Please enter exactly 2 arguments (e.g., [hash / signature / domain / url / ip] [value]).")
+            
+        query_type = args[0]
+        query_value = args[1]
 
-            intelligence = entry.get("intelligence", {})
-            clamav_detections = intelligence.get("clamav", [])
-            clamav_detections = ", ".join(clamav_detections) if isinstance(clamav_detections, list) else "N/A"
-            md_content.append(f'- **ClamAV Detections**: {clamav_detections}')
-            md_content.append(f'- **Downloads**: {intelligence.get("downloads", "N/A")}')
-            md_content.append(f'- **Uploads**: {intelligence.get("uploads", "N/A")}')
-            md_content.append(f'- **Mail Intelligence**: {intelligence.get("mail", "None")}')
+        if query_type not in ['hash', 'signature', 'domain', 'ip', 'url']:
+            return HttpResponse("Error: Invalid query type. Use 'hash' or 'signature'.")
+
+        json_data = FindQuery(query_type, query_value)
+
+        if not json_data:
+            return HttpResponse("Error: No data returned from the API.")
+
+
+        if query_type in ['hash', 'signature']:
+            for entry in json_data.get("data", []):
+                mw_name = entry.get("signature", "Unknown Malware")
+                md_content.append(f'# {mw_name}\n')
+                md_content.append(f'- **File Name**: {entry.get("file_name", "N/A")}')
+                md_content.append(f'- **SHA256 Hash**: {entry.get("sha256_hash", "N/A")}')
+                md_content.append(f'- **File Size**: {entry.get("file_size", "N/A")} bytes')
+                md_content.append(f'- **MD5 Hash**: {entry.get("md5_hash", "N/A")}')
+                md_content.append(f'- **Imphash**: {entry.get("imphash", "N/A")}')
+
+                tags = entry.get("tags", [])
+                tags = ', '.join(tags) if isinstance(tags, list) else "N/A"
+                md_content.append(f'- **Tags**: {tags}')
+
+                intelligence = entry.get("intelligence", {})
+                clamav_detections = intelligence.get("clamav", [])
+                clamav_detections = ", ".join(clamav_detections) if isinstance(clamav_detections, list) else "N/A"
+                md_content.append(f'- **ClamAV Detections**: {clamav_detections}')
+                md_content.append(f'- **Downloads**: {intelligence.get("downloads", "N/A")}')
+                md_content.append(f'- **Uploads**: {intelligence.get("uploads", "N/A")}')
+                md_content.append(f'- **Mail Intelligence**: {intelligence.get("mail", "None")}')
+                md_content.append('\n')
+
+        elif query_type == 'domain':
+            md_content.append(f'# VirusTotal Domain Report for {query_value}')
+            attributes = json_data.get("data", {}).get("attributes", {})
+            md_content.append(f'- **Last Analysis Stats**: {attributes.get("last_analysis_stats", {})}')
+            md_content.append(f'- **Reputation**: {attributes.get("reputation", "N/A")}')
+            md_content.append(f'- **Tags**: {", ".join(attributes.get("tags", []))}')
             md_content.append('\n')
 
-    elif query_type == 'domain':
-        md_content.append(f'# VirusTotal Domain Report for {query_value}')
-        attributes = json_data.get("data", {}).get("attributes", {})
-        md_content.append(f'- **Last Analysis Stats**: {attributes.get("last_analysis_stats", {})}')
-        md_content.append(f'- **Reputation**: {attributes.get("reputation", "N/A")}')
-        md_content.append(f'- **Tags**: {", ".join(attributes.get("tags", []))}')
-        md_content.append('\n')
+        elif query_type == 'ip':
+            md_content.append(f'# VirusTotal IP Address Report for {query_value}')
+            attributes = json_data.get("data", {}).get("attributes", {})
+            md_content.append(f'- **Last Analysis Stats**: {attributes.get("last_analysis_stats", {})}')
+            md_content.append(f'- **Reputation**: {attributes.get("reputation", "N/A")}')
+            md_content.append(f'- **Tags**: {", ".join(attributes.get("tags", []))}')
+            md_content.append('\n')
 
-    elif query_type == 'ip':
-        md_content.append(f'# VirusTotal IP Address Report for {query_value}')
-        attributes = json_data.get("data", {}).get("attributes", {})
-        md_content.append(f'- **Last Analysis Stats**: {attributes.get("last_analysis_stats", {})}')
-        md_content.append(f'- **Reputation**: {attributes.get("reputation", "N/A")}')
-        md_content.append(f'- **Tags**: {", ".join(attributes.get("tags", []))}')
-        md_content.append('\n')
-
-    elif query_type == 'url':
-        md_content.append(f'# VirusTotal URL Report for {query_value}')
-        attributes = json_data.get("data", {}).get("attributes", {})
-        md_content.append(f'- **Last Analysis Stats**: {attributes.get("last_analysis_stats", {})}')
-        md_content.append(f'- **Reputation**: {attributes.get("reputation", "N/A")}')
-        md_content.append(f'- **Categories**: {", ".join(attributes.get("categories", {}).values())}')
-        md_content.append(f'- **Last Final URL**: {attributes.get("last_final_url", "N/A")}')
-        md_content.append(f'- **Title**: {attributes.get("title", "N/A")}')
-        md_content.append('\n')
+        elif query_type == 'url':
+            md_content.append(f'# VirusTotal URL Report for {query_value}')
+            attributes = json_data.get("data", {}).get("attributes", {})
+            md_content.append(f'- **Last Analysis Stats**: {attributes.get("last_analysis_stats", {})}')
+            md_content.append(f'- **Reputation**: {attributes.get("reputation", "N/A")}')
+            md_content.append(f'- **Categories**: {", ".join(attributes.get("categories", {}).values())}')
+            md_content.append(f'- **Last Final URL**: {attributes.get("last_final_url", "N/A")}')
+            md_content.append(f'- **Title**: {attributes.get("title", "N/A")}')
+            md_content.append('\n')
 
     md_file_path = os.path.join('malware_data.md')
     with open(md_file_path, 'w') as md_file:
