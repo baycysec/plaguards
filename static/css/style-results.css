@@ -9,11 +9,11 @@
   border-radius: 8px;
   padding: 2rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  color: var(--secondary-color) !important; /* Use !important to ensure this rule is applied */
+  color: var(--secondary-color) !important;
 }
 
 .results-section * {
-  color: var(--secondary-color) !important; /* This will apply to all elements inside results-section */
+  color: var(--secondary-color) !important;
 }
 
 .pdf-container {
@@ -49,7 +49,7 @@
 
 .no-results {
   text-align: center;
-  color: var(--secondary-color) !important; /* Use !important to ensure this rule is applied */
+  color: var(--secondary-color) !important;
   font-style: italic;
 }
 
@@ -60,7 +60,6 @@ footer {
   margin-top: 2rem;
 }
 
-/* Add this new rule to target any paragraphs or headings in the results section */
 .results-section p,
 .results-section h1,
 .results-section h2,
