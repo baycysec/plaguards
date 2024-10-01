@@ -52,7 +52,7 @@ def search(request):
 
         queryinput.append(search_sanitize(search_query))
 
-        output_pdf_path = search_IOC_and_generate_report(queryinput, search = True)
+        output_pdf_path = search_IOC_and_generate_report(queryinput, search=True)
 
         if 'Error' in output_pdf_path:
             return JsonResponse({
@@ -98,7 +98,7 @@ def file_upload(request):
             iplist[i] = search_sanitize('ip' + ' ' + iplist[i]) 
         
         queryinput = httplist + iplist
-        output_pdf_path = search_IOC_and_generate_report(queryinput, search = False, code=code)
+        output_pdf_path = search_IOC_and_generate_report(queryinput, search=False, code=code)
 
         if 'Error' in output_pdf_path:
             return JsonResponse({
