@@ -108,13 +108,16 @@ def search_IOC_and_generate_report(queryinput, search = False, code = None):
             return "Error: Invalid query type. Use 'hash' or 'signature'."
 
         json_data = FindQuery(query_type, query_value)
-
-        if json_data['query_status'] == 'no_results' and search:
+        
+        if not json_data:
             return "Error: No data returned from the API."
-        if json_data['query_status'] == 'no_results':
-            md_content.append(f'# VirusTotal Report for {query_value}\n')
-            md_content.append(f'No Information Found')
-            continue
+        if 'query_status' in json_data:
+            if (json_data['query_status'] == 'no_results' or json_data['query_status'] == 'illegal_hash') and search:
+                return "Error: No data returned from the API."
+            if json_data['query_status'] == 'no_results' or json_data['query_status'] == 'illegal_hash':
+                md_content.append(f'# VirusTotal Report for {query_value}\n')
+                md_content.append(f'No Information Found')
+                continue
 
 
         if query_type in ['hash', 'signature']:
@@ -176,3 +179,4 @@ def search_IOC_and_generate_report(queryinput, search = False, code = None):
     # request.session['pdf_url'] = output_pdf_path
 
     return output_pdf_path
+
