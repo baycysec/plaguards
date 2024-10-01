@@ -13,12 +13,6 @@ def index(request):
     }
     return render(request, 'index.html', context)
 
-# def tools(request): 
-#     context = {
-#         'title': 'tools',
-#     }
-#     return render(request, 'tools.html', context)
-
 def tools(request): 
     pdf_url = request.session.get('pdf_url', None)
     
@@ -49,17 +43,6 @@ def results(request):
     }
     return render(request, 'results.html', context)    
 
-def file_upload(request):
-    context = {}
-    if request.method == 'POST':
-        file = request.FILES['file']
-        if not file:
-            context['message'] = "No file uploaded. Please choose a file to upload."
-            return render(request, 'tools.html', context)
-        if validate_file_extension(file) == False:
-            context['message'] = "Invalid file extension, please upload .ps1 or .txt files extension."
-            return render(request, 'tools.html', context)
-
 
 def search(request):
     if request.method == 'POST':
@@ -85,20 +68,51 @@ def search(request):
     return render(request, 'results.html')
 
 
+#ini belum bisa ngambil file dr htmlnya
 def file_upload(request):
     if request.method == 'POST':
         file = request.FILES.get('file', None)
         if not file:
-            return HttpResponse("Error: No file uploaded.")
+            return JsonResponse({
+                'status': 'error',
+                'message': "Error: No file uploaded."
+            })
         if not validate_file_extension(file):
-            return HttpResponse("Error: Invalid file extension, please upload a .ps1 or .txt file.")
+            return JsonResponse({
+                'status': 'error',
+                'message': "Error: Invalid file extension, please upload a .ps1 or .txt file."
+            })
+         
+        code = file.read().decode('utf-8')
+        code,httplist,iplist = deobfuscate(code)
+
+        if code == "Something's wrong with the code or input!":
+            return JsonResponse({
+                'status': 'error',
+                'message': code
+            })
+        for i in range(len(httplist)):
+            httplist[i] = search_sanitize('url' + ' ' + httplist[i])
+ 
+        for i in range(len(iplist)):
+            iplist[i] = search_sanitize('ip' + ' ' + iplist[i]) 
         
-        # Handle file saving or processing here...
+        queryinput = httplist + iplist
+        output_pdf_path = search_IOC_and_generate_report(queryinput, search = False, code)
+
+        if 'Error' in output_pdf_path:
+            return JsonResponse({
+                'status': 'error',
+                'message': output_pdf_path
+            })
+        else:
+            return JsonResponse({
+                'status': 'success',
+                'message': "Report generated successfully.",
+                'pdf_url': output_pdf_path
+            })
 
     return render(request, 'results.html')
-
-
-
 
 # def results_view(request, report_id):
 #     try:
