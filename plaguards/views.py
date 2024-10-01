@@ -64,12 +64,12 @@ def file_upload(request):
 def search(request):
     if request.method == 'POST':
         search_query = request.POST.get('search-bar', '').strip()
-        args = search_query.split()
 
-        if len(args) != 2:
-            return HttpResponse("Error: Please enter exactly 2 arguments (e.g., [hash / signature / domain / url / ip] [value]).")
+        queryinput = []
 
-        output_pdf_path = search_IOC_and_generate_report(args[0],args[1])
+        queryinput.append(search_sanitize(search_query))
+
+        output_pdf_path = search_IOC_and_generate_report(queryinput)
 
         if output_pdf_path:
             return JsonResponse({
