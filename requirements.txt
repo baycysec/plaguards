@@ -1,0 +1,9 @@
+Django>=3.2
+djangorestframework
+requests
+pypandoc
+html
+re
+pybase64
+
+
