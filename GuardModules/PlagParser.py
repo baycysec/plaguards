@@ -88,7 +88,7 @@ def md_to_pdf(md_file, output_dir, template_path=None):
         print(f"Error during PDF conversion: {e}")
         return None
 
-def search_IOC_and_generate_report(queryinput, search = False, code = None):
+def search_IOC_and_generate_report(queryinput, search=False, code=None):
     md_content = []
 
     if code:
@@ -108,7 +108,13 @@ def search_IOC_and_generate_report(queryinput, search = False, code = None):
             return "Error: Invalid query type. Use 'hash' or 'signature'."
 
         json_data = FindQuery(query_type, query_value)
-        
+
+        # if json_data['query_status'] == 'no_results' and search:
+        #     return "Error: No data returned from the API."
+        # if json_data['query_status'] == 'no_results':
+        #     md_content.append(f'# VirusTotal Report for {query_value}\n')
+        #     md_content.append(f'No Information Found')
+        #     continue
         if not json_data:
             return "Error: No data returned from the API."
         if 'query_status' in json_data:
@@ -118,7 +124,6 @@ def search_IOC_and_generate_report(queryinput, search = False, code = None):
                 md_content.append(f'# VirusTotal Report for {query_value}\n')
                 md_content.append(f'No Information Found')
                 continue
-
 
         if query_type in ['hash', 'signature']:
             for entry in json_data.get("data", []):
@@ -179,4 +184,3 @@ def search_IOC_and_generate_report(queryinput, search = False, code = None):
     # request.session['pdf_url'] = output_pdf_path
 
     return output_pdf_path
-
