@@ -145,41 +145,20 @@ nav {
 
 .team__container {
   display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-  justify-content: center;
+  gap: 0;
+  justify-content: space-between;
 }
 
 .team__box {
   text-align: center;
-  flex: 0 1 calc(33.333% - 2rem); /* This will make each box take up about a third of the container width */
-  max-width: 200px; /* Adjust this value as needed */
 }
 
 .team__box img {
-  width: 100%;
-  height: auto;
-  max-height: 200px;
-  object-fit: cover;
+  height: 200px;
 }
 
 .team__box h2 {
-  margin-top: 1rem;
-  margin-bottom: 0.5rem;
-  font-size: 1.2rem;
-}
-
-.team__box.mascot {
-  flex-basis: 100%;
-  margin-top: 2rem;
-}
-
-/* For smaller screens */
-@media (max-width: 768px) {
-  .team__box {
-    flex: 0 1 100%;
-    max-width: 100%;
-  }
+  margin-bottom: 10px;
 }
 
 .socials {
