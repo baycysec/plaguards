@@ -88,8 +88,12 @@ def md_to_pdf(md_file, output_dir, template_path=None):
         print(f"Error during PDF conversion: {e}")
         return None
 
-def search_IOC_and_generate_report(queryinput, search = False):
+def search_IOC_and_generate_report(queryinput, search = False, code = None):
     md_content = []
+
+    if code:
+        md_content.append(f'# Deobfuscated Code\n')
+        md_content.append(code)
 
     for i in range(len(queryinput)):
         args = queryinput[i].split()
@@ -172,3 +176,4 @@ def search_IOC_and_generate_report(queryinput, search = False):
     # request.session['pdf_url'] = output_pdf_path
 
     return output_pdf_path
+
