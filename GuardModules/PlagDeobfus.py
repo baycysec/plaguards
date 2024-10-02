@@ -211,11 +211,7 @@ def combine_and_concat_multiple_variables_value(code):
                 newvaluetemp += value_dict[match]
             else:
                 newvaluetemp += match
-
-        if not newvaluetemp.startswith("'") and not newvaluetemp.endswith("'") and not newvaluetemp.startswith('"') and not newvaluetemp.endswith('"'):
-            value_dict[var] = "'" + newvaluetemp + "'"
-        else:
-            value_dict[var] = newvaluetemp 
+        value_dict[var] = newvaluetemp
 
     reverse_value_dict = {}
     for var, value in value_dict.items():
