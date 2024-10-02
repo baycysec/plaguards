@@ -319,7 +319,7 @@ def Replace(code):
         if stringmatch1:
             return '"' + stringmatch1.replace(oldword.replace("'","").replace('"',""), newword.replace("'","").replace('"',"")) + '"'
         elif stringmatch2:
-            return "'" + stringmatch2.replace(oldword.replace("'","").replace('"',""), newwordoldword.replace("'","").replace('"',"")) + "'"
+            return "'" + stringmatch2.replace(oldword.replace("'","").replace('"',""), newword.replace("'","").replace('"',"")) + "'"
     
     checkcode = code.split('\n')
     for i in range(len(checkcode)):
