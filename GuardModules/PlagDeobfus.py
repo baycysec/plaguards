@@ -1,6 +1,9 @@
 import re
 import base64
 from urllib.parse import unquote
+import os
+
+os.system('cls')
 
 def remove_string(code):
     pattern = re.compile(r'\[string\]', re.IGNORECASE)
@@ -36,7 +39,7 @@ def convertercode(code):
 
 def removequote(code):
     def quoteremover(match):
-        if ".replace(" in match.group(0).lower():
+        if ".replace(" in match.group(0).lower() or match.group(0) == '" "' or match.group(0) == "' '":
             return match.group(0)
         else:
             return match.group(0).strip("'\"")
@@ -320,7 +323,10 @@ def fixingcodequote(code):
     checkcode = code.split('\n')
     newcoderes = []
     for i in checkcode:
-        i = re.sub(r"([\w\s]+)\.replace\((\w+),(\w+)\)", r"'\1'.replace('\2','\3')", i, flags=re.IGNORECASE)
+        match1 = re.search(r'=\s*(.*?)(?=\.replace\([^,]+,[^)]+\))', i, flags=re.IGNORECASE)
+        if match1:
+            if not match1.group(1).startswith("("):
+                i = i.replace(match1.group(1), "'" + match1.group(1) + "'")
         newcoderes.append(i)
 
     newcode = ''.join([i + '\n' for i in newcoderes])
@@ -385,19 +391,31 @@ def decoding(code):
 
 def Replace(code):
     def replace_func(match):
-        stringmatch1,stringmatch2,oldword,newword = match.groups()
-        if stringmatch1:
-            return '"' + stringmatch1.replace(oldword.replace("'","").replace('"',""), newword.replace("'","").replace('"',"")) + '"'
-        elif stringmatch2:
-            return "'" + stringmatch2.replace(oldword.replace("'","").replace('"',""), newword.replace("'","").replace('"',"")) + "'"
+        if len(match.groups()) == 4:
+            stringmatch1,stringmatch2,oldword,newword = match.groups()
+            if stringmatch1:
+                return '"' + stringmatch1.replace(oldword.replace("'","").replace('"',""), newword.replace("'","").replace('"',"")) + '"'
+            elif stringmatch2:
+                return "'" + stringmatch2.replace(oldword.replace("'","").replace('"',""), newword.replace("'","").replace('"',"")) + "'"
+            
+        elif len(match.groups()) == 3:
+            stringmatch,oldword,newword = match.groups()
+            return "'" + stringmatch.replace(oldword.replace("'","").replace('"',""), newword.replace("'","").replace('"',"")) + "'"
     
     checkcode = code.split('\n')
     for i in range(len(checkcode)):
         while True:
-            newcode, count = re.subn(r'(?:\(?"([^"]+)"\)?|\(?\'([^\']+)\'\)?)\.replace\(([^,]+),([^)]+)\)', replace_func, checkcode[i], flags=re.IGNORECASE)
+            newcode, count = re.subn(r'\(["\']?([^"\']*)["\']?\)\.replace\(([^,]+),([^)]+)\)', replace_func, checkcode[i], flags=re.IGNORECASE)
             if count == 0:
                 break
             checkcode[i] = newcode
+
+        while True:
+            newcode, count = re.subn(r'(?:"([^"]+)"|\'([^\']+)\')\.replace\(([^,]+),([^)]+)\)', replace_func, checkcode[i], flags=re.IGNORECASE)
+            if count == 0:
+                break
+            checkcode[i] = newcode
+
     newcode = ''.join([i + '\n' for i in checkcode])
     return newcode.strip().replace("'","").replace('"', "")
 
