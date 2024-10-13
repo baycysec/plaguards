@@ -23,6 +23,33 @@ def change_bxor_and_to_chr(code):
     
     return re.compile(r'\[char\]\(([\d\-+\*/\s]+(?:\s?-bxor\s?[\d\-+\*/\s]+)*)\)', re.IGNORECASE).sub(replace_bxor_and_to_chr, code)
  
+def convertercode(code):
+    checkcode = code.split('\n')
+    newcoderes = []
+    for i in checkcode:
+        i = re.sub(r'\)\s*\(', ');(', i)
+        i = re.sub(r"\(?('[^']+'|\"[^\"]+\")\)?\s*-replace\s*\(?('[^']+'|\"[^\"]+\")\s*,\s*('[^']+'|\"[^\"]+\")\)?", r"\1.replace(\2,\3)", i, flags=re.IGNORECASE)
+        newcoderes.append(i)
+
+    newcode = ''.join([i + '\n' for i in newcoderes])
+    return newcode.strip()
+
+def removequote(code):
+    def quoteremover(match):
+        if ".replace(" in match.group(0).lower():
+            return match.group(0)
+        else:
+            return match.group(0).strip("'\"")
+        
+    checkcode = code.split('\n')
+    newcoderes = []
+    for i in checkcode:
+        i = re.sub(r"(\(?'[^']*'\)?\.replace\([^)]+\))|(\(?\"[^\"]*\"\)?\.replace\([^)]+\))|('[^']*'|\"[^\"]*\")", quoteremover, i, flags=re.IGNORECASE)
+        newcoderes.append(i)
+    newcode = ''.join([i + '\n' for i in newcoderes])
+    return newcode.strip()
+
+
 def decode_chr(expr):
     numbers = list(map(int, re.findall(r'-?\d+', expr)))
     symbol = re.compile(r'\d+\s*(\^|\+|\-|\/|\*{1,2}|\%|\^)', re.IGNORECASE).findall(expr)
@@ -178,6 +205,8 @@ def combine_and_concat_multiple_variables_value(code):
 
     for i in range(len(checkcode)):
         checkcode[i] = re.sub(equalmorethan1pattern, replace_equal_more_than_1, checkcode[i])
+        if "++=" in checkcode[i]:
+            checkcode[i] = checkcode[i].replace('++=', '+=')
         if "+=" in checkcode[i]:
             parts = checkcode[i].split('+=')
             var = parts[0].strip()
@@ -286,26 +315,71 @@ def combine_and_concat_multiple_variables_value(code):
     newcode = ''.join([i for i in newcoderes])
     return newcode
 
-def decoding(code):
+
+def fixingcodequote(code):
     checkcode = code.split('\n')
     newcoderes = []
     for i in checkcode:
+        i = re.sub(r"([\w\s]+)\.replace\((\w+),(\w+)\)", r"'\1'.replace('\2','\3')", i, flags=re.IGNORECASE)
+        newcoderes.append(i)
+
+    newcode = ''.join([i + '\n' for i in newcoderes])
+    return newcode.strip()
+
+def decoding(code):
+    checkcode = code.split('\n')
+    newcoderes = []
+
+    for i in checkcode:
         if i == '':
             continue
-        matchb64 = re.search(r'(?i)([A-Za-z0-9]+%3D%3D)', i)
-        if matchb64:
-            try:
-                encoded = unquote(matchb64.group(0))
-                decoded = base64.b64decode(encoded).decode()
-                matchb64part2 = re.search(r"(?i)\[(.*?\)+)|(b64|base64).*?%3D%3D", i)
-                if matchb64part2:
-                    newcoderes.append(i.replace(matchb64part2.group(0), decoded))
-                else:
-                    newcoderes.append(i.replace(matchb64.group(0), decoded))
-            except:
+
+        while 1:
+            match_from_base64 = re.search(r'[^\s]*fromBase64String\(([^)]+)\)', i, re.IGNORECASE)
+            matchb64 = re.search(r'(?i)([A-Za-z0-9]+%3D%3D)', i)
+
+            if match_from_base64:
+                try:
+                    newmatch = match_from_base64.group(1).replace('"','').replace("'", "")
+
+                    if newmatch.endswith('%3D%3D'):
+                        content = newmatch.replace('%3D%3D', '==')
+                    else:
+                        content = newmatch + '=='
+
+                    get_decode = base64.b64decode(content)
+                    get_clean = get_decode.replace(b'\x00', b'')
+
+                    decoded_str = get_clean.decode("utf-8", errors="ignore")
+
+                    decoded_line = i.replace(match_from_base64.group(0), decoded_str)
+                    i = decoded_line
+
+                except Exception as e:
+                    print(f'Error during decoding: {e}')
+                    newcoderes.append(i)
+                    break
+
+            elif matchb64:
+                try:
+                    encoded = unquote(matchb64.group(0).replace('%3D%3D', '=='))
+                    decoded = base64.b64decode(encoded)
+
+                    decoded_clean = re.sub(b'\x00', b'', decoded)
+
+                    decoded_str = decoded_clean.decode("utf-8", errors="ignore")
+
+                    decoded_line = i.replace(matchb64.group(0), decoded_str)
+                    i = decoded_line
+
+                except Exception as e:
+                    print(f'Error during URL-encoded Base64 decoding: {e}')
+                    newcoderes.append(i)
+                    break
+            else:
                 newcoderes.append(i)
-        else:
-            newcoderes.append(i)
+                break
+
     newcode = ''.join([i + '\n' for i in newcoderes])
     return newcode.strip()
 
@@ -320,7 +394,7 @@ def Replace(code):
     checkcode = code.split('\n')
     for i in range(len(checkcode)):
         while True:
-            newcode, count = re.subn(r'(?:"([^"]+)"|\'([^\']+)\')\.replace\(([^,]+),([^)]+)\)', replace_func, checkcode[i], flags=re.IGNORECASE)
+            newcode, count = re.subn(r'(?:\(?"([^"]+)"\)?|\(?\'([^\']+)\'\)?)\.replace\(([^,]+),([^)]+)\)', replace_func, checkcode[i], flags=re.IGNORECASE)
             if count == 0:
                 break
             checkcode[i] = newcode
@@ -339,6 +413,7 @@ def deobfuscate(code):
         code = remove_string(code)
         code = remove_space_from_char(code)
         code = change_bxor_and_to_chr(code)
+        code = convertercode(code)
         codetemp = []
         checkcode = code.split('\n')
         for i in range(len(checkcode)):
@@ -357,10 +432,13 @@ def deobfuscate(code):
                         codetemp.append(j + '\n')
             else:
                 codetemp.append(checkcode[i])
+                        
         code = ''.join([i if i != codetemp[-1] else i.rstrip('\n') for i in codetemp])
         code = concat_code(code)
+        code = removequote(code)
         code = backtick(code)
         code = combine_and_concat_multiple_variables_value(code)
+        code = fixingcodequote(code)
         code = Replace(code)
         code = decoding(code)
         httplist,iplist = http_and_ip_grep(code)
