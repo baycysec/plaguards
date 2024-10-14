@@ -1,9 +1,6 @@
 import re
 import base64
 from urllib.parse import unquote
-import os
-
-os.system('cls')
 
 def remove_string(code):
     pattern = re.compile(r'\[string\]', re.IGNORECASE)
@@ -31,7 +28,10 @@ def convertercode(code):
     newcoderes = []
     for i in checkcode:
         i = re.sub(r'\)\s*\(', ');(', i)
-        i = re.sub(r"\(?('[^']+'|\"[^\"]+\")\)?\s*-replace\s*\(?('[^']+'|\"[^\"]+\")\s*,\s*('[^']+'|\"[^\"]+\")\)?", r"\1.replace(\2,\3)", i, flags=re.IGNORECASE)
+        while True:
+            i, count = re.subn(r"\s*-replace\s*\(?('[^']+'|\"[^\"]+\")\s*,\s*('[^']+'|\"[^\"]+\")\)?", r".replace(\1,\2)", i, flags=re.IGNORECASE)
+            if count == 0:
+                break
         newcoderes.append(i)
 
     newcode = ''.join([i + '\n' for i in newcoderes])
@@ -325,7 +325,7 @@ def fixingcodequote(code):
     for i in checkcode:
         match1 = re.search(r'=\s*(.*?)(?=\.replace\([^,]+,[^)]+\))', i, flags=re.IGNORECASE)
         if match1:
-            if not match1.group(1).startswith("("):
+            if not match1.group(1).startswith("(") and match1.group(1).count('"') != 2 and match1.group(1).count("'") != 2:
                 i = i.replace(match1.group(1), "'" + match1.group(1) + "'")
         newcoderes.append(i)
 
