@@ -37,33 +37,36 @@ def tutorial(request):
     }
     return render(request, 'tutorial.html', context)
 
-def results(request): 
+def results(request):
+    pdf_url = request.session.get('pdf_url', None)
+    
     context = {
         'title': 'Results',
+        'pdf_url': pdf_url,
     }
-    return render(request, 'results.html', context)    
+    return render(request, 'results.html', context) 
 
 
 def search(request):
     if request.method == 'POST':
         search_query = request.POST.get('search-bar', '').strip()
-
         queryinput = []
-
         queryinput.append(search_sanitize(search_query))
-
+        
         output_pdf_path = search_IOC_and_generate_report(queryinput, search=True)
-
+        
         if 'Error' in output_pdf_path:
             return JsonResponse({
                 'status': 'error',
                 'message': output_pdf_path
             })
         else:
+            # Store the PDF path in session
+            request.session['pdf_url'] = '/results/checker_result.pdf'
             return JsonResponse({
                 'status': 'success',
                 'message': "Report generated successfully.",
-                'pdf_url': output_pdf_path
+                'pdf_url': '/results/checker_result.pdf'
             })
     return render(request, 'results.html')
 
