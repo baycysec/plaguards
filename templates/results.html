@@ -38,15 +38,15 @@
 
       <div class="results-section">
         {% if pdf_url %}
-        <h2>Generated Report</h2>
         <div class="pdf-container">
-          <iframe src="{{ pdf_url }}" width="100%" height="600px"></iframe>
-        </div>
-        <div class="download-section">
-          <a href="{{ pdf_url }}" download class="btn download-btn"> <i class="ri-download-2-line"></i> Download PDF </a>
+          <h2>Generated Report</h2>
+          <div class="pdf-viewer">
+            <embed src="{{ pdf_url }}" type="application/pdf" width="100%" height="800px" style="border: 1px solid #ccc; border-radius: 4px" />
+            <p>If the PDF is not displaying, you can <a href="{{ pdf_url }}" target="_blank">download it here</a>.</p>
+          </div>
         </div>
         {% else %}
-        <p class="no-results">No report generated yet.</p>
+        <p>No report generated yet.</p>
         {% endif %}
       </div>
     </div>
