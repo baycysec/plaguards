@@ -24,5 +24,7 @@ urlpatterns = [
     path("tutorial/", tutorial, name="tutorial"),
     path("search/", search, name="search"),
     path("results/", search, name="results"),
-    path("", index, name="index")
-]
+    path("", index, name="index"),
+    path('results/checker_result.pdf', serve, {'document_root': os.path.join(settings.BASE_DIR, 'results'), 'path': 'checker_result.pdf'}),
+]
+
