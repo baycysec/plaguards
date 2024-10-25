@@ -439,7 +439,7 @@ def splitcode(code):
 
 def http_and_ip_grep(code):    
     httplist = re.findall(r'https?://(?!\d+\.\d+\.\d+\.\d+)[^\s]+', code)
-    iplist = re.findall(r'\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}(?::[0-9]{1,5})?\b', code)
+    iplist = re.findall(r'\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b', code)
     
     return list(set(httplist)), list(set(iplist))
 
