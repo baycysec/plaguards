@@ -1,6 +1,7 @@
 import requests
 import pypandoc
 import os
+import base64
 
 def FindQuery(query_type, query_value):
     if query_type == 'hash':
@@ -104,7 +105,6 @@ def search_IOC_and_generate_report(queryinput, search=False, code=None):
     # add_metadata("others/templates.md")
     md_content = []
 
-
     md_content.append('---')
     md_content.append('title: ""')
     md_content.append('author: "PLAGUARDS"')
@@ -139,12 +139,17 @@ def search_IOC_and_generate_report(queryinput, search=False, code=None):
 
         json_data = FindQuery(query_type, query_value)
 
-        if not json_data:
+        if not json_data and search:
             return "Error: No data returned from the API."
+        elif not json_data and search == False:
+            md_content.append(f'# VirusTotal Report for {query_value}\n')
+            md_content.append(f'No Information Found')
+            continue
+
         if 'query_status' in json_data:
             if (json_data['query_status'] == 'no_results' or json_data['query_status'] == 'illegal_hash') and search:
                 return "Error: No data returned from the API."
-            if json_data['query_status'] == 'no_results' or json_data['query_status'] == 'illegal_hash':
+            elif json_data['query_status'] == 'no_results' or json_data['query_status'] == 'illegal_hash':
                 md_content.append(f'# VirusTotal Report for {query_value}\n')
                 md_content.append(f'No Information Found')
                 continue
