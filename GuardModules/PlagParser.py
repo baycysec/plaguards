@@ -105,25 +105,39 @@ def search_IOC_and_generate_report(queryinput, search=False, code=None):
     # add_metadata("others/templates.md")
     md_content = []
 
-    md_content.append('---')
-    md_content.append('title: ""')
-    md_content.append('author: "PLAGUARDS"')
-    md_content.append('date: "IOC Report"')
-    md_content.append('titlepage: true') # cover
-    # md_content.append('title-page-color: "FFFFFF"')
-    md_content.append('titlepage-rule-color: "FFFFFF"')
-    md_content.append('titlepage-text-color: "FFFFFF"')
-    md_content.append('page-background: "/app/results/background.png"')
-    md_content.append('toc: true') # daftar isi
-    md_content.append('toc-own-page: true')
-    md_content.append('titlepage-background: "/app/results/ioc-bg.pdf"')
-    md_content.append('...')
-    md_content.append('\n')
-
 
     if code:
+        md_content.append('---')
+        md_content.append('title: ""')
+        md_content.append('author: "PLAGUARDS"')
+        md_content.append('date: "IOC Report"')
+        md_content.append('titlepage: true') # cover
+        # md_content.append('title-page-color: "FFFFFF"')
+        md_content.append('titlepage-rule-color: "FFFFFF"')
+        md_content.append('titlepage-text-color: "FFFFFF"')
+        md_content.append('page-background: "/app/results/background.png"')
+        md_content.append('toc: true') # daftar isi
+        md_content.append('toc-own-page: true')
+        md_content.append('titlepage-background: "/app/results/deobfus-bg.pdf"')
+        md_content.append('...')
+        md_content.append('\n')
         md_content.append(f'# Deobfuscated Code\n')
         md_content.append(code)
+    else:
+        md_content.append('---')
+        md_content.append('title: ""')
+        md_content.append('author: "PLAGUARDS"')
+        md_content.append('date: "IOC Report"')
+        md_content.append('titlepage: true') # cover
+        # md_content.append('title-page-color: "FFFFFF"')
+        md_content.append('titlepage-rule-color: "FFFFFF"')
+        md_content.append('titlepage-text-color: "FFFFFF"')
+        md_content.append('page-background: "/app/results/background.png"')
+        md_content.append('toc: true') # daftar isi
+        md_content.append('toc-own-page: true')
+        md_content.append('titlepage-background: "/app/results/ioc-bg.pdf"')
+        md_content.append('...')
+        md_content.append('\n')
 
     for i in range(len(queryinput)):
         args = queryinput[i].split()
