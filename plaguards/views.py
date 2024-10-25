@@ -71,16 +71,15 @@ def search(request):
     return render(request, 'results.html')
 
 
-#ini belum bisa ngambil file dr htmlnya
 def file_upload(request):
     if request.method == 'POST':
-        file = request.FILES.get('file', None)
+        file = request.FILES['file']
         if not file:
             return JsonResponse({
                 'status': 'error',
                 'message': "Error: No file uploaded."
             })
-        if not validate_file_extension(file):
+        if not validate_file_extension(os.path.splitext(file.name)[1].lower()):
             return JsonResponse({
                 'status': 'error',
                 'message': "Error: Invalid file extension, please upload a .ps1 or .txt file."
