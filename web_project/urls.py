@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from plaguards.views import index, tools, about, tutorial, search
+from plaguards.views import index, tools, about, tutorial, search, file_upload
 
 urlpatterns = [
     path("index/", index, name="index"),
