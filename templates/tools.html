@@ -91,13 +91,17 @@
       -->
 
       <div class="upload-container">
+        <form method="POST" enctype="multipart/form-data" action="{% url 'file_upload' %}">
+        {% csrf_token %}
         <label class="upload-section" id="drop-zone">
-          <input type="file" id="upload-file" hidden />
+          <input type="file" id="upload-file" name="file" hidden />
           <div id="file-view">
             <i class="ri-upload-2-line"> </i>
             <p>Drag and Drop or Click Here to Upload File</p>
           </div>
         </label>
+        <button type="submit">Upload</button>
+      </form>
       </div>
 
       <!-- <i class="ri-download-2-line"></i> -->
