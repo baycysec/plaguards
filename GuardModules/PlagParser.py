@@ -110,7 +110,7 @@ def search_IOC_and_generate_report(queryinput, search=False, code=None):
         md_content.append('---')
         md_content.append('title: ""')
         md_content.append('author: "PLAGUARDS"')
-        md_content.append('date: "IOC Report"')
+        md_content.append('date: "Debfuscate and IOC Report"')
         md_content.append('titlepage: true') # cover
         # md_content.append('title-page-color: "FFFFFF"')
         md_content.append('titlepage-rule-color: "FFFFFF"')
