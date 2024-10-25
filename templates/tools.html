@@ -91,7 +91,7 @@
       -->
 
       <div class="upload-container">
-        <form method="POST" enctype="multipart/form-data" action="{% url 'file_upload' %}">
+        <form id = "file-upload-form" method="POST" enctype="multipart/form-data" action="{% url 'file_upload' %}">
         {% csrf_token %}
         <label class="upload-section" id="drop-zone">
           <input type="file" id="upload-file" name="file" hidden />
@@ -149,7 +149,34 @@
             },
           });
         });
+      
+        $("#file-upload-form").on("submit", function (e) {
+        e.preventDefault();
+        
+        var formData = new FormData(this);
+
+        $.ajax({
+            url: $(this).attr("action"),
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: "json",
+            success: function (response) {
+                if (response.status === "success") {
+                    showNotification(response.message, "success");
+                    window.location.href = '../' + response.pdf_url;
+                } else {
+                    showNotification(response.message, "error");
+                }
+            },
+            error: function () {
+                showNotification("An error occurred. Please try again.", "error");
+            },
+          });
+        });
       });
+
     </script>
   </body>
 </html>
