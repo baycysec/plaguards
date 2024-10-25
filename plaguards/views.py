@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from GuardModules.PlagFilter import *
 from GuardModules.PlagDeobfus import deobfuscate
 from GuardModules.PlagParser import search_IOC_and_generate_report
+import os
 
 
 # Create your views here.
@@ -115,14 +116,3 @@ def file_upload(request):
             })
 
     return render(request, 'results.html')
-
-# def results_view(request, report_id):
-#     try:
-#         report = Report.objects.get(id=report_id)
-#         context = {
-#             'title': 'Results',
-#             'pdf_url': report.pdf_file.url if report.pdf_file else None,
-#         }
-#         return render(request, 'results.html', context)
-#     except Report.DoesNotExist:
-#         return HttpResponse("Report not found", status=404)
