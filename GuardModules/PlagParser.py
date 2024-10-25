@@ -123,6 +123,7 @@ def search_IOC_and_generate_report(queryinput, search=False, code=None):
         md_content.append('\n')
         md_content.append(f'# Deobfuscated Code\n')
         md_content.append(code)
+        md_content.append('\n')
     else:
         md_content.append('---')
         md_content.append('title: ""')
