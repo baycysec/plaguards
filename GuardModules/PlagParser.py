@@ -158,6 +158,7 @@ def search_IOC_and_generate_report(queryinput, search=False, code=None):
         elif not json_data and search == False:
             md_content.append(f'# VirusTotal Report for {query_value}\n')
             md_content.append(f'No Information Found')
+            md_content.append('\n')
             continue
 
         if 'query_status' in json_data:
@@ -166,6 +167,7 @@ def search_IOC_and_generate_report(queryinput, search=False, code=None):
             elif json_data['query_status'] == 'no_results' or json_data['query_status'] == 'illegal_hash':
                 md_content.append(f'# VirusTotal Report for {query_value}\n')
                 md_content.append(f'No Information Found')
+                md_content.append('\n')
                 continue
 
         if query_type in ['hash', 'signature']:
