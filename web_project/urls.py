@@ -27,11 +27,11 @@ urlpatterns = [
     path("tutorial/", tutorial, name="tutorial"),
     path("search/", search, name="search"),
     path("file_upload/", file_upload, name="file_upload"),
-    path("results/", search, name="results"),
-    path("results/", file_upload, name="results"),
+    path("redirect_result/", search, name="ioc"),
+    path("redirect_result/", file_upload, name="deobfus"),
     path("", index, name="index"),
-    path('results/checker_result.pdf', serve, {'document_root': os.path.join(settings.BASE_DIR, 'results'), 'path': 'checker_result.pdf'}),
+    # path('results/checker_result.pdf', serve, {'document_root': os.path.join(settings.BASE_DIR, 'results'), 'path': 'checker_result.pdf'}),
+    path('redirect_result/', redirect_result, name="redirect_result"),
 ]
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
