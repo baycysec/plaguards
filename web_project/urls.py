@@ -29,4 +29,6 @@ urlpatterns = [
     path("", index, name="index"),
     path('results/checker_result.pdf', serve, {'document_root': os.path.join(settings.BASE_DIR, 'results'), 'path': 'checker_result.pdf'}),
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
