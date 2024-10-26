@@ -73,13 +73,13 @@ def search(request):
 
 
 def file_upload(request):
-    if request.method == 'POST':
-        file = request.FILES['file']
-        if not file:
-            return JsonResponse({
-                'status': 'error',
-                'message': "Error: No file uploaded."
-            })
+    if not request.FILES:
+        return JsonResponse({
+            'status': 'error',
+            'message': "Error: No file uploaded."
+        })
+    elif request.method == 'POST':
+        file = request.FILES['file']            
         if not validate_file_extension(os.path.splitext(file.name)[1].lower()):
             return JsonResponse({
                 'status': 'error',
