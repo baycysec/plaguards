@@ -18,6 +18,7 @@ from django.urls import path, include
 from plaguards.views import index, tools, about, tutorial, search, file_upload
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.static import serve
 
 urlpatterns = [
     path("index/", index, name="index"),
