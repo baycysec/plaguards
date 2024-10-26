@@ -120,7 +120,7 @@
             success: function (response) {
               if (response.status === "success") {
                 showNotification(response.message, "success");
-                window.location.href = "../" + response.pdf_url;
+                window.location.href = "/redirect_result?pdf_url=" + encodeURIComponent(response.pdf_url);
               } else {
                 showNotification(response.message, "error");
               }
@@ -156,32 +156,6 @@
             },
           });
         });
-
-        // Additional AJAX Call for PDF Generation and Redirection
-        function generateReport() {
-          $.ajax({
-            url: "/generate_report", // Endpoint for PDF generation
-            type: "POST",
-            data: { /* Include necessary data */ },
-            success: function (response) {
-              if (response.status === "success") {
-                showNotification(response.message, "success");
-
-                if (response.pdf_url) {
-                  // Redirect to another page with the PDF URL
-                  window.location.href = "/redirect_result?pdf_url=" + encodeURIComponent(response.pdf_url);
-                } else {
-                  console.error("PDF URL is missing in the response.");
-                }
-              } else {
-                showNotification(response.message, "error");
-              }
-            },
-            error: function (xhr, status, error) {
-              console.error("AJAX error:", error);
-            },
-          });
-        }
       });
     </script>
   </body>
