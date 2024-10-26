@@ -16,6 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from plaguards.views import index, tools, about, tutorial, search, file_upload
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path("index/", index, name="index"),
