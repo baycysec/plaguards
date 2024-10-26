@@ -6,7 +6,6 @@ from GuardModules.PlagDeobfus import deobfuscate
 from GuardModules.PlagParser import search_IOC_and_generate_report
 import os
 
-
 # Create your views here.
 def index(request): 
     context = {
@@ -55,7 +54,9 @@ def search(request):
         queryinput.append(search_sanitize(search_query))
         
         output_pdf_path = search_IOC_and_generate_report(queryinput, search=True)
-        
+
+        print(output_pdf_path)
+
         if 'Error' in output_pdf_path:
             return JsonResponse({
                 'status': 'error',
@@ -63,13 +64,14 @@ def search(request):
             })
         else:
             # Store the PDF path in session
-            request.session['pdf_url'] = '/results/checker_result.pdf'
+            # request.session['pdf_url'] = '/results/checker_result.pdf'
             return JsonResponse({
                 'status': 'success',
                 'message': "Report generated successfully.",
-                'pdf_url': '/results/checker_result.pdf'
+                'pdf_url': output_pdf_path
             })
     return render(request, 'results.html')
+    # return render(request, 'index.html')
 
 
 def file_upload(request):
@@ -116,3 +118,10 @@ def file_upload(request):
             })
 
     return render(request, 'results.html')
+
+def redirect_result(request):
+    pdf_url = request.GET.get('pdf_url')
+    # if pdf_url:
+    return render(request, 'results.html', {'pdf_url': pdf_url})
+    # else:
+    #     return HttpResponseBadRequest("PDF URL is missing")
