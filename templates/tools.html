@@ -15,8 +15,8 @@
     <style>
       .notification {
         position: fixed;
-        bottom: 20px; /* Keeps the notification at the bottom */
-        right: 20px; /* Changed from left to right to place it on the right side */
+        bottom: 20px;
+        right: 20px;
         padding: 15px;
         border-radius: 5px;
         display: none;
@@ -80,38 +80,20 @@
       <br />
 
       <p>Upload file to deobfuscate (.ps1)</p>
-      <!-- 
-      <div class="upload-container">
-        <div class="upload-section" id="drop-zone">
-          <i class="ri-upload-2-line"></i>
-          <label for="file-upload" class="custom-file-upload"> Drag & Drop or Click to Upload File </label>
-          <input id="file-upload" type="file" />
-        </div>
-      </div> 
-      -->
 
       <div class="upload-container">
-        <form id = "file-upload-form" method="POST" enctype="multipart/form-data" action="{% url 'file_upload' %}">
-        {% csrf_token %}
-        <label class="upload-section" id="drop-zone">
-          <input type="file" id="upload-file" name="file" hidden />
-          <div id="file-view">
-            <i class="ri-upload-2-line"> </i>
-            <p>Drag and Drop or Click Here to Upload File</p>
-          </div>
-        </label>
-        <button type="submit">Upload</button>
-      </form>
+        <form id="file-upload-form" method="POST" enctype="multipart/form-data" action="{% url 'file_upload' %}">
+          {% csrf_token %}
+          <label class="upload-section" id="drop-zone">
+            <input type="file" id="upload-file" name="file" hidden />
+            <div id="file-view">
+              <i class="ri-upload-2-line"></i>
+              <p>Drag and Drop or Click Here to Upload File</p>
+            </div>
+          </label>
+          <button type="submit">Upload</button>
+        </form>
       </div>
-
-      <!-- <i class="ri-download-2-line"></i> -->
-
-      <!-- 
-      <div class="search-container">
-        <i class="ri-search-line"></i>
-        <input type="text" placeholder="Search..." class="search-bar" />
-      </div> 
-      -->
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -127,9 +109,9 @@
       }
 
       $(document).ready(function () {
+        // Search Form Submission
         $("#search-form").on("submit", function (e) {
           e.preventDefault();
-
           $.ajax({
             url: $(this).attr("action"),
             type: "POST",
@@ -138,8 +120,7 @@
             success: function (response) {
               if (response.status === "success") {
                 showNotification(response.message, "success");
-                // If you want to redirect to the PDF, uncomment the next line
-                window.location.href = '../' + response.pdf_url;
+                window.location.href = "../" + response.pdf_url;
               } else {
                 showNotification(response.message, "error");
               }
@@ -149,13 +130,13 @@
             },
           });
         });
-      
-        $("#file-upload-form").on("submit", function (e) {
-        e.preventDefault();
-        
-        var formData = new FormData(this);
 
-        $.ajax({
+        // File Upload Form Submission
+        $("#file-upload-form").on("submit", function (e) {
+          e.preventDefault();
+          var formData = new FormData(this);
+
+          $.ajax({
             url: $(this).attr("action"),
             type: "POST",
             data: formData,
@@ -163,20 +144,45 @@
             contentType: false,
             dataType: "json",
             success: function (response) {
-                if (response.status === "success") {
-                    showNotification(response.message, "success");
-                    window.location.href = '../' + response.pdf_url;
-                } else {
-                    showNotification(response.message, "error");
-                }
+              if (response.status === "success") {
+                showNotification(response.message, "success");
+                window.location.href = "/redirect_result?pdf_url=" + encodeURIComponent(response.pdf_url);
+              } else {
+                showNotification(response.message, "error");
+              }
             },
             error: function () {
-                showNotification("An error occurred. Please try again.", "error");
+              showNotification("An error occurred. Please try again.", "error");
             },
           });
         });
-      });
 
+        // Additional AJAX Call for PDF Generation and Redirection
+        function generateReport() {
+          $.ajax({
+            url: "/generate_report", // Endpoint for PDF generation
+            type: "POST",
+            data: { /* Include necessary data */ },
+            success: function (response) {
+              if (response.status === "success") {
+                showNotification(response.message, "success");
+
+                if (response.pdf_url) {
+                  // Redirect to another page with the PDF URL
+                  window.location.href = "/redirect_result?pdf_url=" + encodeURIComponent(response.pdf_url);
+                } else {
+                  console.error("PDF URL is missing in the response.");
+                }
+              } else {
+                showNotification(response.message, "error");
+              }
+            },
+            error: function (xhr, status, error) {
+              console.error("AJAX error:", error);
+            },
+          });
+        }
+      });
     </script>
   </body>
 </html>
