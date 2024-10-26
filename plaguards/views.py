@@ -95,7 +95,7 @@ def file_upload(request):
                 'message': code
             })
         for i in range(len(httplist)):
-            httplist[i] = search_sanitize('url' + ' ' + httplist[i])
+            httplist[i] = search_sanitize('domain' + ' ' + httplist[i])
  
         for i in range(len(iplist)):
             iplist[i] = search_sanitize('ip' + ' ' + iplist[i]) 
