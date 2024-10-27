@@ -2,6 +2,14 @@ import requests
 import pypandoc
 import os
 import base64
+import string
+import random
+
+
+def generate_random_val(length):
+    characters = string.ascii_letters + string.digits
+    return ''.join(random.choice(characters) for _ in range(length))
+
 
 def FindQuery(query_type, query_value):
     if query_type == 'hash':
@@ -50,13 +58,13 @@ def FindQuery(query_type, query_value):
     else:
         return None
 
-def md_to_pdf(md_file, output_dir, template_path="/usr/share/pandoc/data/templates/eisvogel.latex"):
+def md_to_pdf(md_file, output_dir, randomval, template_path="/usr/share/pandoc/data/templates/eisvogel.latex"):
     try:
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
         # Create the full path for the PDF file
-        output_pdf = os.path.join(output_dir, 'checker_result.pdf')
+        output_pdf = os.path.join(output_dir, f'checker_result_{randomval}.pdf')
 
         
         extra_args = [
@@ -228,13 +236,13 @@ def search_IOC_and_generate_report(queryinput, search=False, code=None):
             md_content.append(f'- **Last Final URL**: {attributes.get("last_final_url", "N/A")}')
             md_content.append(f'- **Title**: {attributes.get("title", "N/A")}')
             md_content.append('\n')
-
-    md_file_path = os.path.join('results/checker.md')
+    
+    randomval = generate_random_val(150)
+    md_file_path = os.path.join(f'results/checker_{randomval}.md')
     with open(md_file_path, 'w') as md_file: # previously w mode.
         md_file.write('\n'.join(md_content))
 
-    output_pdf_path = os.path.join('results')
-    md_to_pdf(md_file_path, output_pdf_path)
-
+    output_pdf_path = os.path.join(f'media/checker_result_{randomval}.pdf')
+    md_to_pdf(md_file_path, output_pdf_path, randomval)
 
     return output_pdf_path
