@@ -242,7 +242,8 @@ def search_IOC_and_generate_report(queryinput, search=False, code=None):
     with open(md_file_path, 'w') as md_file: # previously w mode.
         md_file.write('\n'.join(md_content))
 
-    output_pdf_path = os.path.join(f'media/checker_result_{randomval}.pdf')
-    md_to_pdf(md_file_path, output_pdf_path, randomval)
+    path = os.path.join('media')
+    md_to_pdf(md_file_path, path, randomval)
+    output_pdf_path = os.path.join(f'media/checker_pdf_{randomval}')
 
     return output_pdf_path
