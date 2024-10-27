@@ -131,8 +131,14 @@ def search_IOC_and_generate_report(queryinput, search=False, code=None):
         md_content.append('\n')
         md_content.append(f'# Deobfuscated Code\n')
         checkcode = code.split('\n')
+
+        md_content.append(f'```ps1')
+
         for i in checkcode:
-            md_content.append(f'- {i}')
+            md_content.append(f'{i}')
+        
+        md_content.append(f'```')
+
         md_content.append('\n')
     else:
         md_content.append('---')
