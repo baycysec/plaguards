@@ -36,30 +36,18 @@
     <div class="content__container">
       <h1>{{ title }}</h1>
 
-      <!-- <div class="results-section">
+      <div class="results-section">
         {% if pdf_url %}
         <div class="pdf-container">
           <h2>Generated Report</h2>
           <div class="pdf-viewer">
-            <embed src="/results/checker_result.pdf" type="application/pdf" width="100%" height="800px" style="border: 1px solid #ccc; border-radius: 4px" />
-            <p>If the PDF is not displaying, you can <a href="{{ pdf_url }}" target="_blank">download it here</a>.</p>
+            <embed src="../{{ pdf_url }}" type="application/pdf" width="100%" height="800px" style="border: 1px solid #ccc; border-radius: 4px" />
+            <p>If the PDF is not displaying, you can <a href="../{{ pdf_url }}" target="_blank">download it here</a>.</p>
           </div>
         </div>
         {% else %}
         <p>No report generated yet.</p>
         {% endif %}
-      </div>
-    </div> -->
-
-    <div class="results-section">
-      <div class="pdf-container">
-        <h2>Generated Report</h2>
-        <div class="pdf-viewer">
-          <!-- Usingh media is a must -->
-          <!-- <embed src="http://127.0.0.1:8000/media/checker_result.pdf" type="application/pdf" width="100%" height="800px" style="border: 1px solid #ccc; border-radius: 4px" /> -->
-          <iframe src="http://127.0.0.1/media/checker_result.pdf" type="application/pdf" width="100%" height="800px" style="border: 1px solid #ccc; border-radius: 4px" />
-          <p>If the PDF is not displaying, you can <a href="/media/checker_result.pdf" target="_blank">download it here</a>.</p>
-        </div>
       </div>
     </div>
 
