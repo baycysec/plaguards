@@ -12,6 +12,7 @@
     <script src="{% static 'js/script-upload.js' %}"></script>
     <link rel="stylesheet" href="https://unpkg.com/scrollreveal" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" />
+    
     <style>
       .notification {
         position: fixed;
@@ -80,20 +81,22 @@
       <br />
 
       <p>Upload file to deobfuscate (.ps1)</p>
-
-      <div class="upload-container">
-        <form id="file-upload-form" method="POST" enctype="multipart/form-data" action="{% url 'file_upload' %}">
-          {% csrf_token %}
-          <label class="upload-section" id="drop-zone">
-            <input type="file" id="upload-file" name="file" hidden />
-            <div id="file-view">
-              <i class="ri-upload-2-line"></i>
-              <p>Drag and Drop or Click Here to Upload File</p>
-            </div>
-          </label>
-          <button type="submit">Upload</button>
-        </form>
-      </div>
+      <form id="file-upload-form" method="POST" enctype="multipart/form-data" action="{% url 'file_upload' %}">
+        <div class="upload-content">
+            {% csrf_token %}
+            <label class="upload-section" id="drop-zone">
+              <input type="file" id="upload-file" name="file" hidden />
+              <div id="file-view">
+                <i class="ri-upload-2-line"></i>
+                <p>Drag and Drop or Click Here to Upload File</p>
+              </div>
+            </label>
+        </div>
+        <br>
+          <button class="upload-button" type="submit">
+            <span>Upload File</span>
+          </button>
+      </form>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
