@@ -58,13 +58,13 @@ def FindQuery(query_type, query_value):
     else:
         return None
 
-def md_to_pdf(md_file, output_dir, randomval, template_path="/usr/share/pandoc/data/templates/eisvogel.latex"):
+def md_to_pdf(md_file, path, randomval, template_path="/usr/share/pandoc/data/templates/eisvogel.latex"):
     try:
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
+        if not os.path.exists(path):
+            os.makedirs(path)
 
         # Create the full path for the PDF file
-        output_pdf = os.path.join(output_dir, f'checker_result_{randomval}.pdf')
+        output_pdf = os.path.join(path, f'checker_result_{randomval}.pdf')
 
         
         extra_args = [
