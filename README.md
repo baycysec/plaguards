@@ -7,6 +7,11 @@
 
 ## What We Offer?
 
+1. IOC Checker.
+2. Powershell Deobfuscation.
+3. Automated Reporting in PDF format.
+4. Report is downloadable.
+
 ## Requirements
 
 - Docker
