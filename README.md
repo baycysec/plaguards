@@ -3,3 +3,38 @@
 
 
 <p align="justify">Plaguards is a security tool capable of automating analysis and reverse engineering (reversing) to deobfuscate the source code of malware. Plaguards has been designed to facilitate and enhance the effectiveness of teams in handling obfuscated malware files, making this tool valuable for security teams (especially blue teams) to address malware threats more efficiently and effectively. Plaguards is available as a web app, allowing users to easily and flexibly access the application to conduct analysis anytime and anywhere.</p>
+
+
+## What We Offer?
+
+## Requirements
+
+- Docker
+- Docker Compose v2
+- Python 3.x
+- Port 8000
+
+**(Few Requirements are needed to install manually!)**
+
+<br>
+
+## Deployment and Usage
+
+#### To deploy Plaguards:
+
+1. Clone this repository.
+
+> Command
+
+```console
+git clone https://github.com/Bread-Yolk/plaguards.git
+cd plaguards-main
+```
+
+2. Run the setup script.
+
+```
+./plaguards.sh
+```
+
+3. By default, Plaguards dashboard will listen at port **8000**.
