@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/License-AGPLv3-purple.svg?&logo=none)](https://www.gnu.org/licenses/agpl-3.0)
 ![Powershell-Deobfuscator](https://img.shields.io/badge/Powershell_Deobfuscator-blue)
 ![Powershell-Deobfuscator](https://img.shields.io/badge/IOC_Checker-red)
-![Automated Reporting](https://img.shields.io/badge/Automated_Reporting-White)
+![Automated Reporting](https://img.shields.io/badge/Automated_Reporting-white)
 
 <p align="justify">Plaguards is a cutting-edge security tool built to streamline and automate the deobfuscation of obfuscated PowerShell scripts, empowering security teams to rapidly identify Indicators of Compromise (IOCs) and determine whether they represent verified threats (VT) or false positives (FP). Each analysis is documented in a comprehensive PDF report, designed to provide deep insights and actionable intelligence.
 
