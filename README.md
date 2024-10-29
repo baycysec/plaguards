@@ -30,9 +30,7 @@ WARNING: There are known security vulnerabilities within certain versions of Pla
 - Python 3.x
 - Port 8000
 
-**(You don't need to install anything manually, we'll do it for you!)**
-
-<br>
+**(No manual installation needed – we’ll handle everything for you!)**
 
 ## Deployment and Usage
 
