@@ -49,7 +49,8 @@ cd plaguards-main
 2. Run the setup script.
 
 ```txt
-./plaguards.sh
+chmod 777 plaguards.sh
+sudo ./plaguards.sh
 ```
 
 3. By default, Plaguards dashboard will listen at port **8000**.
