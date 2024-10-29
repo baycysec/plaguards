@@ -46,3 +46,10 @@ cd plaguards-main
 ```
 
 3. By default, Plaguards dashboard will listen at port **8000**.
+
+## Main Features
+
+## Authors
+- [jon-brandy](https://github.com/jon-brandy)
+- [LawsonSchwantz](https://github.com/LawsonSchwantz)
+- [tkxldk](https://github.com/tkxldk)
