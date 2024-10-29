@@ -11,6 +11,10 @@
 As a web app, Plaguards offers users the flexibility to conduct powerful, on-demand analysis from anywhere, at any time, making it invaluable to blue teams tasked with responding to complex malware threats. This innovation not only accelerates workflows but also enhances detection accuracy, positioning Plaguards as a vital asset in proactive threat response.</p>
 
 
+## Security Warning
+
+WARNING: There are known security vulnerabilities within certain versions of Plaguards. Before proceeding, please read through Plaguards [Security Advisories]() for a better understanding of how you might be impacted.
+
 ## What We Offer?
 
 1. IOC Checker.
