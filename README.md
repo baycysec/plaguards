@@ -4,7 +4,9 @@
 
 [![License](https://img.shields.io/badge/License-AGPLv3-red.svg?&logo=none)](https://www.gnu.org/licenses/agpl-3.0)
 
-<p align="justify">Plaguards is a security tool capable of automating analysis and reverse engineering (reversing) to deobfuscate the source code of malware. Plaguards has been designed to facilitate and enhance the effectiveness of teams in handling obfuscated malware files, making this tool valuable for security teams (especially blue teams) to address malware threats more efficiently and effectively. Plaguards is available as a web app, allowing users to easily and flexibly access the application to conduct analysis anytime and anywhere.</p>
+<p align="justify">Plaguards is a cutting-edge security tool built to streamline and automate the deobfuscation of obfuscated PowerShell scripts, empowering security teams to rapidly identify Indicators of Compromise (IOCs) and determine whether they represent verified threats (VT) or false positives (FP). Each analysis is documented in a comprehensive PDF report, designed to provide deep insights and actionable intelligence.
+
+As a web app, Plaguards offers users the flexibility to conduct powerful, on-demand analysis from anywhere, at any time, making it invaluable to blue teams tasked with responding to complex malware threats. This innovation not only accelerates workflows but also enhances detection accuracy, positioning Plaguards as a vital asset in proactive threat response.</p>
 
 
 ## What We Offer?
