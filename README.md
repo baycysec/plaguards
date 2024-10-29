@@ -40,14 +40,14 @@ WARNING: There are known security vulnerabilities within certain versions of Pla
 
 > Command
 
-```console
+```txt
 git clone https://github.com/Bread-Yolk/plaguards.git
 cd plaguards-main
 ```
 
 2. Run the setup script.
 
-```
+```txt
 ./plaguards.sh
 ```
 
