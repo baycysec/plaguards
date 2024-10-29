@@ -1,4 +1,4 @@
-# Plaguards: Powershell Deobfuscator and IOC Checker with automated report.
+# Plaguards: PowerShell Deobfuscation and IOC Detection Engine for Blue Teams.
 
 ![Plaguards](https://github.com/user-attachments/assets/f902d2b5-43ec-4919-b880-d41a64db2f15)
 
