@@ -17,9 +17,11 @@ WARNING: There are known security vulnerabilities within certain versions of Pla
 
 ## Main Features
 
-1. IOC Checker.
-2. Powershell Deobfuscation.
-3. Automated Reporting in PDF format.
+|No.|Main Features|Notes|
+|:-:|:------------:|:---:|
+|1. | IOC Checker.|Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed purus nulla, congue vel tincidunt lobortis, tincidunt eget nisi. Sed iaculis suscipit tortor id laoreet. Duis et ipsum nec dolor iaculis aliquet. Integer ultricies urna nec tristique vehicula. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Fusce lacinia ex non facilisis pellentesque. Cras vitae magna porttitor, rutrum ipsum quis, tristique dolor. Sed porttitor convallis sapien, non dictum leo fringilla eget. |
+|2. | Powershell Deobfuscation.|Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed purus nulla, congue vel tincidunt lobortis, tincidunt eget nisi. Sed iaculis suscipit tortor id laoreet. Duis et ipsum nec dolor iaculis aliquet. Integer ultricies urna nec tristique vehicula. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Fusce lacinia ex non facilisis pellentesque. Cras vitae magna porttitor, rutrum ipsum quis, tristique dolor. Sed porttitor convallis sapien, non dictum leo fringilla eget. |
+|3. | Automated Reporting in PDF format.|Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed purus nulla, congue vel tincidunt lobortis, tincidunt eget nisi. Sed iaculis suscipit tortor id laoreet. Duis et ipsum nec dolor iaculis aliquet. Integer ultricies urna nec tristique vehicula. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Fusce lacinia ex non facilisis pellentesque. Cras vitae magna porttitor, rutrum ipsum quis, tristique dolor. Sed porttitor convallis sapien, non dictum leo fringilla eget. |
 
 ## Requirements
 
