@@ -41,8 +41,6 @@ WARNING: There are known security vulnerabilities within certain versions of Pla
 
 1. Clone this repository.
 
-> Command
-
 ```txt
 git clone https://github.com/Bread-Yolk/plaguards.git
 cd plaguards-main
