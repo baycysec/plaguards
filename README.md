@@ -1,4 +1,4 @@
-# Plaguards: PowerShell Deobfuscation and IOC Detection Engine for Blue Teams.
+# Plaguards: Open Source PowerShell Deobfuscation and IOC Detection Engine for Blue Teams.
 
 ![Plaguards](https://github.com/user-attachments/assets/f902d2b5-43ec-4919-b880-d41a64db2f15)
 
@@ -15,7 +15,7 @@ As a web app, Plaguards offers users the flexibility to conduct powerful, on-dem
 
 WARNING: There are known security vulnerabilities within certain versions of Plaguards. Before proceeding, please read through Plaguards [Security Advisories]() for a better understanding of how you might be impacted.
 
-## What We Offer?
+## Main Features
 
 1. IOC Checker.
 2. Powershell Deobfuscation.
@@ -53,7 +53,6 @@ cd plaguards-main
 
 3. By default, Plaguards dashboard will listen at port **8000**.
 
-## Main Features
 
 ## Authors
 - [jon-brandy](https://github.com/jon-brandy)
