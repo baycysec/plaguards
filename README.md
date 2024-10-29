@@ -18,10 +18,10 @@ WARNING: There are known security vulnerabilities within certain versions of Pla
 ## Main Features
 
 |No.|Main Features|Notes|
-|:-:|:------------:|:---:|
-|1. | IOC Checker.|Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed purus nulla, congue vel tincidunt lobortis, tincidunt eget nisi. Sed iaculis suscipit tortor id laoreet. Duis et ipsum nec dolor iaculis aliquet. Integer ultricies urna nec tristique vehicula. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Fusce lacinia ex non facilisis pellentesque. Cras vitae magna porttitor, rutrum ipsum quis, tristique dolor. Sed porttitor convallis sapien, non dictum leo fringilla eget. |
-|2. | Powershell Deobfuscation.|Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed purus nulla, congue vel tincidunt lobortis, tincidunt eget nisi. Sed iaculis suscipit tortor id laoreet. Duis et ipsum nec dolor iaculis aliquet. Integer ultricies urna nec tristique vehicula. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Fusce lacinia ex non facilisis pellentesque. Cras vitae magna porttitor, rutrum ipsum quis, tristique dolor. Sed porttitor convallis sapien, non dictum leo fringilla eget. |
-|3. | Automated Reporting in PDF format.|Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed purus nulla, congue vel tincidunt lobortis, tincidunt eget nisi. Sed iaculis suscipit tortor id laoreet. Duis et ipsum nec dolor iaculis aliquet. Integer ultricies urna nec tristique vehicula. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Fusce lacinia ex non facilisis pellentesque. Cras vitae magna porttitor, rutrum ipsum quis, tristique dolor. Sed porttitor convallis sapien, non dictum leo fringilla eget. |
+|:-:|:------------|:---|
+|1. | Powershell Deobfuscation|  |
+|2. | IOC Checker| Plaguards offers five parameters for analyzing Indicators of Compromise (IOCs): hash, ip, domain, url, and signature. To initiate a query, users select one of these parameters and provide a second argument as the IOC value to be checked. Plaguards then cross-references this value with public threat intelligence sources, including VirusTotal and Malware Bazaar, via API. The resulting JSON data is parsed into a structured Markdown format, which is then converted into a downloadable, viewable PDF report—delivering actionable insights in a professional, easy-to-read format.|
+|3. | Automated Reporting in PDF format.| Plaguards provides automated PDF reporting for both PowerShell deobfuscation results and IOC checker outcomes, all formatted in an easy-to-read template for clear and accessible insights.|
 
 ## Requirements
 
