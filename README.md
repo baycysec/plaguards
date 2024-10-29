@@ -15,12 +15,14 @@
 
 ## Requirements
 
+- VPN Server (Recommended for Production Server).
+- Domain for HTTPS (Recommended for Production Server).
 - Docker
 - Docker Compose v2
 - Python 3.x
 - Port 8000
 
-**(Few Requirements are needed to install manually!)**
+**(You don't need to install anything manually, we'll do it for you!)**
 
 <br>
 
