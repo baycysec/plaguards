@@ -1,6 +1,10 @@
 # Plaguards: Open Source PowerShell Deobfuscation and IOC Detection Engine for Blue Teams.
 
-![Plaguards](https://github.com/user-attachments/assets/f902d2b5-43ec-4919-b880-d41a64db2f15)
+<p align="center" width="100">
+
+<img src="static/assets/PlaguardsBanner.png">
+
+</p>
 
 [![License](https://img.shields.io/badge/License-AGPLv3-purple.svg?&logo=none)](https://www.gnu.org/licenses/agpl-3.0)
 ![Powershell-Deobfuscator](https://img.shields.io/badge/Powershell_Deobfuscator-blue)
