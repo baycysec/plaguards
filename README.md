@@ -65,7 +65,7 @@ sudo ./plaguards.sh
 
 |IOC Checker|Powershell Deobfuscation|
 |:---------:|:-----------------------:|
-|<img src="" width="550"> | <img src="" width="200"> |
+|<img src="static/assets/demo.gif" width="550"> | <img src="static/assets/test.gif" width="200"> |
 
 
 
