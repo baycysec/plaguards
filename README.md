@@ -60,7 +60,7 @@ sudo ./plaguards.sh
 3. By default, Plaguards dashboard will listen at port **8000**.
 
 
-## Demo
+## Demo for Main Features
 
 
 |IOC Checker|PDF Report|
