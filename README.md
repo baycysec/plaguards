@@ -67,7 +67,7 @@ sudo ./plaguards.sh
 |:---------:|:-----------------------:|
 |<img src="static/assets/demo.gif" width="550"> | <img src="static/assets/portrait.gif" width="200"> |
 
-|Powershel Deobfuscation|PDF Report|
+|Powershell Deobfuscation|PDF Report|
 |:---------:|:-----------------------:|
 |<img src="static/assets/demo.gif" width="550"> | <img src="static/assets/portrait.gif" width="200"> |
 
