@@ -63,9 +63,13 @@ sudo ./plaguards.sh
 ## Demo
 
 
-|IOC Checker|Powershell Deobfuscation|
+|IOC Checker|PDF Report|
 |:---------:|:-----------------------:|
-|<img src="static/assets/demo.gif" width="550"> | <img src="static/assets/test.gif" width="200"> |
+|<img src="static/assets/demo.gif" width="550"> | <img src="static/assets/portrait.gif" width="200"> |
+
+|Powershel Deobfuscation|PDF Report|
+|:---------:|:-----------------------:|
+|<img src="static/assets/demo.gif" width="550"> | <img src="static/assets/portrait.gif" width="200"> |
 
 
 
