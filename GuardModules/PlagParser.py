@@ -9,6 +9,7 @@ def generate_random_val(length):
     characters = string.ascii_letters + string.digits
     return ''.join(random.choice(characters) for _ in range(length))
 
+VT_API_KEY = os.getenv("VT_API_KEY")
 
 def FindQuery(query_type, query_value):
     if query_type == 'hash':
@@ -30,14 +31,14 @@ def FindQuery(query_type, query_value):
     elif query_type == 'domain':
         url = f'https://www.virustotal.com/api/v3/domains/{query_value}'
         headers = {
-            'x-apikey': '685ca79fa45028696c796f773802c5cef7f495b9e63d74e817db0545701c029f'
+            'x-apikey': VT_API_KEY
         }
         response = requests.get(url, headers=headers)
 
     elif query_type == 'ip':
         url = f'https://www.virustotal.com/api/v3/ip_addresses/{query_value}'
         headers = {
-            'x-apikey': '685ca79fa45028696c796f773802c5cef7f495b9e63d74e817db0545701c029f'
+            'x-apikey': VT_API_KEY
         }
         response = requests.get(url, headers=headers)
 
@@ -45,7 +46,7 @@ def FindQuery(query_type, query_value):
         url_id = base64.urlsafe_b64encode(query_value.encode()).decode().strip("=")
         url = f'https://www.virustotal.com/api/v3/urls/{url_id}'
         headers = {
-            'x-apikey': '685ca79fa45028696c796f773802c5cef7f495b9e63d74e817db0545701c029f'
+            'x-apikey': VT_API_KEY
         }
         response = requests.get(url, headers=headers)
 
