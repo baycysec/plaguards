@@ -359,13 +359,12 @@ def decoding(code):
 
             if match_from_base64:
                 try:
-                    newmatch = match_from_base64.group(1).replace('"','').replace("'", "")
+                    newmatch = match_from_base64.group(1).replace('"','').replace("'", "").replace("(", "").replace(")","")
 
                     if newmatch.endswith('%3D%3D'):
                         content = newmatch.replace('%3D%3D', '==')
                     else:
                         content = newmatch + '=='
-
                     get_decode = base64.b64decode(content)
                     get_clean = get_decode.replace(b'\x00', b'')
 
@@ -491,8 +490,8 @@ def deobfuscate(code):
         code = combine_and_concat_multiple_variables_value(code)
         code = fixingcodequote(code)
         code = replacecode(code)
-        code = splitcode(code)
         code = decoding(code)
+        code = splitcode(code)
         httplist,iplist = http_and_ip_grep(code)
     except:
         code = "Something's wrong with the code or input!"
