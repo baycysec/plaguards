@@ -57,7 +57,15 @@ chmod 777 plaguards.sh
 sudo ./plaguards.sh
 ```
 
-3. By default, Plaguards dashboard will listen at port **8000**.
+3. Configure your Virus Total API key.
+
+```
+export VT_API_KEY="your_virustotal_api_key"
+```
+
+#### For instructions on obtaining your API key, Click [here]().
+
+4. By default, Plaguards dashboard will listen at port **8000**.
 
 
 ## Demo for Main Features
