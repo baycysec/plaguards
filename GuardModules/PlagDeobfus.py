@@ -216,19 +216,23 @@ def combine_and_concat_multiple_variables_value(code):
             checkcode[i] = checkcode[i].replace('++=', '+=')
         if "+=" in checkcode[i]:
             parts = checkcode[i].split('+=')
-            var = parts[0].strip()
+            var = parts[0].strip().replace('(','').replace(')', '').replace('"','').replace("'", "")
             value = parts[1].strip()
+            if not var.startswith("$"):
+                var = "$" + var
             plusequalcount[var] = 0
             if re.search(r'\$\w+', value_dict.get(var, "")) and plusequalcount[var] != 1:
                 value_dict[var] = value_dict.get(var, "") + "+" + value
                 plusequalcount[var] = 1
             else:
                 value_dict[var] = value_dict.get(var, "") + value
-
+        
         elif "=" in checkcode[i] and "!=" not in checkcode[i]:
             split_equal = checkcode[i].split('=')
             for i in range(len(split_equal)-1, 0, -1):
-                var = split_equal[i-1].strip().split()[-1]
+                var = split_equal[i-1].strip().split()[-1].replace('(','').replace(')', '').replace('"','').replace("'", "")
+                if not var.startswith("$"):
+                    var = "$" + var
                 value = split_equal[i].strip().split('=')[0].strip()
                 value_dict[var] = value
         else:
@@ -331,6 +335,11 @@ def fixingcodequote(code):
         if match1:
             if not match1.group(1).startswith("(") and match1.group(1).count('"') != 2 and match1.group(1).count("'") != 2:
                 i = i.replace(match1.group(1), "'" + match1.group(1) + "'")
+            elif not ((match1.group(1).startswith("'") and match1.group(1).endswith("'")) or (match1.group(1).startswith('"') and match1.group(1).endswith('"'))):
+                if "'" in match1.group(1):
+                    i = i.replace(match1.group(1), '"' + match1.group(1) + '"')
+                elif '"' in match1.group(1):
+                    i = i.replace(match1.group(1), "'" + match1.group(1) + "'")
         newcoderes.append(i)
 
     newcode = ''.join([i + '\n' for i in newcoderes])
@@ -398,8 +407,13 @@ def replacecode(code):
         if len(match.groups()) == 4:
             stringmatch1,stringmatch2,oldword,newword = match.groups()
             if stringmatch1:
+                if not oldword in stringmatch1 and oldword.replace("(","").replace(")","") in stringmatch1:
+                    return '"' + stringmatch1.replace(oldword.replace("'","").replace('"',"").replace("(","").replace(")",""), newword.replace("'","").replace('"',"").replace("(","").replace(")","")) + '"'
+                
                 return '"' + stringmatch1.replace(oldword.replace("'","").replace('"',""), newword.replace("'","").replace('"',"")) + '"'
             elif stringmatch2:
+                if not oldword in stringmatch2 and oldword.replace("(","").replace(")","") in stringmatch2:
+                    return '"' + stringmatch2.replace(oldword.replace("'","").replace('"',"").replace("(","").replace(")",""), newword.replace("'","").replace('"',"").replace("(","").replace(")","")) + '"'
                 return "'" + stringmatch2.replace(oldword.replace("'","").replace('"',""), newword.replace("'","").replace('"',"")) + "'"
             
         elif len(match.groups()) == 3:
@@ -433,6 +447,8 @@ def splitcode(code):
     checkcode = code.split('\n')
     for i in range(len(checkcode)):
         checkcode[i] = re.sub(r'(["\'][^"\']*["\'])\.split\(([^)]+)\)', split_func, checkcode[i], flags=re.IGNORECASE)
+        if checkcode[i].count('(') != checkcode[i].count(')'):
+            checkcode[i] = checkcode[i].replace("(","").replace(")","")
 
     newcode = ''.join([i + '\n' for i in checkcode])
     return newcode.strip().replace("'","").replace('"', "")
