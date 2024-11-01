@@ -59,7 +59,7 @@ sudo ./plaguards.sh
 
 3. Configure your Virus Total API key. 
 
-> For instructions on obtaining your API key, Click [here]().
+> For instructions on obtaining your API key, Click [here](https://github.com/Bread-Yolk/plaguards/wiki/Configure-your-Virus-Total-API-Key).
 
 ```
 export VT_API_KEY="your_virustotal_api_key"
