@@ -57,7 +57,9 @@ chmod 777 plaguards.sh
 sudo ./plaguards.sh
 ```
 
-3. Configure your Virus Total API key. For instructions on obtaining your API key, Click [here]().
+3. Configure your Virus Total API key. 
+
+> For instructions on obtaining your API key, Click [here]().
 
 ```
 export VT_API_KEY="your_virustotal_api_key"
