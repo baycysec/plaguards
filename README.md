@@ -16,6 +16,15 @@
 <p align="justify">As a web app, Plaguards offers users the flexibility to conduct powerful, on-demand analysis from anywhere, at any time, making it invaluable to blue teams tasked with responding to complex malware threats. This innovation not only accelerates workflows but also enhances detection accuracy, positioning Plaguards as a vital asset in proactive threat response.</p>
 
 
+# Motivation Behind Plaguards
+
+<p align="justify">Plaguards was created to address a significant challenge faced by Incident Response (IR) teams in analyzing obfuscated PowerShell scripts during malware and ransomware incidents. These incidents are high-priority due to their potential to disrupt business operations severely. While numerous JavaScript deobfuscation tools exist, there is a stark lack of equivalent resources tailored for PowerShell—a critical gap given the recent rise of fileless PowerShell-based attacks in 2024.</p>
+
+<p align="justify">Recognizing this need, Plaguards offers automated deobfuscation specifically for PowerShell scripts, empowering IR teams to swiftly identify Indicators of Compromise (IOCs) and validate whether these IOCs represent legitimate threats or false positives. By focusing on PowerShell, Plaguards equips security teams with a dedicated tool to respond more efficiently and effectively to modern threats.</p>
+
+<p align="justify">The platform’s capabilities are further enhanced by its templated PDF reports, which document each deobfuscated line of code (LOC) along with IOCs, such as IP addresses and HTTP references. These are cross-referenced with threat intelligence to provide actionable insights, ensuring that IR teams can respond with both speed and depth. With its specialized focus and streamlined reporting, Plaguards stands out as an essential asset in the proactive defense against complex malware threats.</p>
+
+
 ## Security Warning
 
 **WARNING**: There are known security vulnerabilities within certain versions of Plaguards. Before proceeding, please read through Plaguards [Security Advisories]() for a better understanding of how you might be impacted.
