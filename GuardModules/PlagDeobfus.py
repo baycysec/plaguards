@@ -1,6 +1,7 @@
 import re
 import base64
 from urllib.parse import unquote
+import ast
 
 def remove_string(code):
     pattern = re.compile(r'\[string\]', re.IGNORECASE)
@@ -35,6 +36,7 @@ def convertercode(code):
             if count == 0:
                 break
         i = re.sub(r"\s*-split\s+(['\"][^'\"]+['\"]|[\S]+)",  lambda m: f".split({m.group(1)})", i, flags=re.IGNORECASE)
+        i = re.sub(r'((?:\$\w+\s*=\s*)*)(.+?)\s+-join\s+("[^"]+"|\'[^\']+\'|\S+)',lambda m: f"{m.group(3)}.join([{m.group(2)}])" if not m.group(1) else f"{m.group(1)} {m.group(3)}.join([{m.group(2)}])",i,flags=re.IGNORECASE)
         newcoderes.append(i)
 
     newcode = ''.join([i + '\n' for i in newcoderes])
@@ -330,14 +332,24 @@ def fixingcodequote(code):
     checkcode = code.split('\n')
     newcoderes = []
     for i in checkcode:
-        match1 = re.search(r'(?:\$?\w+\s*=\s*)?(.*?)(?=\.replace\([^,]+,[^)]+\))', i, flags=re.IGNORECASE)
-        match2 = re.search(r'(?:\$?\w+\s*=\s*)?(.*?)(?=\.split\([^)]+\))', i, flags=re.IGNORECASE)
-        if match1 or match2:
+        match1 = re.search(r'(?:\$\w+\s*=\s*)*(.*?)(?=\.replace\([^,]+,[^)]+\))', i, flags=re.IGNORECASE)
+        match2 = re.search(r'(?:\$\w+\s*=\s*)*(.*?)(?=\.split\([^)]+\))', i, flags=re.IGNORECASE)
+        match3 = re.search(r'(\S+)\.join\(\[(.*?)\]\)', i, flags=re.IGNORECASE)
+        if match1 or match2 or match3:
             if match1:
                 val = match1.group(1)
             elif match2:
                 val = match2.group(1)
-            if not val.startswith("(") and val.count('"') != 2 and val.count("'") != 2:
+            elif match3:
+                val = match3.group(1)
+                val2 = match3.group(2).split(',')
+                addquote = [f'"{valuearr.strip()}"' if not valuearr.strip().startswith(('"', "'")) else valuearr.strip() for valuearr in val2]
+                withquoteres = f"{val}.join([{', '.join(addquote)}])"
+                i = re.sub(r'\S+\.join\(\[.*?\]\)', withquoteres, i)
+
+            if re.match(r"^\.+$",val):
+                i = re.sub(r'(\.+)(?=\.join\(\[.*?\]\))', r"'\1'", i, flags=re.IGNORECASE)        
+            elif not val.startswith("(") and val.count('"') != 2 and val.count("'") != 2:
                 i = i.replace(val, "'" + val + "'")
             elif not ((val.startswith("'") and val.endswith("'")) or (val.startswith('"') and val.endswith('"'))):
                 if "'" in val:
@@ -441,14 +453,25 @@ def replacecode(code):
     return newcode.strip()
 
 def joincode(code):
+    def join_func(match):
+        separator, array = match.groups()
+        separator = separator.replace("'","").replace('"',"")
+        return separator.join(ast.literal_eval(array))
 
-    return newcode
+    checkcode = code.split('\n')
+    newcoderes = []
+    for i in checkcode:
+        i = re.sub(r'(\'[^\']*\'|"[^"]*")\.join\((\[[^\]]+\])\)',join_func, i, flags=re.IGNORECASE)
+        newcoderes.append(i)
+
+    newcode = ''.join([i + '\n' for i in newcoderes])
+    return newcode.strip()
 
 def splitcode(code):
     def split_func(match):
         string,objtosplit = match.groups()
         listsplit = string.split(objtosplit.replace("'","").replace('"',''))
-        res = ', '.join(f'"{item}"' for item in listsplit)
+        res = ', '.join(f'"{valuearr}"' for valuearr in listsplit)
         return "[" + res + "]"
 
     checkcode = code.split('\n')
@@ -472,6 +495,7 @@ def deobfuscate(code):
         code = remove_space_from_char(code)
         code = change_bxor_and_to_chr(code)
         code = convertercode(code)
+        print(code)
         codetemp = []
         checkcode = code.split('\n')
         for i in range(len(checkcode)):
@@ -500,10 +524,10 @@ def deobfuscate(code):
         code = fixingcodequote(code)
         code = replacecode(code)
         code = decoding(code)
-        # code = joincode(code)
+        code = joincode(code)
         code = splitcode(code)
         httplist,iplist = http_and_ip_grep(code)
-    except:
-        code = "Something's wrong with the code or input!"
+    except Exception as e:
+        code = f"Something's wrong with the code or input! Error: {e}"
         return code,[],[]
     return code,httplist,iplist
