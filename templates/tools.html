@@ -112,7 +112,8 @@
       }
 
       $(document).ready(function () {
-
+        
+        // Search Form Submission
         $("#search-form").on("submit", function (e) {
           e.preventDefault();
           $.ajax({
@@ -133,43 +134,43 @@
             },
           });
         });
-        
+
         // Capture file selection and display file name
         $("#upload-file").on("change", function () {
-            var file = this.files[0];
-            if (file) {
-                $("#file-name").text(file.name);
-            } else {
-                $("#file-name").text("Drag and Drop or Click Here to Upload File");
-            }
+          var file = this.files[0];
+          if (file) {
+            $("#file-name").text(file.name);
+          } else {
+            $("#file-name").text("Drag and Drop or Click Here to Upload File");
+          }
         });
 
         // File Upload Form Submission
         $("#file-upload-form").on("submit", function (e) {
-            e.preventDefault();
-            var formData = new FormData(this);
+          e.preventDefault();
+          var formData = new FormData(this);
 
-            $.ajax({
-                url: $(this).attr("action"),
-                type: "POST",
-                data: formData,
-                processData: false,
-                contentType: false,
-                dataType: "json",
-                success: function (response) {
-                    if (response.status === "success") {
-                        showNotification(response.message, "success");
-                        window.location.href = "/redirect_result?pdf_url=" + encodeURIComponent(response.pdf_url);
-                    } else {
-                        showNotification(response.message, "error");
-                    }
-                },
-                error: function () {
-                    showNotification("An error occurred. Please try again.", "error");
-                },
-            });
+          $.ajax({
+            url: $(this).attr("action"),
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: "json",
+            success: function (response) {
+              if (response.status === "success") {
+                showNotification(response.message, "success");
+                window.location.href = "/redirect_result?pdf_url=" + encodeURIComponent(response.pdf_url);
+              } else {
+                showNotification(response.message, "error");
+              }
+            },
+            error: function () {
+              showNotification("An error occurred. Please try again.", "error");
+            },
+          });
         });
-    });
+      });
     </script>
   </body>
 </html>
