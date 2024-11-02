@@ -23,19 +23,18 @@ def change_bxor_and_to_chr(code):
     
     return re.compile(r'\[char\]\(([\d\-+\*/\s]+(?:\s?-bxor\s?[\d\-+\*/\s]+)*)\)', re.IGNORECASE).sub(replace_bxor_and_to_chr, code)
  
-def convertercode(code):
-    def clean_quotes_in_split(i):
-        return i.replace('"', '').replace("'", '').replace("(","").replace(")","")
-    
+def convertercode(code):    
     checkcode = code.split('\n')
     newcoderes = []
     for i in checkcode:
         i = re.sub(r'\)\s*\(', ');(', i)
+        
         while True:
-            i, count = re.subn(r"\s*-replace\s*\(?('[^']+'|\"[^\"]+\")\s*,\s*('[^']+'|\"[^\"]+\")\)?", r".replace(\1,\2)", i, flags=re.IGNORECASE)
+            i, count = re.subn(r"\s*-replace\s*\(?('[^']+'|\"[^\"]+\"|[\w\s]+)\s*,\s*('[^']+'|\"[^\"]+\"|[\S]+)\)?"
+, r".replace(\1,\2)", i, flags=re.IGNORECASE)        
             if count == 0:
                 break
-        i = re.sub(r"(\(?(['\"].+['\"])+)\)?\s+-split\s+('[^']+'|\"[^\"]+\")",  lambda m: f'"{clean_quotes_in_split(m.group(1))}".split({m.group(3)})', i, flags=re.IGNORECASE)
+        i = re.sub(r"\s*-split\s+(['\"][^'\"]+['\"]|[\S]+)",  lambda m: f".split({m.group(1)})", i, flags=re.IGNORECASE)
         newcoderes.append(i)
 
     newcode = ''.join([i + '\n' for i in newcoderes])
@@ -43,7 +42,7 @@ def convertercode(code):
 
 def removequote(code):
     def quoteremover(match):
-        if ".replace(" in match.group(0).lower() or ".split(" in match.group(0).lower() or match.group(0) == '" "' or match.group(0) == "' '":
+        if ".replace(" in match.group(0).lower() or ".split(" in match.group(0).lower() or "-split" in match.group(0) or "-replace" in match.group(0) or match.group(0) == '" "' or match.group(0) == "' '":
             return match.group(0)
         else:
             return match.group(0).strip("'\"")
@@ -51,7 +50,7 @@ def removequote(code):
     checkcode = code.split('\n')
     newcoderes = []
     for i in checkcode:
-        i = re.sub(r"(\(?'[^']*'\)?\.replace\([^)]+\))|(\(?\"[^\"]*\"\)?\.replace\([^)]+\))|(\'[^\']*\'\.split\([^)]+\))|(\"[^\"]*\"\.split\([^)]+\))|('[^']*'|\"[^\"]*\")", quoteremover, i, flags=re.IGNORECASE)
+        i = re.sub(r"(\(?'[^']*'\)?\.replace\([^)]+\))|(\(?\"[^\"]*\"\)?\.replace\([^)]+\))|(\'[^\']*\'\.split\([^)]+\))|(\"[^\"]*\"\.split\([^)]+\))|(\s*-replace\s*\(?('[^']+'|\"[^\"]+\")\s*,\s*('[^']+'|\"[^\"]+\")\)?)|((\(?(['\"].+['\"])+)\)?\s+-split\s+('[^']+'|\"[^\"]+\"))|('[^']*'|\"[^\"]*\")", quoteremover, i, flags=re.IGNORECASE)
         newcoderes.append(i)
     newcode = ''.join([i + '\n' for i in newcoderes])
     return newcode.strip()
@@ -146,7 +145,7 @@ def concat_code(code):
             valid = 0
             parts = [part.lstrip(' ') for part in check[i].split('=')]  
             for j in range(len(parts)):
-                if "+" in parts[j] and (re.search(r'\$\w+', parts[j]) or 'replace' in check[i].lower()):
+                if "+" in parts[j] and (re.search(r'\$\w+', parts[j]) or "++" in parts[j].replace("'","").replace('"','')):
                     newcoderes.append(check[i])
                     valid = 1
                     break
@@ -331,15 +330,20 @@ def fixingcodequote(code):
     checkcode = code.split('\n')
     newcoderes = []
     for i in checkcode:
-        match1 = re.search(r'=\s*(.*?)(?=\.replace\([^,]+,[^)]+\))', i, flags=re.IGNORECASE)
-        if match1:
-            if not match1.group(1).startswith("(") and match1.group(1).count('"') != 2 and match1.group(1).count("'") != 2:
-                i = i.replace(match1.group(1), "'" + match1.group(1) + "'")
-            elif not ((match1.group(1).startswith("'") and match1.group(1).endswith("'")) or (match1.group(1).startswith('"') and match1.group(1).endswith('"'))):
-                if "'" in match1.group(1):
-                    i = i.replace(match1.group(1), '"' + match1.group(1) + '"')
-                elif '"' in match1.group(1):
-                    i = i.replace(match1.group(1), "'" + match1.group(1) + "'")
+        match1 = re.search(r'(?:\$?\w+\s*=\s*)?(.*?)(?=\.replace\([^,]+,[^)]+\))', i, flags=re.IGNORECASE)
+        match2 = re.search(r'(?:\$?\w+\s*=\s*)?(.*?)(?=\.split\([^)]+\))', i, flags=re.IGNORECASE)
+        if match1 or match2:
+            if match1:
+                val = match1.group(1)
+            elif match2:
+                val = match2.group(1)
+            if not val.startswith("(") and val.count('"') != 2 and val.count("'") != 2:
+                i = i.replace(val, "'" + val + "'")
+            elif not ((val.startswith("'") and val.endswith("'")) or (val.startswith('"') and val.endswith('"'))):
+                if "'" in val:
+                    i = i.replace(val, '"' + val + '"')
+                elif '"' in val:
+                    i = i.replace(val, "'" + val + "'")
         newcoderes.append(i)
 
     newcode = ''.join([i + '\n' for i in newcoderes])
@@ -436,10 +440,14 @@ def replacecode(code):
     newcode = ''.join([i + '\n' for i in checkcode])
     return newcode.strip()
 
+def joincode(code):
+
+    return newcode
+
 def splitcode(code):
     def split_func(match):
         string,objtosplit = match.groups()
-        listsplit = string.split(objtosplit)
+        listsplit = string.split(objtosplit.replace("'","").replace('"',''))
         res = ', '.join(f'"{item}"' for item in listsplit)
         return "[" + res + "]"
 
@@ -488,9 +496,11 @@ def deobfuscate(code):
         code = removequote(code)
         code = backtick(code)
         code = combine_and_concat_multiple_variables_value(code)
+        code = convertercode(code)
         code = fixingcodequote(code)
         code = replacecode(code)
         code = decoding(code)
+        # code = joincode(code)
         code = splitcode(code)
         httplist,iplist = http_and_ip_grep(code)
     except:
