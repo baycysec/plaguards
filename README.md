@@ -70,7 +70,7 @@ sudo ./plaguards.sh
 
 > For instructions on obtaining your API key, Click [here](https://github.com/Bread-Yolk/plaguards/wiki/Configure-your-Virus-Total-API-Key).
 
-```
+```Dockerfile
 # At Dockerfile
 ENV VT_API_KEY="your_api_key_goes_here"
 ```
