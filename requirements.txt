@@ -3,5 +3,5 @@ djangorestframework
 requests
 pypandoc
 pybase64
-
+django-bootstrap-v5
 

@@ -1,0 +1,27 @@
+body {
+    background-color: #212429;
+    color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  .navbar-brand {
+    display: flex;
+    align-items: center;
+  }
+  
+  .navbar-brand img {
+    margin-right: 8px;
+  }
+  
+  #notification {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    display: none;
+  }
+  
+  #notification.error {
+    background-color: #f44336;
+  }
+  

@@ -1,4 +1,5 @@
-{% load static %}
+<!-- {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -35,8 +36,7 @@
     </nav>
     <header class="header__container">
       <div class="header__image">
-        <img src="{% static "./assets/4.0.0.png" %}" alt="header" />
-        <!-- <p>Meet Pocolo The Mascot</p> -->
+        <img src="{% static 'assets/4.0.0.png' %}" alt="header" />
       </div>
       <div class="header__content">
         <h2>Powershell Analyzer</h2>
@@ -47,7 +47,6 @@
         <p>Plaguards is a security tool capable of performing automated analysis and reverse engineering to deobfuscate the source code of malware.</p>
         <div class="header__btn">
           <button class="btn"><a href="{% url 'tools' %}">Try Plaguards</a></button>
-          <!-- <button class="btn" onclick="window.location.href='../tools.html'">Try Plaguards</button> -->
         </div>
         <br />
         <div class="header__bar">Copyright © 2024 Plaguards. All rights reserved.</div>
@@ -55,6 +54,65 @@
     </header>
   </body>
   </div>
+</html>
+ -->
 
-<!-- <script src="particles.js"></script> -->
+ {% load static %}
+ {% load bootstrap5 %}
+ 
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Plaguards</title>
+    <link rel="icon" href="{% static 'assets/1.0.png' %}" type="image/png" />
+    {% bootstrap_css %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="{% url 'index' %}">
+          <img src="{% static 'assets/1.0.png' %}" alt="logo" />
+          <span>Plaguards</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'tools' %}">Tools</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'tutorial' %}">Tutorial</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About us</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <header class="header__container">
+      <div class="header__content">
+        <h2>Powershell Analyzer</h2>
+        <h1>
+          Deobfuscate<br /><span class="h1__span-1">Malware</span> <span class="h1__span-2">with Plaguards</span>
+        </h1>
+        <p>Plaguards is a security tool capable of performing automated analysis and reverse engineering to deobfuscate the source code of malware.</p>
+        <a href="{% url 'tools' %}" class="btn btn-custom">Try Plaguards</a>
+      </div>
+      <div class="header__image">
+        <img src="{% static 'assets/4.0.0.png' %}" alt="header" class="img-fluid" />
+      </div>
+    </header>
+
+    <footer class="header__bar">
+      Copyright &copy; 2024 Plaguards. All rights reserved.
+    </footer>
+
+    <script src="{% static 'js/script.js' %}"></script>
+    <!-- <script src="{% static 'js/particles.js' %}"></script> -->
+    <script src="https://unpkg.com/scrollreveal"></script>
+    {% bootstrap_javascript %}
+  </body>
 </html>
