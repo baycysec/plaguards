@@ -31,12 +31,11 @@ def convertercode(code):
         i = re.sub(r'\)\s*\(', ');(', i)
         
         while True:
-            i, count = re.subn(r"\s*-replace\s*\(?('[^']+'|\"[^\"]+\"|[\w\s]+)\s*,\s*('[^']+'|\"[^\"]+\"|[\S]+)\)?"
-, r".replace(\1,\2)", i, flags=re.IGNORECASE)        
-            if count == 0:
+            i, count1 = re.subn(r"\s*-replace\s*\(?('[^']+'|\"[^\"]+\"|[\w\s]+)\s*,\s*('[^']+'|\"[^\"]+\"|[\S]+)\)?", r".replace(\1,\2)", i, flags=re.IGNORECASE)
+            i,count2 = re.subn(r"\s*-split\s+(['\"][^'\"]+['\"]|[\S]+)",  lambda m: f".split({m.group(1)})", i, flags=re.IGNORECASE)
+            i,count3 = re.subn(r'((?:\$\w+\s*=\s*)*)(.+?)\s+-join\s+("[^"]+"|\'[^\']+\'|\S+)',lambda m: f"{m.group(3)}.join([{m.group(2)}]) " if not m.group(1) else f"{m.group(1)} {m.group(3)}.join([{m.group(2)}]) ",i,flags=re.IGNORECASE)        
+            if count1 == 0 and count2 == 0 and count3 == 0:
                 break
-        i = re.sub(r"\s*-split\s+(['\"][^'\"]+['\"]|[\S]+)",  lambda m: f".split({m.group(1)})", i, flags=re.IGNORECASE)
-        i = re.sub(r'((?:\$\w+\s*=\s*)*)(.+?)\s+-join\s+("[^"]+"|\'[^\']+\'|\S+)',lambda m: f"{m.group(3)}.join([{m.group(2)}])" if not m.group(1) else f"{m.group(1)} {m.group(3)}.join([{m.group(2)}])",i,flags=re.IGNORECASE)
         newcoderes.append(i)
 
     newcode = ''.join([i + '\n' for i in newcoderes])
@@ -44,7 +43,7 @@ def convertercode(code):
 
 def removequote(code):
     def quoteremover(match):
-        if ".replace(" in match.group(0).lower() or ".split(" in match.group(0).lower() or "-split" in match.group(0) or "-replace" in match.group(0) or match.group(0) == '" "' or match.group(0) == "' '":
+        if ".replace(" in match.group(0).lower() or ".split(" in match.group(0).lower() or "-split" in match.group(0) or "-replace" in match.group(0) or ".join(" in match.group(0) or "-join" in match.group(0) or match.group(0) == '" "' or match.group(0) == "' '":
             return match.group(0)
         else:
             return match.group(0).strip("'\"")
@@ -52,7 +51,7 @@ def removequote(code):
     checkcode = code.split('\n')
     newcoderes = []
     for i in checkcode:
-        i = re.sub(r"(\(?'[^']*'\)?\.replace\([^)]+\))|(\(?\"[^\"]*\"\)?\.replace\([^)]+\))|(\'[^\']*\'\.split\([^)]+\))|(\"[^\"]*\"\.split\([^)]+\))|(\s*-replace\s*\(?('[^']+'|\"[^\"]+\")\s*,\s*('[^']+'|\"[^\"]+\")\)?)|((\(?(['\"].+['\"])+)\)?\s+-split\s+('[^']+'|\"[^\"]+\"))|('[^']*'|\"[^\"]*\")", quoteremover, i, flags=re.IGNORECASE)
+        i = re.sub(r"(\(?'[^']*'\)?\.replace\([^)]+\))|(\(?\"[^\"]*\"\)?\.replace\([^)]+\))|(\'[^\']*\'\.split\([^)]+\))|(\"[^\"]*\"\.split\([^)]+\))|(\s*-replace\s*\(?('[^']+'|\"[^\"]+\")\s*,\s*('[^']+'|\"[^\"]+\")\)?)|((\(?(['\"].+['\"])+)\)?\s+-split\s+('[^']+'|\"[^\"]+\"))|((\(?(['\"].+['\"])+)\)?\s+-join\s+('[^']+'|\"[^\"]+\"))|((\(?(['\"].+['\"])+)\)?\.join\(\[.*?\]\))|('[^']*'|\"[^\"]*\")", quoteremover, i, flags=re.IGNORECASE)
         newcoderes.append(i)
     newcode = ''.join([i + '\n' for i in newcoderes])
     return newcode.strip()
@@ -350,16 +349,20 @@ def fixingcodequote(code):
             if re.match(r"^\.+$",val):
                 i = re.sub(r'(\.+)(?=\.join\(\[.*?\]\))', r"'\1'", i, flags=re.IGNORECASE)        
             elif not val.startswith("(") and val.count('"') != 2 and val.count("'") != 2:
-                i = i.replace(val, "'" + val + "'")
+                if '"' in val:
+                    i = i.replace(val, "'" + val + "'")
+                else:
+                    i = i.replace(val, '"' + val + '"')
             elif not ((val.startswith("'") and val.endswith("'")) or (val.startswith('"') and val.endswith('"'))):
                 if "'" in val:
                     i = i.replace(val, '"' + val + '"')
-                elif '"' in val:
+                else:
                     i = i.replace(val, "'" + val + "'")
         newcoderes.append(i)
 
     newcode = ''.join([i + '\n' for i in newcoderes])
     return newcode.strip()
+
 
 def decoding(code):
     checkcode = code.split('\n')
@@ -461,7 +464,10 @@ def joincode(code):
     checkcode = code.split('\n')
     newcoderes = []
     for i in checkcode:
-        i = re.sub(r'(\'[^\']*\'|"[^"]*")\.join\((\[[^\]]+\])\)',join_func, i, flags=re.IGNORECASE)
+        while True:
+            i,count = re.subn(r'(\'[^\']*\'|"[^"]*")\.join\((\[[^\]]+\])\)',join_func, i, flags=re.IGNORECASE)
+            if count == 0:
+                break
         newcoderes.append(i)
 
     newcode = ''.join([i + '\n' for i in newcoderes])
@@ -471,14 +477,17 @@ def splitcode(code):
     def split_func(match):
         string,objtosplit = match.groups()
         listsplit = string.split(objtosplit.replace("'","").replace('"',''))
-        res = ', '.join(f'"{valuearr}"' for valuearr in listsplit)
-        return "[" + res + "]"
+        res = ', '.join(f'{valuearr}' for valuearr in listsplit)
+        return res
 
     checkcode = code.split('\n')
     for i in range(len(checkcode)):
-        checkcode[i] = re.sub(r'(["\'][^"\']*["\'])\.split\(([^)]+)\)', split_func, checkcode[i], flags=re.IGNORECASE)
-        if checkcode[i].count('(') != checkcode[i].count(')'):
-            checkcode[i] = checkcode[i].replace("(","").replace(")","")
+        while True:
+            checkcode[i],count = re.subn(r'(["\'][^"\']*["\'])\.split\(([^)]+)\)', split_func, checkcode[i], flags=re.IGNORECASE)
+            if checkcode[i].count('(') != checkcode[i].count(')'):
+                checkcode[i] = checkcode[i].replace("(","").replace(")","")
+            if count == 0:
+                break
 
     newcode = ''.join([i + '\n' for i in checkcode])
     return newcode.strip().replace("'","").replace('"', "")
@@ -521,13 +530,12 @@ def deobfuscate(code):
         code = combine_and_concat_multiple_variables_value(code)
         code = convertercode(code)
         code = fixingcodequote(code)
-        code = replacecode(code)
         code = decoding(code)
         code = joincode(code)
+        code = replacecode(code)
         code = splitcode(code)
         httplist,iplist = http_and_ip_grep(code)
     except Exception as e:
         code = f"Something's wrong with the code or input! Error: {e}"
         return code,[],[]
     return code,httplist,iplist
-    
