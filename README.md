@@ -54,7 +54,7 @@
 
 1. Clone this repository.
 
-```txt
+```console
 git clone https://github.com/Bread-Yolk/plaguards.git
 cd plaguards-main
 ```
@@ -70,7 +70,7 @@ ENV VT_API_KEY="your_api_key_goes_here"
  
 3. Run the setup script.
 
-```Dockerfile
+```console
 chmod 777 plaguards.sh
 sudo ./plaguards.sh
 ```
