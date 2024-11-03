@@ -1,0 +1,129 @@
+<!-- {% load static %}
+{% load bootstrap5 %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Plaguards - Results</title>
+    <link rel="icon" href="{% static 'assets/1.0.png' %}" type="image/png" />
+    {% bootstrap_css %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style-results.css' %}" />
+    <link rel="stylesheet" href="https://unpkg.com/scrollreveal" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="{% url 'index' %}">
+          <img src="{% static 'assets/1.0.png' %}" alt="logo" />
+          <span>Plaguards</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'tools' %}">Tools</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'tutorial' %}">Tutorial</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About us</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="content__container">
+      <h1>{{ title }}</h1>
+
+      <div class="results-section">
+        {% if pdf_url %}
+        <div class="pdf-container">
+          <h2>Generated Report</h2>
+          <div class="pdf-viewer">
+            <embed src="../{{ pdf_url }}" type="application/pdf" width="100%" height="800px" style="border: 1px solid #ccc; border-radius: 4px" />
+            <p>If the PDF is not displaying, you can <a href="../{{ pdf_url }}" target="_blank">download it here</a>.</p>
+          </div>
+        </div>
+        {% else %}
+        <p>No report generated yet.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    {% comment %}
+    <footer>
+      <p>&copy; 2024 Plaguards. All rights reserved.</p>
+    </footer>
+    {% endcomment %}
+  </body>
+</html> -->
+
+
+{% load static %}
+{% load bootstrap5 %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Plaguards - Results</title>
+    <link rel="icon" href="{% static 'assets/1.0.png' %}" type="image/png" />
+    {% bootstrap_css %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles4.css' %}" />
+    <link rel="stylesheet" href="https://unpkg.com/scrollreveal" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="{% url 'index' %}">
+          <img src="{% static 'assets/1.0.png' %}" alt="logo" />
+          <span>Plaguards</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'tools' %}">Tools</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'tutorial' %}">Tutorial</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About us</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container my-5">
+      <h1 class="text-center mb-4">{{ title }}</h1>
+
+      <div class="results-section bg-light p-4 rounded shadow-sm">
+        {% if pdf_url %}
+        <div class="pdf-container text-center mb-4">
+          <h2 class="h3">Generated Report</h2>
+          <div class="pdf-viewer mt-3">
+            <embed src="../{{ pdf_url }}" type="application/pdf" width="100%" height="800px" class="rounded border" />
+            <p>If the PDF is not displaying, you can <a href="../{{ pdf_url }}" target="_blank">download it here</a>.</p>
+          </div>
+        </div>
+        {% else %}
+        <p class="no-results">No report generated yet.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <footer class="bg-dark text-white text-center py-3">
+      <p>Copyright &copy; 2024 Plaguards. All rights reserved.</p>
+    </footer>
+
+    <script src="{% static 'js/script.js' %}"></script>
+    <script src="https://unpkg.com/scrollreveal"></script>
+    {% bootstrap_javascript %}
+  </body>
+</html>
+
