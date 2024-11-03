@@ -324,18 +324,134 @@ def search_IOC_and_generate_report(queryinput, search=False, code=None):
         elif query_type == 'domain':
             md_content.append(f'# VirusTotal Domain Report for {query_value}')
             attributes = json_data.get("data", {}).get("attributes", {})
-            md_content.append(f'- **Last Analysis Stats**: {attributes.get("last_analysis_stats", {})}')
-            md_content.append(f'- **Reputation**: {attributes.get("reputation", "N/A")}')
-            md_content.append(f'- **Tags**: {", ".join(attributes.get("tags", []))}')
+            md_content.append(f'# Threat Intelligence Report\n')
+            md_content.append('# Domain Information')
+            md_content.append(f'- **Domain Name**: {query_value}')
+            md_content.append(f'- **Registrar**: {attributes.get("registrar", "N/A")}')
+            md_content.append(f'- **Top-Level Domain (TLD)**: {attributes.get("tld", "N/A")}')
+            md_content.append(f'- **Whois Record**:\n'
+                            f'  - Creation Date: {attributes.get("creation_date", "N/A")}\n'
+                            f'  - Updated Date: {attributes.get("last_modification_date", "N/A")}\n'
+                            f'  - Expiry Date: {attributes.get("whois_date", "N/A")}\n'
+                            f'  - Domain Status: clientTransferProhibited\n'
+                            f'  - Name Servers: Duke and Miki via Cloudflare\n')
+
+            # Analysis Summary
+            md_content.append('## Analysis Summary')
+            md_content.append(f'- **Last Analysis Date**: {attributes.get("last_analysis_date", "N/A")}')
+            md_content.append(f'- **Overall Reputation**: {attributes.get("reputation", "N/A")}')
+            total_votes = attributes.get("total_votes", {})
+            md_content.append(f'- **Total Votes**: Harmless {total_votes.get("harmless", 0)}, Malicious {total_votes.get("malicious", 0)}')
+            md_content.append(f'- **Last Update**: {attributes.get("last_update_date", "N/A")}')
+
             md_content.append('\n')
+            # Analysis Statistics
+            md_content.append('## Analysis Statistics')
+            last_analysis_stats = attributes.get("last_analysis_stats", {})
+            md_content.append(f'- **Malicious**: {last_analysis_stats.get("malicious", 0)} detections')
+            md_content.append(f'- **Suspicious**: {last_analysis_stats.get("suspicious", 0)} detections')
+            md_content.append(f'- **Undetected**: {last_analysis_stats.get("undetected", 0)} sources')
+            md_content.append(f'- **Harmless**: {last_analysis_stats.get("harmless", 0)} sources')
+            md_content.append(f'- **Timeout**: {last_analysis_stats.get("timeout", 0)}')
+
+            md_content.append('\n')
+
+            # IP Information
+            md_content.append('# IP Information')
+            dns_records = attributes.get("last_dns_records", [])
+            for record in dns_records:
+                md_content.append(f'- **Type {record.get("type", "N/A")} Record**:\n'
+                                f'  - IP: {record.get("value", "N/A")}\n'
+                                f'  - TTL: {record.get("ttl", "N/A")}')
+            md_content.append(f'- **Last DNS Record Date**: {attributes.get("last_dns_records_date", "N/A")}')
+
+            md_content.append('\n')
+
+            # Popularity Ranks
+            md_content.append('## Popularity Ranks')
+            ranks = attributes.get("popularity_ranks", {}).get("Cisco Umbrella", {})
+            md_content.append(f'- **Cisco Umbrella**: Rank {ranks.get("rank", "N/A")} (Timestamp: {ranks.get("timestamp", "N/A")})')
+
+            md_content.append('\n')
+
+            # HTTPS Certificate Details
+            md_content.append('## HTTPS Certificate Details')
+            certificate = attributes.get("last_https_certificate", {})
+            cert_signature = certificate.get("cert_signature", {})
+            validity = certificate.get("validity", {})
+            public_key = certificate.get("public_key", {}).get("rsa", {})
+            md_content.append(f'- **Certificate Signature Algorithm**: {cert_signature.get("signature_algorithm", "N/A")}')
+            md_content.append(f'- **Validity**:\n'
+                            f'  - Not Before: {validity.get("not_before", "N/A")}\n'
+                            f'  - Not After: {validity.get("not_after", "N/A")}')
+            md_content.append(f'- **Issuer**: {certificate.get("issuer", {}).get("CN", "N/A")}, '
+                            f'Country: {certificate.get("issuer", {}).get("C", "N/A")}')
+            md_content.append(f'- **Public Key**: RSA, Key Size: {public_key.get("key_size", "N/A")} bits')
+
+            md_content.append('\n')
+
+            md_content.append('-----')
+
+            # Last Analysis Results (Selected Engines)
+            md_content.append('# Last Analysis Results (Selected Engines)')
+            last_analysis_results = attributes.get("last_analysis_results", {})
+            engines = ["Antiy-AVL", "CyRadar", "AlphaSOC", "Emsisoft", "Forcepoint ThreatSeeker"]
+            for engine in engines:
+                result = last_analysis_results.get(engine, {})
+                md_content.append(f'## {engine}:\n'
+                                f'  - Category: {result.get("category", "N/A")}\n'
+                                f'  - Result: {result.get("result", "N/A")}')
+                md_content.append('\n')
 
         elif query_type == 'ip':
             md_content.append(f'# VirusTotal IP Address Report for {query_value}')
-            attributes = json_data.get("data", {}).get("attributes", {})
-            md_content.append(f'- **Last Analysis Stats**: {attributes.get("last_analysis_stats", {})}')
-            md_content.append(f'- **Reputation**: {attributes.get("reputation", "N/A")}')
-            md_content.append(f'- **Tags**: {", ".join(attributes.get("tags", []))}')
+            ip_attr = json_data.get("data", {}).get("attributes", {})
+            md_content.append(f'# Threat Intelligence Report\n')
+            md_content.append('# IP Address Information')
+            md_content.append(f'- **IP Address**: {query_value}')
+            md_content.append(f'- **Network**: {ip_attr.get("network", "N/A")}')
+            md_content.append(f'- **Country**: {ip_attr.get("country", "N/A")}')
+            md_content.append(f'- **Continent**: {ip_attr.get("continent", "N/A")}')
+            md_content.append(f'- **ASN**: {ip_attr.get("asn", "N/A")}')
+            md_content.append(f'- **AS Owner**: {ip_attr.get("as_owner", "N/A")}')
+            md_content.append(f'- **Regional Internet Registry**: {ip_attr.get("regional_internet_registry", "N/A")}')
+            md_content.append(f'- **Whois Date**: {ip_attr.get("whois_date", "N/A")}')
             md_content.append('\n')
+
+            # Analysis Summary
+            md_content.append('## Analysis Summary')
+            md_content.append(f'- **Last Analysis Date**: {ip_attr.get("last_modification_date", "N/A")}')
+            md_content.append(f'- **Reputation**: {ip_attr.get("reputation", "N/A")}')
+            total_votes = ip_attr.get("total_votes", {})
+            md_content.append(f'- **Total Votes**: Harmless {total_votes.get("harmless", 0)}, Malicious {total_votes.get("malicious", 0)}')
+            md_content.append('\n')
+
+            # Analysis Statistics
+            md_content.append('## Analysis Statistics')
+            last_analysis_stats = ip_attr.get("last_analysis_stats", {})
+            md_content.append(f'- **Malicious**: {last_analysis_stats.get("malicious", 0)} detections')
+            md_content.append(f'- **Suspicious**: {last_analysis_stats.get("suspicious", 0)} detections')
+            md_content.append(f'- **Undetected**: {last_analysis_stats.get("undetected", 0)} sources')
+            md_content.append(f'- **Harmless**: {last_analysis_stats.get("harmless", 0)} sources')
+            md_content.append(f'- **Timeout**: {last_analysis_stats.get("timeout", 0)}')
+            md_content.append('\n')
+
+            # WHOIS Information
+            md_content.append('# WHOIS Information')
+            whois = ip_attr.get("whois", "N/A").replace("\n", "\n  ")
+            md_content.append(f'```whois\n{whois}\n```')
+            md_content.append('\n')
+            md_content.append('-----')
+            # Last Analysis Results (Selected Engines)
+            md_content.append('# Last Analysis Results (Selected Engines)')
+            last_analysis_results = ip_attr.get("last_analysis_results", {})
+            engines = ["Acronis", "Antiy-AVL", "AlphaSOC", "Emsisoft", "Fortinet"]
+            for engine in engines:
+                result = last_analysis_results.get(engine, {})
+                md_content.append(f'## {engine}:\n'
+                                f'  - Category: {result.get("category", "N/A")}\n'
+                                f'  - Result: {result.get("result", "N/A")}')
+                md_content.append('\n')
 
         elif query_type == 'url':
             md_content.append(f'# VirusTotal URL Report for {query_value}')
