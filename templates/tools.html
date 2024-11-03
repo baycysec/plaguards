@@ -229,7 +229,7 @@
       <form id="search-form" method="POST" action="{% url 'search' %}" class="input-group mb-3">
         {% csrf_token %}
         <span class="input-group-text"><i class="ri-search-line"></i></span>
-        <input type="text" class="form-control" name="search-bar" placeholder="Search (e.g., hash, IP, domain, etc.)">
+        <input type="text" class="form-control" name="search-bar" placeholder="Search (ex: hash | ip | domain | url | signature <value>)">
         <button type="submit" class="btn btn-primary"><i class="ri-arrow-right-line"></i></button>
       </form>
       <br> <br>
