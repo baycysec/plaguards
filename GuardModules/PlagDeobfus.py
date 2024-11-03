@@ -530,3 +530,4 @@ def deobfuscate(code):
         code = f"Something's wrong with the code or input! Error: {e}"
         return code,[],[]
     return code,httplist,iplist
+    
