@@ -334,7 +334,7 @@ def fixingcodequote(code):
     for i in checkcode:
         match1 = re.search(r'(?:\$\w+\s*=\s*)*(.*?)(?=\.replace\([^,]+,[^)]+\))', i, flags=re.IGNORECASE)
         match2 = re.search(r'(?:\$\w+\s*=\s*)*(.*?)(?=\.split\([^)]+\))', i, flags=re.IGNORECASE)
-        match3 = re.search(r'(\S+)\.join\(\[(.*?)\]\)', i, flags=re.IGNORECASE)
+        match3 = re.search(r'([\'\"]\s*[\'\"]|\S+)\.join\(\[(.*?)\]\)', i, flags=re.IGNORECASE)
         if match1 or match2 or match3:
             if match1:
                 val = match1.group(1)
@@ -495,7 +495,6 @@ def deobfuscate(code):
         code = remove_space_from_char(code)
         code = change_bxor_and_to_chr(code)
         code = convertercode(code)
-        print(code)
         codetemp = []
         checkcode = code.split('\n')
         for i in range(len(checkcode)):
