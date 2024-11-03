@@ -27,9 +27,7 @@ def change_bxor_and_to_chr(code):
 def convertercode(code):    
     checkcode = code.split('\n')
     newcoderes = []
-    for i in checkcode:
-        i = re.sub(r'\)\s*\(', ');(', i)
-        
+    for i in checkcode:        
         while True:
             i, count1 = re.subn(r"\s*-replace\s*\(?('[^']+'|\"[^\"]+\"|[\w\s]+)\s*,\s*('[^']+'|\"[^\"]+\"|[\S]+)\)?", r".replace(\1,\2)", i, flags=re.IGNORECASE)
             i,count2 = re.subn(r"\s*-split\s+(['\"][^'\"]+['\"]|[\S]+)",  lambda m: f".split({m.group(1)})", i, flags=re.IGNORECASE)
@@ -503,11 +501,11 @@ def deobfuscate(code):
         code = remove_string(code)
         code = remove_space_from_char(code)
         code = change_bxor_and_to_chr(code)
-        code = convertercode(code)
         codetemp = []
         checkcode = code.split('\n')
         for i in range(len(checkcode)):
             checkcode[i] += "\n"
+            checkcode[i] = re.sub(r'\)\s*\(', ');(', checkcode[i])
             if ';' in checkcode[i]:
                 parts = [part.lstrip(' ') for part in checkcode[i].split(';')]
                 if parts[-1] == '\n':
