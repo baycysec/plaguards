@@ -458,7 +458,6 @@ def replacecode(code):
 def joincode(code):
     def join_func(match):
         separator, array = match.groups()
-        print(separator,array)
         separator = separator.replace("'","").replace('"',"")
         return separator.join(ast.literal_eval(array))
 
