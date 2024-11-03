@@ -1,4 +1,4 @@
-{% load static %}
+<!-- {% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -91,5 +91,101 @@
     </div>
 
     <footer>Copyright © 2024 Plaguards. All rights reserved.</footer>
+  </body>
+</html> -->
+
+
+{% load static %}
+{% load bootstrap5 %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Plaguards</title>
+    <link rel="icon" href="{% static 'assets/1.0.png' %}" type="image/png" />
+    {% bootstrap_css %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles3.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="{% url 'index' %}">
+          <img src="{% static 'assets/1.0.png' %}" alt="logo" />
+          <span>Plaguards</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'tools' %}">Tools</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'tutorial' %}">Tutorial</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About us</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="content__container pt-5 mt-5">
+      <h1 class="text-center">About us</h1>
+      
+      <div class="explanation text-center">
+        <p class="text-white">
+          Plaguards is a cutting-edge security tool built to streamline and automate the deobfuscation of obfuscated PowerShell scripts, empowering security teams to rapidly identify Indicators of Compromise (IOCs) and determine whether they represent valid threats (VT) or false positives (FP). Each analysis is documented in a comprehensive PDF report, designed to provide deep insights and actionable intelligence.
+        </p>
+      </div>      
+      <br> <br>
+      <h2 class="text-center mt-4">Meet the team</h2>
+      <div class="container text-center mt-4">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="team__box">
+              <img src="{% static 'assets/2.0.0.png' %}" alt="" class="img-fluid rounded-circle"/>
+              <h5>Nicolas Saputra Gunawan</h5>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="team__box">
+              <img src="{% static 'assets/8.0.0.png' %}" alt="" class="img-fluid rounded-circle"/>
+              <h5>Satya Kusuma</h5>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="team__box">
+              <img src="{% static 'assets/6.0.png' %}" alt="" class="img-fluid rounded-circle"/>
+              <h5>Bertrand Redondo Mulyono</h5>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-md-4 offset-md-4">
+            <div class="team__box mascot">
+              <img src="{% static 'assets/4.0.0.png' %}" alt="" class="img-fluid rounded-circle"/>
+              <h5>Pocolo</h5>
+              <p>Plaguards mascot</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+
+      <div class="socials text-center mt-4">
+        <a href="#" class="text-light mx-2"><i class="ri-github-fill"></i></a>
+        <a href="#" class="text-light mx-2"><i class="ri-discord-fill"></i></a>
+        <a href="#" class="text-light mx-2"><i class="ri-instagram-fill"></i></a>
+      </div>
+    </div>
+
+    <footer class="footer bg-dark text-center py-3">
+      <span class="text-light">Copyright © 2024 Plaguards. All rights reserved.</span>
+    </footer>
+
+    <script src="{% static 'js/script.js' %}"></script>
+    <script src="https://unpkg.com/scrollreveal"></script>
+    {% bootstrap_javascript %}
   </body>
 </html>
