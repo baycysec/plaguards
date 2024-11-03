@@ -59,6 +59,10 @@ def decode_chr(expr):
     numbers = list(map(int, re.findall(r'-?\d+', expr)))
     symbol = re.compile(r'\d+\s*(\^|\+|\-|\/|\*{1,2}|\%|\^)', re.IGNORECASE).findall(expr)
 
+    for i in range(len(numbers)):
+        if i != 0 and numbers[i] < 0:
+            numbers[i] = abs(numbers[i])
+
     numlist = []
     oprlist = []
 
