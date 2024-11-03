@@ -59,14 +59,7 @@ git clone https://github.com/Bread-Yolk/plaguards.git
 cd plaguards-main
 ```
 
-2. Run the setup script.
-
-```txt
-chmod 777 plaguards.sh
-sudo ./plaguards.sh
-```
-
-3. Configure your Virus Total API key. 
+2. Configure your Virus Total API key. 
 
 > For instructions on obtaining your API key, Click [here](https://github.com/Bread-Yolk/plaguards/wiki/Configure-your-Virus-Total-API-Key).
 
@@ -75,6 +68,12 @@ sudo ./plaguards.sh
 ENV VT_API_KEY="your_api_key_goes_here"
 ```
  
+3. Run the setup script.
+
+```txt
+chmod 777 plaguards.sh
+sudo ./plaguards.sh
+```
 
 4. By default, Plaguards dashboard will listen at port **8000**.
 
