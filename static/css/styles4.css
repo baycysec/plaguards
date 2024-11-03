@@ -1,0 +1,35 @@
+/* content__container styling moved to Bootstrap's container class */
+.results-section {
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: var(--secondary-color) !important;
+  }
+  
+  .results-section * {
+    color: var(--secondary-color) !important;
+  }
+
+  .h2{
+    font-weight: bold;
+  }
+  
+  .pdf-container {
+    margin-top: 1rem;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .no-results {
+    text-align: center;
+    font-style: italic;
+  }
+  
+  footer {
+    text-align: center;
+    padding: 1rem;
+    background-color: #343a40; /* Dark footer with Bootstrap's dark theme */
+  }
+  
+  
