@@ -19,10 +19,11 @@ def remove_space_from_char(code):
 def change_bxor_and_to_chr(code):
     def replace_bxor_and_to_chr(match):
         res = match.group(1)
-        changebxor = res.replace('-bxor', '^')
+        changebxor = res.replace('-bxor', '^').replace("(","").replace(")","")
         return f'Chr({changebxor})'
     
-    return re.compile(r'\[char\]\(([\d\-+\*/\s]+(?:\s?-bxor\s?[\d\-+\*/\s]+)*)\)', re.IGNORECASE).sub(replace_bxor_and_to_chr, code)
+    return re.compile(r'\[char\]\(([\d\-+\*/\s()]+(?:\s?-bxor\s?[\d\-+\*/\s()]+)*)\)', re.IGNORECASE).sub(replace_bxor_and_to_chr, code)
+                      
  
 def convertercode(code):    
     checkcode = code.split('\n')
@@ -56,6 +57,7 @@ def removequote(code):
 
 
 def decode_chr(expr):
+    expr = re.sub(r'-\s*-', '+', expr)
     numbers = list(map(int, re.findall(r'-?\d+', expr)))
     symbol = re.compile(r'\d+\s*(\^|\+|\-|\/|\*{1,2}|\%|\^)', re.IGNORECASE).findall(expr)
 
