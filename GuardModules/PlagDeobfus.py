@@ -43,7 +43,7 @@ def convertercode(code):
 
 def removequote(code):
     def quoteremover(match):
-        if ".replace(" in match.group(0).lower() or ".split(" in match.group(0).lower() or "-split" in match.group(0) or "-replace" in match.group(0) or ".join(" in match.group(0) or "-join" in match.group(0) or match.group(0) == '" "' or match.group(0) == "' '":
+        if ".replace(" in match.group(0).lower() or ".split(" in match.group(0).lower() or "-split" in match.group(0) or "-replace" in match.group(0) or match.group(0) == '" "' or match.group(0) == "' '":
             return match.group(0)
         else:
             return match.group(0).strip("'\"")
@@ -51,7 +51,7 @@ def removequote(code):
     checkcode = code.split('\n')
     newcoderes = []
     for i in checkcode:
-        i = re.sub(r"(\(?'[^']*'\)?\.replace\([^)]+\))|(\(?\"[^\"]*\"\)?\.replace\([^)]+\))|(\'[^\']*\'\.split\([^)]+\))|(\"[^\"]*\"\.split\([^)]+\))|(\s*-replace\s*\(?('[^']+'|\"[^\"]+\")\s*,\s*('[^']+'|\"[^\"]+\")\)?)|((\(?(['\"].+['\"])+)\)?\s+-split\s+('[^']+'|\"[^\"]+\"))|((\(?(['\"].+['\"])+)\)?\s+-join\s+('[^']+'|\"[^\"]+\"))|((\(?(['\"].+['\"])+)\)?\.join\(\[.*?\]\))|('[^']*'|\"[^\"]*\")", quoteremover, i, flags=re.IGNORECASE)
+        i = re.sub(r"(\(?'[^']*'\)?\.replace\([^)]+\))|(\(?\"[^\"]*\"\)?\.replace\([^)]+\))|(\'[^\']*\'\.split\([^)]+\))|(\"[^\"]*\"\.split\([^)]+\))|(\s*-replace\s*\(?('[^']+'|\"[^\"]+\")\s*,\s*('[^']+'|\"[^\"]+\")\)?)|((\(?(['\"].+['\"])+)\)?\s+-split\s+('[^']+'|\"[^\"]+\"))|('[^']*'|\"[^\"]*\")", quoteremover, i, flags=re.IGNORECASE)
         newcoderes.append(i)
     newcode = ''.join([i + '\n' for i in newcoderes])
     return newcode.strip()
@@ -458,6 +458,7 @@ def replacecode(code):
 def joincode(code):
     def join_func(match):
         separator, array = match.groups()
+        print(separator,array)
         separator = separator.replace("'","").replace('"',"")
         return separator.join(ast.literal_eval(array))
 
