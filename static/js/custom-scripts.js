@@ -5,15 +5,25 @@ function showNotification(message, type = 'success') {
 }
 
 $(document).ready(() => {
-  // Ajax for Search Form
+  function showLoadingSpinner() {
+    $('#loading-overlay').css('display', 'flex');
+  }
+
+  function hideLoadingSpinner() {
+    $('#loading-overlay').css('display', 'none');
+  }
+
   $('#search-form').on('submit', function(e) {
     e.preventDefault();
+    showLoadingSpinner();
+
     $.ajax({
       url: $(this).attr('action'),
       type: 'POST',
       data: $(this).serialize(),
       dataType: 'json',
       success(response) {
+        hideLoadingSpinner();
         if (response.status === 'success') {
           showNotification(response.message);
           window.location.href = `/redirect_result?pdf_url=${encodeURIComponent(response.pdf_url)}`;
@@ -22,14 +32,15 @@ $(document).ready(() => {
         }
       },
       error() {
+        hideLoadingSpinner();
         showNotification('An error occurred. Please try again.', 'error');
       }
     });
   });
 
-  // Ajax for File Upload Form
   $('#file-upload-form').on('submit', function(e) {
     e.preventDefault();
+    showLoadingSpinner();
     const formData = new FormData(this);
 
     $.ajax({
@@ -40,6 +51,7 @@ $(document).ready(() => {
       contentType: false,
       dataType: 'json',
       success(response) {
+        hideLoadingSpinner();
         if (response.status === 'success') {
           showNotification(response.message);
           window.location.href = `/redirect_result?pdf_url=${encodeURIComponent(response.pdf_url)}`;
@@ -48,13 +60,9 @@ $(document).ready(() => {
         }
       },
       error() {
+        hideLoadingSpinner();
         showNotification('An error occurred. Please try again.', 'error');
       }
     });
   });
 });
-
-
-document.getElementById("file-upload-form").onsubmit = function() {
-  document.getElementById("loading-overlay").style.display = "flex";
-};
