@@ -43,14 +43,6 @@ def FindQuery(query_type, query_value):
         }
         response = requests.get(url, headers=headers)
 
-    elif query_type == 'url':
-        url_id = base64.urlsafe_b64encode(query_value.encode()).decode().strip("=")
-        url = f'https://www.virustotal.com/api/v3/urls/{url_id}'
-        headers = {
-            'x-apikey': VT_API_KEY
-        }
-        response = requests.get(url, headers=headers)
-
     else:
         raise ValueError("Unsupported query type. Use 'hash', 'signature', 'domain', or 'ip'.")
 
@@ -139,13 +131,13 @@ def search_IOC_and_generate_report(queryinput, search=False, code=None):
         args = queryinput[i].split()
 
         if len(args) != 2:
-            return "Error: Please enter exactly 2 arguments (e.g., [hash / signature / domain / url / ip] [value])."
+            return "Error: Please enter exactly 2 arguments (e.g., [hash / signature / domain / ip] [value])."
 
         query_type = args[0]
         query_value = args[1]
 
-        if query_type not in ['hash', 'signature', 'domain', 'ip', 'url']:
-            return "Error: Invalid query type. Use 'hash' or 'signature'."
+        if query_type not in ['hash', 'signature', 'domain', 'ip']:
+            return "Error: Invalid query type. Use 'hash', 'signature', 'domain', or 'ip'."
 
         json_data = FindQuery(query_type, query_value)
 
