@@ -455,16 +455,7 @@ def search_IOC_and_generate_report(queryinput, search=False, code=None):
                                 f'  - Category: {result.get("category", "N/A")}\n'
                                 f'  - Result: {result.get("result", "N/A")}')
                 md_content.append('\n')
-
-        elif query_type == 'url':
-            md_content.append(f'# VirusTotal URL Report for {query_value}')
-            attributes = json_data.get("data", {}).get("attributes", {})
-            md_content.append(f'- **Last Analysis Stats**: {attributes.get("last_analysis_stats", {})}')
-            md_content.append(f'- **Reputation**: {attributes.get("reputation", "N/A")}')
-            md_content.append(f'- **Categories**: {", ".join(attributes.get("categories", {}).values())}')
-            md_content.append(f'- **Last Final URL**: {attributes.get("last_final_url", "N/A")}')
-            md_content.append(f'- **Title**: {attributes.get("title", "N/A")}')
-            md_content.append('\n')
+                
     
     randomval = generate_random_val(150)
     md_file_path = os.path.join(f'results/checker_{randomval}.md')
