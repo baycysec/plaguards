@@ -442,6 +442,9 @@ def search_IOC_and_generate_report(queryinput, search=False, code=None):
             md_content.append(f'```whois\n{whois}\n```')
             md_content.append('\n')
             md_content.append('-----')
+
+            md_content.append('\n')
+
             # Last Analysis Results (Selected Engines)
             md_content.append('# Last Analysis Results (Selected Engines)')
             last_analysis_results = ip_attr.get("last_analysis_results", {})
