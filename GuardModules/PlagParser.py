@@ -471,3 +471,5 @@ def search_IOC_and_generate_report(queryinput, search=False, code=None):
     path = os.path.join('media')
     md_to_pdf(md_file_path, path, randomval)
     output_pdf_path = os.path.join(f'media/checker_result_{randomval}.pdf')
+    
+    return output_pdf_path
