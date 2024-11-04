@@ -19,7 +19,7 @@
   }
 
   .image__container img.image__border {
-    border: 4px solid white !important;
+    border: 2px solid white !important;
     border-radius: 8px !important;
     padding: 4px !important;
     box-sizing: border-box !important;
