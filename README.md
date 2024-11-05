@@ -83,11 +83,11 @@ sudo ./plaguards.sh
 
 |IOC Checker|PDF Report|
 |:---------:|:-----------------------:|
-|<img src="static/assets/ioc1.gif" width="500"> | <img src="static/assets/ioc2.gif" width="300"> |
+|<img src="static/assets/ioc1.gif" width="500"> | <img src="static/assets/ioc2.gif" width="200"> |
 
 |Powershell Deobfuscation|PDF Report|
 |:---------:|:-----------------------:|
-|<img src="static/assets/deobfus1.gif" width="500"> | <img src="static/assets/deobfus2.gif" width="300"> |
+|<img src="static/assets/deobfus1.gif" width="500"> | <img src="static/assets/deobfus2.gif" width="200"> |
 
 
 ## Future Development
