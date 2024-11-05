@@ -93,7 +93,7 @@ sudo ./plaguards.sh
 ## Future Development
 
 ```
-Implement Shannon entropy for detecting obfuscated PowerShell scripts.
+Implement Shannon entropy to optimize the detection of obfuscated PowerShell scripts.
 ```
 
 ## Authors
