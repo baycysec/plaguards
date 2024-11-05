@@ -90,6 +90,11 @@ sudo ./plaguards.sh
 |<img src="static/assets/deobfus1.gif" width="550"> | <img src="static/assets/deobfus2.gif" width="200"> |
 
 
+## Future Development
+
+```
+Implement Shannon entropy for detecting obfuscated PowerShell scripts.
+```
 
 ## Authors
 - [jon-brandy](https://github.com/jon-brandy)
