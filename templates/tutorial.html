@@ -40,16 +40,54 @@
       <h1 class="text-center mb-4">Tutorial</h1>
       
       <div class="content__container">
-        <p>1. Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum ratione sit placeat minus sunt voluptate, delectus excepturi dolorem quo deserunt, alias pariatur. Nulla, quod illum? Non voluptatem distinctio quos. Culpa.</p>
+        <p>1. Open tools menu or "Try Plaguards" button in home page.</p>
         <div class="image__container mb-4">
-          <img src="{% static 'assets/testing.png' %}" alt="Step 1" class="img-fluid image__border" />
+          <img src="{% static 'assets/toolsmenu.jpg' %}" alt="Step 1" class="img-fluid image__border" />
         </div>
-        <p>2. Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum ratione sit placeat minus sunt voluptate, delectus excepturi dolorem quo deserunt, alias pariatur. Nulla, quod illum? Non voluptatem distinctio quos. Culpa.</p>
+        <p>2a. For IOC Checker Feature, on the search bar, input parameters that are server needed (ex: hash &lt;value&gt;, signature &lt;value&gt;, domain &lt;value&gt;, ip &lt;value&gt;).</p>
+        <p>Note: Please add space between the initial parameter and the value.</p>
         <div class="image__container mb-4">
-          <img src="{% static 'assets/testing2.png' %}" alt="Step 2" class="img-fluid image__border" />
+          <img src="{% static 'assets/searchbarmenu.jpg' %}" alt="Step 2a" class="img-fluid image__border" />
         </div>
-        <p>3. Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum ratione sit placeat minus sunt voluptate, delectus excepturi dolorem quo deserunt, alias pariatur. Nulla, quod illum? Non voluptatem distinctio quos. Culpa.</p>
-        <p>4. Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum ratione sit placeat minus sunt voluptate, delectus excepturi dolorem quo deserunt, alias pariatur. Nulla, quod illum? Non voluptatem distinctio quos. Culpa.</p>
+        <p>2b. For Deobfuscation Feature, on the upload section, upload the file code that you want to analyze in .ps1 or .txt format.</p>
+        <div class="image__container mb-4">
+          <img src="{% static 'assets/fileuploadmenu.jpg' %}" alt="Step 2b" class="img-fluid image__border" />
+        </div>
+        <p>3. Click the search (for IOC Checker) or file upload menu (for Deobfusaction feature) and wait for the results.</p>
+        <div class="image__container mb-4">
+          <img src="{% static 'assets/waitresults.jpg' %}" alt="Step 3" class="img-fluid image__border" />
+        </div>
+        <p>4. Open the PDF Report</p>
+        <div class="image__container mb-4">
+          <img src="{% static 'assets/openpdf.jpg' %}" alt="Step 4" class="img-fluid image__border" />
+        </div>
+        <p>5a. For IOC Checker Feature, You will see your IoC data if exist.</p>
+        <div class="image__container mb-4">
+          <img src="{% static 'assets/iocreport.jpg' %}" alt="Step 5a" class="img-fluid image__border" />
+        </div>
+        <p>5b. For Deobfuscation Feature, you will see your code deobfuscation result with domain and IP IoC data if exist.</p>
+        <div class="image__container mb-4">
+          <img src="{% static 'assets/deobfusreport.jpg' %}" alt="Step 5b" class="img-fluid image__border" />
+        </div>
+        
+        <h4>If you still do not understand the instructions above, please watch the video below.</h4>
+
+        <br>
+
+        <h5>IOC Checker Feature Demo Video:</h5>
+        <div class="image__container mb-4">
+          <video controls class="img-fluid image__border"> 
+          <source src="{% static 'assets/IOCCheckervideo.mp4' %}" alt="IOC Checker Demo Video" type="video/mp4"/>
+        </video>
+        </div>
+
+        <h5>Deobfuscation Feature Demo Video:</h5>
+        <div class="image__container mb-4">
+          <video controls class="img-fluid image__border">
+          <source src="{% static 'assets/Deobfuscationvideo.mp4' %}" alt="Deobfuscation Feature Demo Video" type="video/mp4"/>
+        </video>
+        </div>
+
       </div>
     </div>
 
