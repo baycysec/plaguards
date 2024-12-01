@@ -1,16 +1,15 @@
 from django.shortcuts import render
-from django.conf import settings
 from django.http import JsonResponse
 from GuardModules.PlagFilter import *
 from GuardModules.PlagDeobfus import deobfuscate
-from GuardModules.PlagParser import search_IOC_and_generate_report
+from GuardModules.PlagParser import search_IOC_and_generate_report, checktimefile
 import os
 
-# Create your views here.
 def index(request): 
     context = {
         'title': 'home',
     }
+    checktimefile()
     return render(request, 'index.html', context)
 
 def tools(request): 
@@ -23,18 +22,21 @@ def tools(request):
         'title': 'Tools',
         'pdf_url': pdf_url,
     }
+    checktimefile()
     return render(request, 'tools.html', context)
 
 def about(request): 
     context = {
         'title': 'about',
     }
+    checktimefile()
     return render(request, 'about.html', context)
 
 def tutorial(request): 
     context = {
         'title': 'tutorial',
     }
+    checktimefile()
     return render(request, 'tutorial.html', context)
 
 def results(request):
@@ -44,10 +46,12 @@ def results(request):
         'title': 'Results',
         'pdf_url': pdf_url,
     }
+    checktimefile()
     return render(request, 'results.html', context) 
 
 
 def search(request):
+    checktimefile()
     if request.method == 'POST':
         search_query = request.POST.get('search-bar', '').strip()
         queryinput = []
@@ -63,18 +67,16 @@ def search(request):
                 'message': output_pdf_path
             })
         else:
-            # Store the PDF path in session
-            # request.session['pdf_url'] = '/results/checker_result.pdf'
             return JsonResponse({
                 'status': 'success',
                 'message': "Report generated successfully.",
                 'pdf_url': output_pdf_path
             })
     return render(request, 'results.html')
-    # return render(request, 'index.html')
 
 
 def file_upload(request):
+    checktimefile()
     if not request.FILES:
         return JsonResponse({
             'status': 'error',
@@ -121,7 +123,4 @@ def file_upload(request):
 
 def redirect_result(request):
     pdf_url = request.GET.get('pdf_url')
-    # if pdf_url:
     return render(request, 'results.html', {'pdf_url': pdf_url})
-    # else:
-    #     return HttpResponseBadRequest("PDF URL is missing")
