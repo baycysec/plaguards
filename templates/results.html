@@ -41,10 +41,10 @@
       <div class="results-section bg-light p-4 rounded shadow-sm">
         {% if pdf_url %}
         <div class="pdf-container text-center mb-4">
-          <h2 class="h3">Generated Report</h2>
+          <h2 class="h3">Generated Report (Available for viewing only 5 Minutes on the server)</h2>
           <div class="pdf-viewer mt-3">
             <embed src="../{{ pdf_url }}" type="application/pdf" width="100%" height="800px" class="rounded border" />
-            <p>If the PDF is not displaying, you can <a href="../{{ pdf_url }}" target="_blank">download it here</a>.</p>
+            <p>You can <a href="../{{ pdf_url }}" target="_blank">view it here</a>(We suggest you to download it).</p>
           </div>
         </div>
         {% else %}
