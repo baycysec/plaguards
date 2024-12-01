@@ -1,10 +1,23 @@
 import requests
 import pypandoc
 import os
-import base64
 import string
 import random
 from datetime import datetime
+import time
+
+
+def checktimefile():
+    for filename in os.listdir('media'):
+        timenow = time.time()
+
+        file_path = os.path.join('media', filename)
+        
+        if os.path.isfile(file_path):
+            file_creation_time = os.path.getctime(file_path)
+            
+            if timenow - file_creation_time > 300:
+                os.remove(file_path) 
 
 def generate_random_val(length):
     characters = string.ascii_letters + string.digits
