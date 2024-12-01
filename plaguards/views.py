@@ -2,14 +2,13 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from GuardModules.PlagFilter import *
 from GuardModules.PlagDeobfus import deobfuscate
-from GuardModules.PlagParser import search_IOC_and_generate_report, checktimefile
+from GuardModules.PlagParser import search_IOC_and_generate_report
 import os
 
 def index(request): 
     context = {
         'title': 'home',
     }
-    checktimefile()
     return render(request, 'index.html', context)
 
 def tools(request): 
@@ -22,21 +21,18 @@ def tools(request):
         'title': 'Tools',
         'pdf_url': pdf_url,
     }
-    checktimefile()
     return render(request, 'tools.html', context)
 
 def about(request): 
     context = {
         'title': 'about',
     }
-    checktimefile()
     return render(request, 'about.html', context)
 
 def tutorial(request): 
     context = {
         'title': 'tutorial',
     }
-    checktimefile()
     return render(request, 'tutorial.html', context)
 
 def results(request):
@@ -46,12 +42,10 @@ def results(request):
         'title': 'Results',
         'pdf_url': pdf_url,
     }
-    checktimefile()
     return render(request, 'results.html', context) 
 
 
 def search(request):
-    checktimefile()
     if request.method == 'POST':
         search_query = request.POST.get('search-bar', '').strip()
         queryinput = []
@@ -76,7 +70,6 @@ def search(request):
 
 
 def file_upload(request):
-    checktimefile()
     if not request.FILES:
         return JsonResponse({
             'status': 'error',
