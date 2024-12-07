@@ -557,6 +557,10 @@
     letter-spacing: 1px;
     border-bottom: 2px solid var(--accent-color);
   }
+
+  .hero h3{
+    width:35rem;
+  }
   
   .hero .social-links {
     margin-top: 25px;
@@ -582,6 +586,15 @@
   
     .hero p {
       font-size: 20px;
+    }
+    
+    .hero h3{
+      width: 15rem;
+      font-size:15px;
+    }
+    
+    .hero a{
+      font-size:15px;
     }
   }
   
