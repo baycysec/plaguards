@@ -27,7 +27,7 @@
 
 ## Security Warning
 
-**WARNING**: <p align="justify">There are known `security vulnerabilities` within certain versions of Plaguards. Before proceeding, please read through Plaguards [Security Advisories]() for a better understanding of how you might be impacted.</p>
+**WARNING**: There are known `security vulnerabilities` within certain versions of Plaguards. Before proceeding, please read through Plaguards [Security Advisories]() for a better understanding of how you might be impacted.
 
 ## Main Features
 
