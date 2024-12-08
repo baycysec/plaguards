@@ -39,8 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'plaguards',
-    # 'bootstrap5'
+    'plaguards'
 ]
 
 MIDDLEWARE = [
@@ -133,3 +132,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Allow embedding only for the same origin (safer)
+X_FRAME_OPTIONS = 'SAMEORIGIN'
