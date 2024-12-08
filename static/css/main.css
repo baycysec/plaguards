@@ -45,6 +45,16 @@
     --surface-color: #151f2b;
     --contrast-color: #ffffff;
   }
+
+  .report-background {
+    --background-color: #212429; /* Deep Navy Blue */
+    --default-color: #ffffff; /* White text for contrast */
+    --heading-color: #ffffff; /* White heading color */
+    --surface-color: #1c252e; /* Charcoal Grey for any surfaces */
+    --contrast-color: #ffffff; /* Text and contrast elements */
+}
+
+
   
   /* Smooth scroll */
   :root {
