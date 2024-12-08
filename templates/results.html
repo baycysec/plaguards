@@ -61,10 +61,7 @@
             <a href="#hero" class="active"><i class="bi bi-house navicon"></i>Home</a>
           </li>
           <li>
-            <a href="#about"><i class="bi bi-person navicon"></i> About & Motive</a>
-          </li>
-          <li>
-            <a href="#download-report"><i class="bi bi-gear-wide-connected navicon"></i> Tools</a>
+            <a href="#generated-report"><i class="bi bi-person navicon"></i>Generated Report</a>
           </li>
           <li>
             <a href="#reports"><i class="bi bi-filetype-pdf navicon"></i>Reports</a>
@@ -75,7 +72,7 @@
 
     <main class="main">
 
-      <section class="section dark-background">
+      <section id="generated-report" class="section dark-background">
 
         <div class="container text-end mt-4">
           <a href="{% url 'index' %}" class="btn btn-danger">Back to home</a>
@@ -86,9 +83,12 @@
     
           <div class="results-section dark-background p-4 rounded shadow-sm">
             {% if pdf_url %}
+                <!-- Section Title -->
+                <div class="container section-title" data-aos="fade-up">
+                    <h2 class="h3">Generated Report</h2>
+              <p>(Available for viewing only <b>5 Minutes</b> on the server)</p></div>
             <div class="pdf-container text-center mb-4">
-              <h2 class="h3">Generated Report</h2>
-              <p>(Available for viewing only <b>5 Minutes</b> on the server)</p>
+              
               <div class="pdf-viewer mt-3">
                 <!-- <embed src="../{{ pdf_url }}" type="application/pdf" width="100%" height="800px" class="rounded border" /> -->
                 <!-- <p>You can view and download it <a href="../{{ pdf_url }}" target="_blank" class="pdf-link" style="text-decoration: underline;">here</a></p>
