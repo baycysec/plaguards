@@ -1,65 +1,163 @@
 {% load static %}
-{% load bootstrap5 %}
 
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Plaguards - Results</title>
-    <link rel="icon" href="{% static 'assets/1.0.png' %}" type="image/png" />
-    {% bootstrap_css %}
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <link rel="stylesheet" href="{% static 'css/styles4.css' %}" />
-    <link rel="stylesheet" href="https://unpkg.com/scrollreveal" />
+
+    <!-- Favicons -->
+    <link href="{% static 'assets/plaguard-logo.png' %}" type="image/png" rel="icon" />
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Vendor CSS Files -->
+    <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet" />
+    <link href="{% static 'assets/vendor/aos/aos.css' %}" rel="stylesheet" />
+    <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet" />
+    
+
+    <!-- Icon -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" />
+
+    <!-- Main CSS File -->
+    <link href="{% static 'css/main.css' %}" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'css/custom-styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/loading-spinner.css' %}">
+    
+
   </head>
-  <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <div class="container">
-        <a class="navbar-brand d-flex align-items-center" href="{% url 'index' %}">
-          <img src="{% static 'assets/1.0.png' %}" alt="logo" />
-          <span>Plaguards</span>
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item"><a class="nav-link" href="{% url 'index' %}">Home</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'tools' %}">Tools</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'tutorial' %}">Tutorial</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About us</a></li>
-          </ul>
-        </div>
+
+  <body class="index-page">
+    <header id="header" class="header dark-background d-flex flex-column">
+      <i class="header-toggle d-xl-none bi bi-list"></i>
+
+      <div class="profile-img">
+        <img src="{% static 'assets/plaguard-logo.png' %}" alt="" class="img-fluid rounded-circle" />
       </div>
-    </nav>
 
-    <div class="container my-5">
-      <h1 class="text-center mb-4">{{ title }}</h1>
+      <a href="{% url 'index' %}" class="logo d-flex align-items-center justify-content-center">
+        <h1 class="sitename">Plaguards</h1>
+      </a>
 
-      <div class="results-section bg-light p-4 rounded shadow-sm">
-        {% if pdf_url %}
-        <div class="pdf-container text-center mb-4">
-          <h2 class="h3">Generated Report</h2>
-          <div class="pdf-viewer mt-3">
-            <embed src="../{{ pdf_url }}" type="application/pdf" width="100%" height="800px" class="rounded border" />
-            <p>If the PDF is not displaying, you can <a href="../{{ pdf_url }}" target="_blank">download it here</a>.</p>
+      <div class="social-links text-center">
+        <a href="https://github.com/Bread-Yolk/plaguards" target="_blank" class="github"><i class="bi bi-github"></i></a>
+        <a href="https://www.linkedin.com/company/thebayclub" target="_blank" class="linkedin"><i class="bi bi-linkedin"></i></a>
+        <a href="https://medium.com/@baycorp22 " target="_blank" class="medium"><i class="bi bi-medium"></i></a>
+      </div>
+
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li>
+            <a href="#generated-report" class="active"><i class="bi bi-columns navicon"></i>Generated Report</a>
+          </li>
+          <!-- <li>
+            <a href="#reports"><i class="bi bi-filetype-pdf navicon"></i>Reports</a>
+          </li> -->
+        </ul>
+      </nav>
+    </header>
+
+    <main class="main">
+
+      <section id="generated-report" class="section dark-background">
+
+        <div class="container text-end mt-4">
+          <a href="{% url 'index' %}" class="btn btn-danger">Back to home</a>
+        </div>
+    
+        <div class="container">
+          <h1 class="text-center mb-4">{{ title }}</h1>
+    
+          <div class="results-section dark-background p-4 rounded shadow-sm">
+            {% if pdf_url %}
+                <!-- Section Title -->
+                <div class="container section-title" data-aos="fade-up">
+                    <h2 class="h3">Generated Report</h2>
+              <p>(Available for viewing only <b>5 Minutes</b> on the server)</p></div>
+            <div class="pdf-container text-center mb-4">
+              
+              <div class="pdf-viewer mt-3">
+                <!-- <embed src="../{{ pdf_url }}" type="application/pdf" width="100%" height="800px" class="rounded border" /> -->
+                <!-- <p>You can view and download it <a href="../{{ pdf_url }}" target="_blank" class="pdf-link" style="text-decoration: underline;">here</a></p>
+                  -->
+                  <!-- <embed src="{{ MEDIA_URL }}{{ pdf_url }}" type="application/pdf" width="100%" height="800px" class="rounded border" /> -->
+                  <!-- <iframe src="{{ MEDIA_URL }}{{ pdf_url }}" type="application/pdf" width="100%" height="800px" class="rounded border"></iframe> -->
+                   
+                <iframe 
+                    src="/{{ pdf_url }}" 
+                    width="100%" 
+                    height="1400px" 
+                    style="border: none;" 
+                    class="rounded border">
+                    Your browser does not support iframes.
+                </iframe>
+                  <!-- <embed src="/media/{{ pdf_url }}" type="application/pdf" width="100%" height="800px" /> -->
+
+                  
+                  <p class="pt-3">If the PDF does not load, you can view and download it <a href="../{{ pdf_url }}" target="_blank" class="pdf-link" style="text-decoration: underline;">here</a></p>
+              </div>
+            </div>
+            {% else %}
+            <p class="no-results">No report generated yet.</p>
+            {% endif %}
           </div>
         </div>
-        {% else %}
-        <p class="no-results">No report generated yet.</p>
-        {% endif %}
-      </div>
-    </div>
+  
+      </section>
 
-    <footer class="bg-dark text-white text-center py-3">
-      <p>Copyright &copy; 2024 Plaguards. All rights reserved.</p>
+
+</section>
+<!-- end of Reports Section -->
+
+
+    <footer id="footer" class="footer position-relative dark-background">
+      <div class="container">
+        <div class="copyright text-center">
+          <p>© <span>Copyright 2024</span> <strong class="px-1 sitename">Plaguards.</strong> <span>All Rights Reserved</span></p>
+        </div>
+        <div class="credits">
+          Powered by <a href="https://github.com/Bread-Yolk">BAY</a>
+        </div>
+      </div>
     </footer>
 
+    
+
+    <!-- Scroll Top -->
+    <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+    <!-- Preloader -->
+    <div id="preloader"></div>
+
+    <!-- Vendor JS Files -->
+    <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
+    <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
+    <script src="{% static 'assets/vendor/typed.js/typed.umd.js' %}"></script>
+    <script src="{% static 'assets/vendor/purecounter/purecounter_vanilla.js' %}"></script>
+    <script src="{% static 'assets/vendor/waypoints/noframework.waypoints.js' %}"></script>
+    <script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/imagesloaded/imagesloaded.pkgd.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
+    <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Main JS File -->
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/custom-scripts.js' %}"></script>
     <script src="{% static 'js/script.js' %}"></script>
     <script src="https://unpkg.com/scrollreveal"></script>
-    {% bootstrap_javascript %}
+    <script src="{% static 'js/loading-spinner.js' %}"></script>
   </body>
 </html>
-
