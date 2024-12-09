@@ -87,7 +87,7 @@ sudo ./plaguards.sh
 
 |Powershell Deobfuscation|PDF Report|
 |:---------:|:-----------------------:|
-|<img src="static/assets/deobfus1.gif" width="500"> | <img src="static/assets/deobfus2.gif" width="250"> |
+|<img src="static/assets/deobfus-gif.gif" width="500"> | <img src="static/assets/deobfus2.gif" width="250"> |
 
 
 ## Future Development
