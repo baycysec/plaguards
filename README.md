@@ -34,7 +34,7 @@
 |No.|Main Features|Summary|
 |:-:|:------------|:----|
 |1. | Powershell Deobfuscation| Plaguards introduces deobfuscation features such as concatenating both strings and variable values, moving a variable's value while concatenating it with a new string or variable, merging variables with identical values, decoding base64, reading backtick functions, splitting a single line into multiple lines (if separated by ";" or "(*)"), flexible variable value changes, performing arithmetic operations within characters to generate a string, executing replace functions, executing split functions, interpreting whitespace consistently (ensuring identical results regardless of whitespace length during arithmetic operations in chars, replace, or split), and extracting domain and IP values found within the provided code.|
-|2. | IOC Checker| Plaguards offers five parameters for analyzing Indicators of Compromise (IOCs): `hash`, `ip`, `domain`, `url`, and `signature`. To initiate a query, users select one of these parameters and provide a second argument as the IOC value to be checked. Plaguards then cross-references this value with public threat intelligence sources, including VirusTotal and Malware Bazaar, via API. The resulting JSON data is parsed into a structured Markdown format, which is then converted into a downloadable, viewable PDF report—delivering actionable insights in a professional, easy-to-read format.|
+|2. | IOC Checker| Plaguards offers four parameters for analyzing Indicators of Compromise (IOCs): `hash`, `ip`, `domain`, and `signature`. To initiate a query, users select one of these parameters and provide a second argument as the IOC value to be checked. Plaguards then cross-references this value with public threat intelligence sources, including VirusTotal and Malware Bazaar, via API. The resulting JSON data is parsed into a structured Markdown format, which is then converted into a downloadable, viewable PDF report—delivering actionable insights in a professional, easy-to-read format.|
 |3. | Automated Reporting in PDF format.| Plaguards provides automated PDF reporting for both PowerShell deobfuscation results and IOC checker outcomes, all formatted in an easy-to-read template for clear and accessible insights.|
 
 ## Requirements
@@ -83,13 +83,18 @@ sudo ./plaguards.sh
 
 |IOC Checker|PDF Report|
 |:---------:|:-----------------------:|
-|<img src="static/assets/demo.gif" width="550"> | <img src="static/assets/portrait.gif" width="200"> |
+|<img src="static/assets/ioc1.gif" width="500"> | <img src="static/assets/ioc2.gif" width="250"> |
 
 |Powershell Deobfuscation|PDF Report|
 |:---------:|:-----------------------:|
-|<img src="static/assets/demo.gif" width="550"> | <img src="static/assets/portrait.gif" width="200"> |
+|<img src="static/assets/deobfus1.gif" width="500"> | <img src="static/assets/deobfus2.gif" width="250"> |
 
 
+## Future Development
+
+```
+Implement Shannon entropy to optimize the detection of obfuscated PowerShell scripts.
+```
 
 ## Authors
 - [jon-brandy](https://github.com/jon-brandy)

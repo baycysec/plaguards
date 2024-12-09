@@ -1,10 +1,23 @@
 import requests
 import pypandoc
 import os
-import base64
 import string
 import random
 from datetime import datetime
+import time
+
+
+def checktimefile():
+    for filename in os.listdir('media'):
+        timenow = time.time()
+
+        file_path = os.path.join('media', filename)
+        
+        if os.path.isfile(file_path):
+            file_creation_time = os.path.getctime(file_path)
+            
+            if timenow - file_creation_time > 300:
+                os.remove(file_path) 
 
 def generate_random_val(length):
     characters = string.ascii_letters + string.digits
@@ -38,14 +51,6 @@ def FindQuery(query_type, query_value):
 
     elif query_type == 'ip':
         url = f'https://www.virustotal.com/api/v3/ip_addresses/{query_value}'
-        headers = {
-            'x-apikey': VT_API_KEY
-        }
-        response = requests.get(url, headers=headers)
-
-    elif query_type == 'url':
-        url_id = base64.urlsafe_b64encode(query_value.encode()).decode().strip("=")
-        url = f'https://www.virustotal.com/api/v3/urls/{url_id}'
         headers = {
             'x-apikey': VT_API_KEY
         }
@@ -139,13 +144,13 @@ def search_IOC_and_generate_report(queryinput, search=False, code=None):
         args = queryinput[i].split()
 
         if len(args) != 2:
-            return "Error: Please enter exactly 2 arguments (e.g., [hash / signature / domain / url / ip] [value])."
+            return "Error: Please enter exactly 2 arguments (e.g., [hash / signature / domain / ip] [value])."
 
         query_type = args[0]
         query_value = args[1]
 
-        if query_type not in ['hash', 'signature', 'domain', 'ip', 'url']:
-            return "Error: Invalid query type. Use 'hash' or 'signature'."
+        if query_type not in ['hash', 'signature', 'domain', 'ip']:
+            return "Error: Invalid query type. Use 'hash', 'signature', 'domain', or 'ip'."
 
         json_data = FindQuery(query_type, query_value)
 
@@ -455,16 +460,7 @@ def search_IOC_and_generate_report(queryinput, search=False, code=None):
                                 f'  - Category: {result.get("category", "N/A")}\n'
                                 f'  - Result: {result.get("result", "N/A")}')
                 md_content.append('\n')
-
-        elif query_type == 'url':
-            md_content.append(f'# VirusTotal URL Report for {query_value}')
-            attributes = json_data.get("data", {}).get("attributes", {})
-            md_content.append(f'- **Last Analysis Stats**: {attributes.get("last_analysis_stats", {})}')
-            md_content.append(f'- **Reputation**: {attributes.get("reputation", "N/A")}')
-            md_content.append(f'- **Categories**: {", ".join(attributes.get("categories", {}).values())}')
-            md_content.append(f'- **Last Final URL**: {attributes.get("last_final_url", "N/A")}')
-            md_content.append(f'- **Title**: {attributes.get("title", "N/A")}')
-            md_content.append('\n')
+                
     
     randomval = generate_random_val(150)
     md_file_path = os.path.join(f'results/checker_{randomval}.md')

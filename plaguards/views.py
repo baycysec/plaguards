@@ -1,12 +1,10 @@
 from django.shortcuts import render
-from django.conf import settings
 from django.http import JsonResponse
 from GuardModules.PlagFilter import *
 from GuardModules.PlagDeobfus import deobfuscate
 from GuardModules.PlagParser import search_IOC_and_generate_report
 import os
 
-# Create your views here.
 def index(request): 
     context = {
         'title': 'home',
@@ -63,15 +61,12 @@ def search(request):
                 'message': output_pdf_path
             })
         else:
-            # Store the PDF path in session
-            # request.session['pdf_url'] = '/results/checker_result.pdf'
             return JsonResponse({
                 'status': 'success',
                 'message': "Report generated successfully.",
                 'pdf_url': output_pdf_path
             })
     return render(request, 'results.html')
-    # return render(request, 'index.html')
 
 
 def file_upload(request):
@@ -121,7 +116,16 @@ def file_upload(request):
 
 def redirect_result(request):
     pdf_url = request.GET.get('pdf_url')
-    # if pdf_url:
     return render(request, 'results.html', {'pdf_url': pdf_url})
-    # else:
-    #     return HttpResponseBadRequest("PDF URL is missing")
+
+# def reports_view(request):
+#     media_dir = settings.MEDIA_ROOT
+#     if not os.path.exists(media_dir):
+#         print("Media directory does not exist.")
+#         return render(request, 'index.html', {'recent_pdfs': []})
+
+#     pdf_files = [f for f in os.listdir(media_dir) if f.endswith('.pdf')]
+#     print(f"Found PDF files: {pdf_files}")  # Debugging output
+#     pdf_files = sorted(pdf_files, key=lambda x: os.path.getctime(os.path.join(media_dir, x)), reverse=True)[:4]
+#     print(f"Recent PDFs: {pdf_files}")  # Debugging output
+#     return render(request, 'index.html', {'recent_pdfs': pdf_files})
