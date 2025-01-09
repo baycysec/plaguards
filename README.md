@@ -10,6 +10,7 @@
 ![Powershell-Deobfuscator](https://img.shields.io/badge/Powershell_Deobfuscator-blue)
 ![Powershell-Deobfuscator](https://img.shields.io/badge/IOC_Checker-red)
 ![Automated Reporting](https://img.shields.io/badge/Automated_Reporting-white)
+[![Black Hat Arsenal](https://img.shields.io/badge/Black_Hat_Asia-Asia_2025-blue)](https://www.blackhat.com/asia-25/arsenal/schedule/index.html#plaguards-open-source-powershell-deobfuscation-and-ioc-detection-engine-for-blue-teams-43739)
 
 <p align="justify">Plaguards is a cutting-edge security tool built to streamline and automate the deobfuscation of obfuscated PowerShell scripts, empowering security teams to rapidly identify Indicators of Compromise (IOCs) and determine whether they represent valid threats (VT) or false positives (FP). Each analysis is documented in a comprehensive PDF report, designed to provide deep insights and actionable intelligence.</p>
 
