@@ -57,7 +57,7 @@
 
 ```console
 git clone https://github.com/Bread-Yolk/plaguards.git
-cd plaguards-main
+cd plaguards
 ```
 
 2. Configure your Virus Total API key. 
