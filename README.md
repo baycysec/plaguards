@@ -70,7 +70,7 @@ nano Dockerfile
 
 ```Dockerfile
 # At Dockerfile
-ENV VT_API_KEY="your_api_key_goes_here"
+ENV VT_API_KEY="your_api_key_goes_here" # paste your API KEY.
 ```
  
 3. Run the setup script.
