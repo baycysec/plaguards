@@ -19,7 +19,7 @@ def remove_space_from_char(code):
 def change_bxor_and_to_chr(code):
     def replace_bxor_and_to_chr(match):
         res = match.group(1)
-        changebxor = res.replace('-bxor', '^').replace("(","").replace(")","")
+        changebxor = res.replace('-bxor', '^')
         return f'Chr({changebxor})'
     
     return re.compile(r'\[char\]\(([\d\-+\*/\s()]+(?:\s?-bxor\s?[\d\-+\*/\s()]+)*)\)', re.IGNORECASE).sub(replace_bxor_and_to_chr, code)
