@@ -155,7 +155,7 @@ def search_IOC_and_generate_report(queryinput, search=False, code=None):
         json_data = FindQuery(query_type, query_value)
 
         if not json_data and search:
-            return "Error: No data returned from the API."
+            return "No data returned from the API."
         elif not json_data and search == False:
             md_content.append(f'# VirusTotal Report for {query_value}\n')
             md_content.append(f'No Information Found')
@@ -163,9 +163,10 @@ def search_IOC_and_generate_report(queryinput, search=False, code=None):
             continue
 
         if 'query_status' in json_data:
-            if (json_data['query_status'] == 'no_results' or json_data['query_status'] == 'illegal_hash') and search:
-                return "Error: No data returned from the API."
-            elif json_data['query_status'] == 'no_results' or json_data['query_status'] == 'illegal_hash':
+            print(json_data, search)
+            if (json_data['query_status'] == 'no_results' or json_data['query_status'] == 'illegal_hash' or json_data['query_status'] == 'hash_not_found') and search:
+                return "No data returned from the API."
+            elif json_data['query_status'] == 'no_results' or json_data['query_status'] == 'illegal_hash' or json_data['query_status'] == 'hash_not_found':
                 md_content.append(f'# VirusTotal Report for {query_value}\n')
                 md_content.append(f'No Information Found')
                 md_content.append('\n')
