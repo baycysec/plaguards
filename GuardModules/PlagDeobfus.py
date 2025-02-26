@@ -185,7 +185,6 @@ def concat_code(code):
 
 def backtick(code):
     backtick_dict = {
-        '`b': '\b',
         '`f': '\f',
         '`n': '\n',
         '`r': '\r',
