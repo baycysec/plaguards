@@ -91,7 +91,7 @@ def md_to_pdf(md_file, path, randomval, template_path="/usr/share/pandoc/data/te
     except Exception as e:
         print(f"Error during PDF conversion: {e}")
         print(f'TEMPLATE PATH --> {template_path}')
-        return None
+        return f"Error"
 
 def search_IOC_and_generate_report(queryinput, search=False, code=None):
     md_content = []
@@ -469,7 +469,11 @@ def search_IOC_and_generate_report(queryinput, search=False, code=None):
         md_file.write('\n'.join(md_content))
 
     path = os.path.join('media')
-    md_to_pdf(md_file_path, path, randomval)
+    res = md_to_pdf(md_file_path, path, randomval)
+    
+    if "Error" in res:
+    	return "Error during PDF conversion"
+    	
     output_pdf_path = os.path.join(f'media/checker_result_{randomval}.pdf')
     
     return output_pdf_path
