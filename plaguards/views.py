@@ -53,9 +53,12 @@ def search(request):
         
         output_pdf_path = search_IOC_and_generate_report(queryinput, search=True)
 
-        print(output_pdf_path)
-
         if 'Error' in output_pdf_path:
+            return JsonResponse({
+                'status': 'error',
+                'message': output_pdf_path
+            })
+        elif 'No data' in output_pdf_path:
             return JsonResponse({
                 'status': 'error',
                 'message': output_pdf_path
@@ -86,7 +89,7 @@ def file_upload(request):
         code = file.read().decode('utf-8')
         code,httplist,iplist = deobfuscate(code)
 
-        if code == "Something's wrong with the code or input!":
+        if "Something's wrong with the code or input!" in code:
             return JsonResponse({
                 'status': 'error',
                 'message': code
@@ -117,15 +120,3 @@ def file_upload(request):
 def redirect_result(request):
     pdf_url = request.GET.get('pdf_url')
     return render(request, 'results.html', {'pdf_url': pdf_url})
-
-# def reports_view(request):
-#     media_dir = settings.MEDIA_ROOT
-#     if not os.path.exists(media_dir):
-#         print("Media directory does not exist.")
-#         return render(request, 'index.html', {'recent_pdfs': []})
-
-#     pdf_files = [f for f in os.listdir(media_dir) if f.endswith('.pdf')]
-#     print(f"Found PDF files: {pdf_files}")  # Debugging output
-#     pdf_files = sorted(pdf_files, key=lambda x: os.path.getctime(os.path.join(media_dir, x)), reverse=True)[:4]
-#     print(f"Recent PDFs: {pdf_files}")  # Debugging output
-#     return render(request, 'index.html', {'recent_pdfs': pdf_files})
