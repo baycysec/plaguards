@@ -6,7 +6,6 @@ import random
 from datetime import datetime
 import time
 
-
 def checktimefile():
     for filename in os.listdir('media'):
         timenow = time.time()
@@ -17,7 +16,18 @@ def checktimefile():
             file_creation_time = os.path.getctime(file_path)
             
             if timenow - file_creation_time > 300:
-                os.remove(file_path) 
+                os.remove(file_path)
+                
+    for filename in os.listdir('results'):
+        timenow = time.time()
+
+        file_path = os.path.join('results', filename)
+        
+        if os.path.isfile(file_path):
+            file_creation_time = os.path.getctime(file_path)
+            
+            if timenow - file_creation_time > 300 and filename.endswith('.md'):
+                os.remove(file_path)  
 
 def generate_random_val(length):
     characters = string.ascii_letters + string.digits
