@@ -104,7 +104,9 @@ pip3 install -r requirements.txt
 ```console
 python3 plaguards-cli.py example.ps1
 ```
-You can also use `.txt` files containing powershell payloads.
+
+> [!NOTE]
+> You can also use `.txt` files containing powershell payloads.
 
 ```console
 python3 plaguards-cli.py obfuscated.txt
