@@ -62,6 +62,7 @@ cd plaguards
 
 2. Configure your Virus Total API key. 
 
+> [!IMPORTANT]  
 > For instructions on obtaining your API key, Click [here](https://github.com/Bread-Yolk/plaguards/wiki/Configure-your-Virus-Total-API-Key).
 
 ```console
