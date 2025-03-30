@@ -27,8 +27,8 @@
 
 
 ## Security Warning
-
-**WARNING**: There are known `security vulnerabilities` within certain versions of Plaguards. Before proceeding, please read through Plaguards [Security Advisories]() for a better understanding of how you might be impacted.
+> [!WARNING]
+> There are known `security vulnerabilities` within certain versions of Plaguards. Before proceeding, please read through Plaguards [Security Advisories]() for a better understanding of how you might be impacted.
 
 ## Main Features
 
@@ -47,7 +47,8 @@
 - Python 3.x
 - Port 8000
 
-**(No manual installation needed – we’ll handle everything for you!)**
+> [!NOTE]  
+> **(No manual installation needed – we’ll handle everything for you!)**
 
 ## Deployment and Usage
 
@@ -62,7 +63,7 @@ cd plaguards
 
 2. Configure your Virus Total API key. 
 
-> [!IMPORTANT]  
+> [!TIP]  
 > For instructions on obtaining your API key, Click [here](https://github.com/Bread-Yolk/plaguards/wiki/Configure-your-Virus-Total-API-Key).
 
 ```console
