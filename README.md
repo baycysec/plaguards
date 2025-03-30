@@ -51,7 +51,7 @@
 
 ## Deployment and Usage
 
-#### To deploy Plaguards:
+#### To deploy Plaguards GUI:
 
 1. Clone this repository.
 
@@ -81,6 +81,32 @@ sudo ./plaguards.sh
 ```
 
 4. By default, Plaguards dashboard will listen at port **8000**.
+
+#### To deploy Plaguards CLI:
+
+1. Set up a virtual environment.
+
+```
+python3 -m venv plaguards-venv
+source plaguards-venv/bin/activate
+```
+
+2. Install required dependencies.
+
+```
+pip3 install -r requirements.txt
+```
+
+3. Run Plaguards CLI.
+
+```console
+python3 plaguards-cli.py example.ps1
+```
+You can also use `.txt` files containing powershell payloads.
+
+```console
+python3 plaguards-cli.py obfuscated.txt
+```
 
 
 ## Demo for Main Features
