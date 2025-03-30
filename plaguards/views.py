@@ -92,7 +92,7 @@ def generate_deobfus_md(powershell, previous_hash=None):
     md_content.append(f'```')
     md_content.append(f'\n')
 
-    md_path = './deob_result.md'
+    md_path = 'results/deob_result.md'
     with open(md_path, "w") as md_file:
         md_file.write('\n'.join(md_content))
 
@@ -112,7 +112,7 @@ def generate_deobfus_md(powershell, previous_hash=None):
     md_content2.append(f'```')
     md_content2.append('\n')
 
-    md_path2 = './deob_result2.md'
+    md_path2 = 'results/deob_result2.md'
     with open(md_path2, "w") as md_file:
         md_file.write('\n'.join(md_content2))
     sha256sum2 = hashlib.sha256()
