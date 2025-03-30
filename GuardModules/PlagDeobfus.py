@@ -540,6 +540,6 @@ def deobfuscate(code):
         code = splitcode(code)
         httplist,iplist = http_and_ip_grep(code)
     except Exception as e:
-        code = f"Something's wrong with the code or input! Error: {e}"
+        code = f"Something's wrong with the code or input!"
         return code,[],[]
     return code,httplist,iplist

@@ -10,5 +10,5 @@ class validatefiletime:
         return response
 
     def process_view(self, request, view_func, view_args, view_kwargs):
-        if '' in request.path or 'media' in request.path or 'tools' in request.path or 'index' in request.path or 'tutorial' in request.path or 'about' in request.path or 'file_upload' in request.path or 'search' in request.path or 'redirect_result':
+        if '' in request.path or 'media' in request.path or 'tools' in request.path or 'index' in request.path or 'tutorial' in request.path or 'about' in request.path or 'file_upload' in request.path or 'search' in request.path or 'results' in request.path:
             checktimefile()
