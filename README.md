@@ -86,14 +86,14 @@ sudo ./plaguards.sh
 
 1. Set up a virtual environment.
 
-```
+```console
 python3 -m venv plaguards-venv
 source plaguards-venv/bin/activate
 ```
 
 2. Install required dependencies.
 
-```
+```console
 pip3 install -r requirements.txt
 ```
 
