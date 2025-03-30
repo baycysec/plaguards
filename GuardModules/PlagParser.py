@@ -114,51 +114,6 @@ def get_integrity(file_path):
     checksum = sha256sum.hexdigest()
     return checksum
 
-def generate_deobfus_md(powershell, previous_has=None):
-    md_content = []
-    code = deobfuscate(powershell)
-    checkcode = code.split('\n')
-    md_content.append(f'```ps1')
-    for line in checkcode:
-        md_content.append(f'{line}')
-    md_content.append(f'```')
-    md_content.append(f'\n')
-
-    md_path = './deob_result.md'
-    with open(md_path, "w") as md_file:
-        md_file.write('\n'.join(md_content))
-
-    sha256sum = hashlib.sha256()
-    with open(md_path, "rb") as f:
-        for byte_block in iter(lambda: f.read(4096), b""):
-            sha256sum.update(byte_block)
-    
-    checksum_1 = sha256sum.hexdigest()
-    code2 = deobfuscate(code)
-
-    md_content2 = []
-    checkcode2 = code2.split('\n')
-    md_content2.append(f'```ps1')
-    for line in checkcode2:
-        md_content2.append(f'{line}')
-    md_content2.append(f'```')
-    md_content2.append('\n')
-
-    md_path2 = './deob_result2.md'
-    with open(md_path2, "w") as md_file:
-        md_file.write('\n'.join(md_content2))
-    sha256sum2 = hashlib.sha256()
-    with open(md_path2, "rb") as f:
-        for byte_block in iter(lambda: f.read(4096), b""):
-            sha256sum2.update(byte_block)
-    checksum_2 = sha256sum2.hexdigest()
-
-    if checksum_1 == checksum_2:
-        return md_content2, httplist, ip
-    else:
-        return generate_deobfus_md(code2, previous_hash=checksum2)
-
-
 def search_IOC_and_generate_report(queryinput, search=False, code=None):
     md_content = []
     if code:
