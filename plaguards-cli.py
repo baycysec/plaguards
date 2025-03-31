@@ -580,7 +580,7 @@ def generate_random_val(length):
     characters = string.ascii_letters + string.digits
     return ''.join(random.choice(characters) for _ in range(length))
 
-VT_API_KEY = "INSERT_YOUR_VT_API_KEY_HERE"
+VT_API_KEY = "your_api_key_goes_here"
 
 def FindQuery(query_type, query_value):
     if query_type == 'domain':
