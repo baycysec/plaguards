@@ -97,13 +97,10 @@ source plaguards-venv/bin/activate
 
 ```console
 pip3 install -r requirements.txt
-
-Run with root privilege (Command: sudo su):
-     
-    apt-get update && \
-    apt-get install -y pandoc texlive texlive-latex-extra texlive-xetex && \
-    apt-get install -y texlive-fonts-extra && \
-    apt-get install -y apt-utils
+sudo apt-get update
+sudo apt-get install -y pandoc texlive texlive-latex-extra texlive-xetex
+sudo apt-get install -y texlive-fonts-extra
+sudo apt-get install -y apt-utils
 ```
 
 3. Run Plaguards CLI.
