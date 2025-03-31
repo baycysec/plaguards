@@ -111,7 +111,7 @@ nano plaguards-cli.py
 
 ```python
 # At plaguards-cli.py  in line 583
-VT_API_KEY = "INSERT_YOUR_VT_API_KEY_HERE"
+VT_API_KEY = "your_api_key_goes_here"
 ```
 
 4. Install required dependencies.
