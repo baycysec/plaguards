@@ -86,14 +86,35 @@ sudo ./plaguards.sh
 
 #### To deploy Plaguards CLI:
 
-1. Set up a virtual environment.
+1. Clone this repository.
+
+```console
+git clone https://github.com/Bread-Yolk/plaguards.git
+cd plaguards
+```
+
+2. Set up a virtual environment.
 
 ```console
 python3 -m venv plaguards-venv
 source plaguards-venv/bin/activate
 ```
 
-2. Install required dependencies.
+3. Configure your Virus Total API key. 
+
+> [!TIP]  
+> For instructions on obtaining your API key, Click [here](https://github.com/Bread-Yolk/plaguards/wiki/Configure-your-Virus-Total-API-Key).
+
+```console
+nano plaguards-cli.py
+```
+
+```python
+# At plaguards-cli.py  in line 583
+VT_API_KEY = "INSERT_YOUR_VT_API_KEY_HERE"
+```
+
+4. Install required dependencies.
 
 ```console
 pip3 install -r requirements.txt
@@ -103,7 +124,7 @@ sudo apt-get install -y texlive-fonts-extra
 sudo apt-get install -y apt-utils
 ```
 
-3. Run Plaguards CLI.
+5. Run Plaguards CLI.
 
 ```console
 python3 plaguards-cli.py example.ps1
