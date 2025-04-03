@@ -128,14 +128,14 @@ cp ./others/eisvogel.latex /usr/share/pandoc/data/templates/eisvogel.latex
 5. Run Plaguards CLI.
 
 ```console
-python3 plaguards-cli.py example.ps1
+sudo python3 plaguards-cli.py example.ps1
 ```
 
 > [!NOTE]
 > You can also use `.txt` files containing powershell payloads.
 
 ```console
-python3 plaguards-cli.py obfuscated.txt
+sudo python3 plaguards-cli.py obfuscated.txt
 ```
 
 
