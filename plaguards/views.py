@@ -75,15 +75,33 @@ def search(request):
             })
     return render(request, 'results.html')
 
-def generate_deobfus_md(powershell, previous_hash=None):
+
+def generate_deobfus_md(powershell, count, previous_hash=None):
     md_content = []
-    code, httplist,ip = deobfuscate(powershell)
+    code, httplist,ip, status = deobfuscate(powershell, count)
+    # print(code)
     if "Something's wrong with the code or input!" in code:
         return JsonResponse({
             'status': 'error',
             'message': code
     })
-    print(code)
+    # print(code)
+    if status == True or count == 20:
+        checkcode = code.split('\n')
+        # print(code)
+        md_content.append(f'```ps1')
+        for line in checkcode:
+            md_content.append(f'{line}')
+        md_content.append(f'```')
+        md_content.append(f'\n')
+
+        md_path = 'results/deob_result.md'
+        with open(md_path, "w") as md_file:
+            md_file.write('\n'.join(md_content))
+        return md_content, httplist, ip
+
+    count += 1
+    print(f'count pertama -> {count}')
     checkcode = code.split('\n')
     # print(code)
     md_content.append(f'```ps1')
@@ -102,7 +120,27 @@ def generate_deobfus_md(powershell, previous_hash=None):
             sha256sum.update(byte_block)
     
     checksum_1 = sha256sum.hexdigest()
-    code2, httplist, ip = deobfuscate(code)
+    code2, httplist, ip, status = deobfuscate(code, count)
+    # print(status)
+
+    if status == True:
+        md_content2 = []
+        checkcode2 = code2.split('\n')
+        md_content2.append(f'```ps1')
+        for line in checkcode2:
+            md_content2.append(f'{line}')
+        md_content2.append(f'```')
+        md_content2.append('\n')
+    
+
+        md_path2 = 'results/deob_result2.md'
+        with open(md_path2, "w") as md_file:
+            md_file.write('\n'.join(md_content2))
+
+        return md_content2, httplist, ip
+
+    count += 1
+    print(f'count selanjutnya -> {count}')
 
     md_content2 = []
     checkcode2 = code2.split('\n')
@@ -125,7 +163,7 @@ def generate_deobfus_md(powershell, previous_hash=None):
         return md_content2, httplist, ip
     else:
         print("[+] Hash Mismatch")
-        return generate_deobfus_md(code2, previous_hash=checksum_2)
+        return generate_deobfus_md(code2, count, previous_hash=checksum_2)
 
 def file_upload(request):
     if not request.FILES:
@@ -142,7 +180,10 @@ def file_upload(request):
             })
          
         code = file.read().decode('utf-8')
-        md_deob_content,httplist,iplist = generate_deobfus_md(code)
+        count = 0
+        md_deob_content, httplist, iplist = generate_deobfus_md(code, count)
+        # httplist = []
+        # iplist = []
 
         # if "Something's wrong with the code or input!" in deob_code:
         #     return JsonResponse({
