@@ -202,6 +202,43 @@ def backtick(code):
     newcode = ''.join([i for i in checkcode])
     return newcode.strip()
 
+def ascii_getstring(code):
+    pattern = r'ASCII\.GetString\(\[byte\[\]\]\(([\d,\s]+)\)\)'
+
+    # Find all matches
+    matches = re.findall(pattern, code)
+
+    # Convert and print
+    for i, match in enumerate(matches):
+        # Clean and split the byte values
+        byte_values = [int(x.strip()) for x in match.split(',')]
+        # Convert bytes to string
+        ascii_string = bytes(byte_values).decode('ascii')
+        print(f"Match {i+1}: {ascii_string}")
+    return ascii_string
+
+def asciicode(code):
+    checkcode = code.split('\n')
+    newcoderes = []
+
+    for i in checkcode:
+        if i == '':
+            continue
+        match_ascii = re.search(r"ASCII\.GetString\(*([\d,\s]+)\)*", i, re.IGNORECASE)
+        if match_ascii:
+            try:
+                numbers = list(map(int, match_ascii.group(1).split(',')))
+                res = ''
+                for j in numbers:
+                    res += chr(j)
+                newcoderes.append(i.replace(match_ascii.group(0), res))
+            except Exception as e:
+                print(f'Error during decoding: {e}')
+                newcoderes.append(i)
+        else:
+            newcoderes.append(i)
+    newcode = ''.join([i + '\n' for i in newcoderes])
+    return newcode.strip()
 
 def combine_and_concat_multiple_variables_value(code):
     value_dict = {}
@@ -502,7 +539,8 @@ def http_and_ip_grep(code):
     
     return list(set(httplist)), list(set(iplist))
 
-def deobfuscate(code):
+count_deobf = 0
+def deobfuscate(code, count_deobf):
     try:
         code = remove_string(code)
         code = remove_space_from_char(code)
@@ -537,9 +575,36 @@ def deobfuscate(code):
         code = decoding(code)
         code = joincode(code)
         code = replacecode(code)
+        code = asciicode(code)
         code = splitcode(code)
         httplist,iplist = http_and_ip_grep(code)
+        # count_deobf += 1
+        # print(f'result count deobf -> {count_deobf}')
     except Exception as e:
-        code = f"Something's wrong with the code or input!"
-        return code,[],[]
-    return code,httplist,iplist
+        print("masuk")
+        if count_deobf > 0:
+            return code,httplist,iplist,True
+        else:
+            code = f"Something's wrong with the code or input!"
+            return code,[],[],False
+    return code,httplist,iplist,False
+
+# pwsh = """
+# $s=[System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('U3lzdGVtLk1hbmFnZW1lbnQuQXV0b21hdGlvbi5BbXNpVXRpbHM=='));
+# $t=[Ref].Assembly.GetType($s);
+# $t.GetField([System.Text.Encoding]::ASCII.GetString((97,109,115,105,73,110,105,116,70,97,105,108,101,100)),'NonPublic,Static').SetValue($null,$true);
+# """
+
+# # print(deobfuscate(pwsh))
+# data_strings = deobfuscate(pwsh, 0)
+# print(data_strings)
+
+# print("==")
+
+# data_2 = deobfuscate(data_strings[0], 1)
+# print(data_2)
+# data_3 = deobfuscate(data_2[0], 2)
+# print(data_3)
+
+# data_4 = deobfuscate(data_3[0], 3)
+# print(data_4)
