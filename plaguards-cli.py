@@ -486,6 +486,31 @@ def joincode(code):
     newcode = ''.join([i + '\n' for i in newcoderes])
     return newcode.strip()
 
+def asciicode(code):
+    checkcode = code.split('\n')
+    newcoderes = []
+
+    for i in checkcode:
+        if i == '':
+            continue
+        match_ascii = re.search(r"ASCII\.GetString\(*([\d,\s]+)\)*", i, re.IGNORECASE)
+        if match_ascii:
+            try:
+                numbers = list(map(int, match_ascii.group(1).split(',')))
+                res = ''
+                for j in numbers:
+                    res += chr(j)
+                newcoderes.append(i.replace(match_ascii.group(0), res))
+            except Exception as e:
+                print(f'Error during decoding: {e}')
+                newcoderes.append(i)
+        else:
+            newcoderes.append(i)
+    newcode = ''.join([i + '\n' for i in newcoderes])
+    return newcode.strip()
+
+
+
 def splitcode(code):
     def split_func(match):
         string,objtosplit = match.groups()
@@ -511,7 +536,7 @@ def http_and_ip_grep(code):
     
     return list(set(httplist)), list(set(iplist))
 
-def deobfuscate(code):
+def deobfuscate(code, count_deobf):
     try:
         code = remove_string(code)
         code = remove_space_from_char(code)
@@ -546,41 +571,23 @@ def deobfuscate(code):
         code = decoding(code)
         code = joincode(code)
         code = replacecode(code)
+        code = asciicode(code)
         code = splitcode(code)
         httplist,iplist = http_and_ip_grep(code)
     except Exception as e:
-        code = f"Something's wrong with the code or input!"
-        return code,[],[]
-    return code,httplist,iplist
+        if count_deobf > 0:
+            return code,httplist,iplist,True
+        else:
+            code = f"Something's wrong with the code or input!"
+            return code,[],[],False
+    return code,httplist,iplist,False
 
-def checktimefile():
-    for filename in os.listdir('media'):
-        timenow = time.time()
-
-        file_path = os.path.join('media', filename)
-        
-        if os.path.isfile(file_path):
-            file_creation_time = os.path.getctime(file_path)
-            
-            if timenow - file_creation_time > 300:
-                os.remove(file_path)
-                
-    for filename in os.listdir('results'):
-        timenow = time.time()
-
-        file_path = os.path.join('results', filename)
-        
-        if os.path.isfile(file_path):
-            file_creation_time = os.path.getctime(file_path)
-            
-            if timenow - file_creation_time > 300 and filename.endswith('.md'):
-                os.remove(file_path)  
 
 def generate_random_val(length):
     characters = string.ascii_letters + string.digits
     return ''.join(random.choice(characters) for _ in range(length))
 
-VT_API_KEY = "your_api_key_goes_here"
+VT_API_KEY = "a147779cbd82633a92720dfd59fa55fd537793555ae964697522c57562938f76"
 
 def FindQuery(query_type, query_value):
     if query_type == 'domain':
@@ -605,12 +612,15 @@ def FindQuery(query_type, query_value):
     else:
         return None
 
+def remove_unprintable_character(content):
+    return ''.join(ch for ch in content if ch.isprintable() or ch in '\n\r\t\v')
+    
+    
 def md_to_pdf(md_file, path, randomval, template_path="/usr/share/pandoc/data/templates/eisvogel.latex"):
     try:
         if not os.path.exists(path):
             os.makedirs(path)
 
-        # Create the full path for the PDF file
         output_pdf = os.path.join(path, f'checker_result_{randomval}.pdf')
 
         
@@ -623,7 +633,15 @@ def md_to_pdf(md_file, path, randomval, template_path="/usr/share/pandoc/data/te
 
         if template_path:
             extra_args.append(f"--template={template_path}")
-
+        
+        with open(md_file, "r", encoding="utf-8", errors="ignore") as f:
+            content = f.read()
+        
+        cleaned_content = remove_unprintable_character(content)
+        
+        with open(md_file, "w", encoding="utf-8") as f:
+            f.write(cleaned_content)
+	    
         output = pypandoc.convert_file(md_file, 'pdf', outputfile=output_pdf, extra_args=extra_args)
         assert output == ""
 
@@ -643,9 +661,28 @@ def get_integrity(file_path):
     checksum = sha256sum.hexdigest()
     return checksum
 
-def generate_deobfus_md(powershell, previous_hash=None):
+def generate_deobfus_md(powershell, count, previous_hash=None):
     md_content = []
-    code, httplist, ip = deobfuscate(powershell)
+    code, httplist,ip, status = deobfuscate(powershell, count)
+    if "Something's wrong with the code or input!" in code:
+        return JsonResponse({
+            'status': 'error',
+            'message': code
+    })
+    if status == True or count == 21:
+        checkcode = code.split('\n')
+        md_content.append(f'```ps1')
+        for line in checkcode:
+            md_content.append(f'{line}')
+        md_content.append(f'```')
+        md_content.append(f'\n')
+
+        md_path = 'results/deob_result.md'
+        with open(md_path, "w") as md_file:
+            md_file.write('\n'.join(md_content))
+        return md_content, httplist, ip
+
+    count += 1
     
     checkcode = code.split('\n')
     md_content.append(f'```ps1')
@@ -654,7 +691,7 @@ def generate_deobfus_md(powershell, previous_hash=None):
     md_content.append(f'```')
     md_content.append(f'\n')
 
-    md_path = 'plaguards-cli-results/deob_result.md'
+    md_path = 'results/deob_result.md'
     with open(md_path, "w") as md_file:
         md_file.write('\n'.join(md_content))
 
@@ -664,7 +701,25 @@ def generate_deobfus_md(powershell, previous_hash=None):
             sha256sum.update(byte_block)
     
     checksum_1 = sha256sum.hexdigest()
-    code2, httplist, ip = deobfuscate(code)
+    code2, httplist, ip, status = deobfuscate(code, count)
+
+    if status == True:
+        md_content2 = []
+        checkcode2 = code2.split('\n')
+        md_content2.append(f'```ps1')
+        for line in checkcode2:
+            md_content2.append(f'{line}')
+        md_content2.append(f'```')
+        md_content2.append('\n')
+    
+
+        md_path2 = 'results/deob_result2.md'
+        with open(md_path2, "w") as md_file:
+            md_file.write('\n'.join(md_content2))
+
+        return md_content2, httplist, ip
+
+    count += 1
 
     md_content2 = []
     checkcode2 = code2.split('\n')
@@ -674,7 +729,7 @@ def generate_deobfus_md(powershell, previous_hash=None):
     md_content2.append(f'```')
     md_content2.append('\n')
 
-    md_path2 = 'plaguards-cli-results/deob_result2.md'
+    md_path2 = 'results/deob_result2.md'
     with open(md_path2, "w") as md_file:
         md_file.write('\n'.join(md_content2))
     sha256sum2 = hashlib.sha256()
@@ -686,13 +741,14 @@ def generate_deobfus_md(powershell, previous_hash=None):
     if checksum_1 == checksum_2:
         return md_content2, httplist, ip
     else:
-        return generate_deobfus_md(code2, previous_hash=checksum_2)
+        print("[+] Hash Mismatch")
+        return generate_deobfus_md(code2, count, previous_hash=checksum_2)
 
 
 def deobfuscate_and_generate_report(queryinput, search=False, code=None):
     md_content = []
 
-    deobf_code, httplist, ip = generate_deobfus_md(code)
+    deobf_code, httplist, ip = generate_deobfus_md(code, 1)
     timestamp = datetime.now().strftime('%Y-%m-%d')
     header = [
         '---',
@@ -910,7 +966,7 @@ def main():
     print("\033[1;33m[+] Please kindly wait..\033[0m")
     time.sleep(0.5)
 
-    deobf_code, domains, ips = deobfuscate(ps_code)
+    deobf_code, domains, ips, status = deobfuscate(ps_code, 0)
     queryinput = []
     for domain in domains:
         queryinput.append(f'domain {domain}')
@@ -928,4 +984,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
