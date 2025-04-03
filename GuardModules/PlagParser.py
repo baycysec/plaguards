@@ -76,6 +76,9 @@ def FindQuery(query_type, query_value):
     else:
         return None
 
+def remove_unprintable_character(content):
+    return ''.join(ch for ch in content if ch.isprintable() or ch in '\n\r\t\v')
+
 def md_to_pdf(md_file, path, randomval, template_path="/usr/share/pandoc/data/templates/eisvogel.latex"):
     try:
         if not os.path.exists(path):
@@ -95,6 +98,15 @@ def md_to_pdf(md_file, path, randomval, template_path="/usr/share/pandoc/data/te
         if template_path:
             extra_args.append(f"--template={template_path}")
 
+        with open(md_file, "r", encoding="utf-8", errors="ignore") as f:
+            content = f.read()
+        
+        cleaned_content = remove_unprintable_character(content)
+        
+        with open(md_file, "w", encoding="utf-8") as f:
+            f.write(cleaned_content)
+            
+            
         output = pypandoc.convert_file(md_file, 'pdf', outputfile=output_pdf, extra_args=extra_args)
         assert output == ""
 
