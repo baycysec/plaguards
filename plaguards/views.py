@@ -79,16 +79,13 @@ def search(request):
 def generate_deobfus_md(powershell, count, previous_hash=None):
     md_content = []
     code, httplist,ip, status = deobfuscate(powershell, count)
-    # print(code)
     if "Something's wrong with the code or input!" in code:
         return JsonResponse({
             'status': 'error',
             'message': code
     })
-    # print(code)
     if status == True or count == 20:
         checkcode = code.split('\n')
-        # print(code)
         md_content.append(f'```ps1')
         for line in checkcode:
             md_content.append(f'{line}')
@@ -101,9 +98,8 @@ def generate_deobfus_md(powershell, count, previous_hash=None):
         return md_content, httplist, ip
 
     count += 1
-    print(f'count pertama -> {count}')
+    
     checkcode = code.split('\n')
-    # print(code)
     md_content.append(f'```ps1')
     for line in checkcode:
         md_content.append(f'{line}')
@@ -121,7 +117,6 @@ def generate_deobfus_md(powershell, count, previous_hash=None):
     
     checksum_1 = sha256sum.hexdigest()
     code2, httplist, ip, status = deobfuscate(code, count)
-    # print(status)
 
     if status == True:
         md_content2 = []
@@ -140,7 +135,6 @@ def generate_deobfus_md(powershell, count, previous_hash=None):
         return md_content2, httplist, ip
 
     count += 1
-    print(f'count selanjutnya -> {count}')
 
     md_content2 = []
     checkcode2 = code2.split('\n')
