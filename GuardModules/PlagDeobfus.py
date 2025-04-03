@@ -578,7 +578,6 @@ def deobfuscate(code, count_deobf):
         code = splitcode(code)
         httplist,iplist = http_and_ip_grep(code)
     except Exception as e:
-        print("masuk")
         if count_deobf > 0:
             return code,httplist,iplist,True
         else:
