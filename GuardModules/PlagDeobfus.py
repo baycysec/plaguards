@@ -578,8 +578,6 @@ def deobfuscate(code, count_deobf):
         code = asciicode(code)
         code = splitcode(code)
         httplist,iplist = http_and_ip_grep(code)
-        # count_deobf += 1
-        # print(f'result count deobf -> {count_deobf}')
     except Exception as e:
         print("masuk")
         if count_deobf > 0:
@@ -588,23 +586,3 @@ def deobfuscate(code, count_deobf):
             code = f"Something's wrong with the code or input!"
             return code,[],[],False
     return code,httplist,iplist,False
-
-# pwsh = """
-# $s=[System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('U3lzdGVtLk1hbmFnZW1lbnQuQXV0b21hdGlvbi5BbXNpVXRpbHM=='));
-# $t=[Ref].Assembly.GetType($s);
-# $t.GetField([System.Text.Encoding]::ASCII.GetString((97,109,115,105,73,110,105,116,70,97,105,108,101,100)),'NonPublic,Static').SetValue($null,$true);
-# """
-
-# # print(deobfuscate(pwsh))
-# data_strings = deobfuscate(pwsh, 0)
-# print(data_strings)
-
-# print("==")
-
-# data_2 = deobfuscate(data_strings[0], 1)
-# print(data_2)
-# data_3 = deobfuscate(data_2[0], 2)
-# print(data_3)
-
-# data_4 = deobfuscate(data_3[0], 3)
-# print(data_4)
