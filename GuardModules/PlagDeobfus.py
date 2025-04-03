@@ -539,7 +539,6 @@ def http_and_ip_grep(code):
     
     return list(set(httplist)), list(set(iplist))
 
-count_deobf = 0
 def deobfuscate(code, count_deobf):
     try:
         code = remove_string(code)
