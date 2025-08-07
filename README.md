@@ -112,8 +112,9 @@ nano plaguards-cli.py
 ```
 
 ```python
-# At plaguards-cli.py  in line 583
+# At plaguards-cli.py  in line 590 and 591
 VT_API_KEY = "your_api_key_goes_here"
+BAZAAR_API_KEY="your_api_key_goes_here"
 ```
 
 4. Install required dependencies.
