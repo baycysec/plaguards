@@ -124,7 +124,7 @@ sudo apt-get update
 sudo apt-get install -y pandoc texlive texlive-latex-extra texlive-xetex
 sudo apt-get install -y texlive-fonts-extra
 sudo apt-get install -y apt-utils
-cp ./others/eisvogel.latex /usr/share/pandoc/data/templates/eisvogel.latex
+sudo cp ./others/eisvogel.latex /usr/share/pandoc/data/templates/eisvogel.latex
 ```
 
 5. Run Plaguards CLI.
