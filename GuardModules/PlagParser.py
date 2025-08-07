@@ -36,23 +36,26 @@ def generate_random_val(length):
     return ''.join(random.choice(characters) for _ in range(length))
 
 VT_API_KEY = os.getenv("VT_API_KEY")
+BAZAAR_API_KEY = os.getenv("BAZAAR_API_KEY")
 
 def FindQuery(query_type, query_value):
     if query_type == 'hash':
+        headers = {"Auth-Key": BAZAAR_API_KEY}
         data = {
             'query': 'get_info',
             'hash': query_value,
             'limit': '1'
         }
-        response = requests.post('https://mb-api.abuse.ch/api/v1/', data=data)
+        response = requests.post('https://mb-api.abuse.ch/api/v1/', data=data, headers=headers)
 
     elif query_type == 'signature':
+        headers = {"Auth-Key": BAZAAR_API_KEY}
         data = {
             'query': 'get_siginfo',
             'signature': query_value,
             'limit': '15'
         }
-        response = requests.post('https://mb-api.abuse.ch/api/v1/', data=data)
+        response = requests.post('https://mb-api.abuse.ch/api/v1/', data=data,headers=headers)
 
     elif query_type == 'domain':
         url = f'https://www.virustotal.com/api/v3/domains/{query_value}'
