@@ -3,6 +3,7 @@ FROM python:3.10
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV VT_API_KEY="your_api_key_goes_here"
+ENV BAZAAR_API_KEY="your_api_key_goes_here"
 
 COPY ./others/eisvogel.latex /usr/share/pandoc/data/templates/eisvogel.latex
 
@@ -23,3 +24,4 @@ COPY fonts/ /usr/local/share/fonts/
 EXPOSE 8000
 
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+
