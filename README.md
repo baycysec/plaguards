@@ -74,6 +74,7 @@ nano Dockerfile
 ```Dockerfile
 # At Dockerfile
 ENV VT_API_KEY="your_api_key_goes_here"
+ENV BAZAAR_API_KEY="your_api_key_goes_here"
 ```
  
 3. Run the setup script.
