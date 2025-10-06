@@ -54,7 +54,7 @@
 - Port 8000
 
 > [!NOTE]  
-> **(You don’t need to install anything manually - ArteMon’s bash script handles the setup for you automatically.)**
+> **(No manual installation needed – we’ll handle everything for you!)**
 
 ## Deployment and Usage
 
