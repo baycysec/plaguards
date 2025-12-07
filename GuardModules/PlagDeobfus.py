@@ -202,21 +202,6 @@ def backtick(code):
     newcode = ''.join([i for i in checkcode])
     return newcode.strip()
 
-def ascii_getstring(code):
-    pattern = r'ASCII\.GetString\(\[byte\[\]\]\(([\d,\s]+)\)\)'
-
-    # Find all matches
-    matches = re.findall(pattern, code)
-
-    # Convert and print
-    for i, match in enumerate(matches):
-        # Clean and split the byte values
-        byte_values = [int(x.strip()) for x in match.split(',')]
-        # Convert bytes to string
-        ascii_string = bytes(byte_values).decode('ascii')
-        print(f"Match {i+1}: {ascii_string}")
-    return ascii_string
-
 def asciicode(code):
     checkcode = code.split('\n')
     newcoderes = []
