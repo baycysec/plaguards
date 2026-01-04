@@ -70,7 +70,7 @@ cd plaguards
 2. Configure your Virus Total and Malware Bazaar API key. 
 
 > [!TIP]  
-> For instructions on obtaining your API key, Click [here](https://github.com/Bread-Yolk/plaguards/wiki/Configure-your-Virus-Total-API-Key) and [here](https://github.com/baycysec/plaguards/wiki/Configure-your-Malware-Bazaar-API-Key).
+> For instructions on obtaining your API key, Click [VirusTotal](https://github.com/Bread-Yolk/plaguards/wiki/Configure-your-Virus-Total-API-Key) and [MalwareBazaar](https://github.com/baycysec/plaguards/wiki/Configure-your-Malware-Bazaar-API-Key).
 
 ```console
 nano Dockerfile
